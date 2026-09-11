@@ -1,0 +1,347 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   SAMANTROY ACADEMY - design system
+   --------------------------------------------------------------------------
+   Theme      Light, locked. The only dark area is the closing CTA + footer
+              block, a single deliberate colour block at the end of the page.
+   Palette    Cool paper neutrals, regimental green (brand), one saffron
+              accent. Saffron is used for primary CTAs and headline emphasis
+              only. Text-on-saffron is always ink (contrast ~6:1).
+   Type       Cabinet Grotesk (display) / Switzer (text) / Bespoke Stencil
+              (numerals + wordmark only). Self-hosted from Fontshare (ITF).
+   Shape      Buttons and chips: full pill. Cards and media: 20px.
+              Inputs: 12px. No other radii.
+   Motion     GSAP + ScrollTrigger + Lenis. Every effect collapses under
+              prefers-reduced-motion.
+   ========================================================================== */
+
+@theme {
+  --font-display: var(--font-cabinet), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-switzer), ui-sans-serif, system-ui, sans-serif;
+  --font-stencil: var(--font-bespoke-stencil), var(--font-cabinet), ui-sans-serif, sans-serif;
+
+  /* Neutrals: cool paper with a whisper of green. */
+  --color-paper: #f3f4f0;
+  --color-surface: #fbfbf9;
+  --color-tint: #e8ebe4;
+  --color-tint-2: #dde2d8;
+  --color-line: #d4d9cf;
+  --color-ink: #141a17;
+  --color-ink-2: #36413b;
+  --color-muted: #59645e;
+
+  /* Brand: regimental green. */
+  --color-brand-50: #eef3ef;
+  --color-brand-100: #d9e4db;
+  --color-brand-200: #b4cab9;
+  --color-brand-300: #88aa92;
+  --color-brand-400: #5c876a;
+  --color-brand-500: #3f6b4f;
+  --color-brand-600: #2d553c;
+  --color-brand-700: #22452f;
+  --color-brand-800: #1a3625;
+  --color-brand-900: #12271b;
+  --color-brand-950: #0b1a12;
+
+  /* The single accent: saffron. */
+  --color-accent: #ee7d1e;
+  --color-accent-600: #dd6c0d;
+  --color-accent-ink: #b0520a; /* accent as TEXT on paper: >= 4.5:1 */
+  --color-accent-50: #fdf0e3;
+  --color-accent-100: #fbdcbd;
+
+  /* Force / vertical tones (accent strips only, never large fills). */
+  --color-tone-army: #4e5d2c;
+  --color-tone-navy: #1f3c70;
+  --color-tone-airforce: #2f7fb8;
+  --color-tone-capf: #8a6b36;
+  --color-tone-odisha: #9b3a2c;
+  --color-tone-railway: #2d5a76;
+
+  --radius-card: 20px;
+  --radius-field: 12px;
+
+  --shadow-card: 0 1px 0 rgb(20 26 23 / 0.04), 0 18px 40px -22px rgb(18 39 27 / 0.28);
+  --shadow-lift: 0 1px 0 rgb(20 26 23 / 0.05), 0 28px 60px -28px rgb(18 39 27 / 0.38);
+  --shadow-btn: 0 1px 0 rgb(255 255 255 / 0.35) inset, 0 10px 24px -12px rgb(176 82 10 / 0.55);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-marquee: marquee var(--marquee-duration, 48s) linear infinite;
+  @keyframes marquee {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+  }
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  ::selection { background: var(--color-brand-700); color: var(--color-surface); }
+  :focus-visible {
+    outline: 2px solid var(--color-accent-600);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  img { max-width: 100%; }
+}
+
+/* ── Layout helpers ───────────────────────────────────────────────────── */
+@utility container-x {
+  width: 100%;
+  max-width: 1320px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (min-width: 640px) { padding-inline: 2rem; }
+}
+
+@utility section-y {
+  padding-block: 4.5rem;
+  @media (min-width: 768px) { padding-block: 6.5rem; }
+}
+
+/* ── Typography helpers ──────────────────────────────────────────────── */
+@utility display-xl {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  font-size: clamp(2.5rem, 6.2vw, 5.25rem);
+}
+/* Hero headline: capped so the two CMS lines never wrap to three on desktop. */
+@utility display-hero {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  font-size: clamp(2.6rem, 4.6vw, 4.1rem);
+}
+@utility display-lg {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  font-size: clamp(2rem, 4.4vw, 3.6rem);
+}
+@utility display-md {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+}
+@utility lede {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--color-ink-2);
+  max-width: 62ch;
+  @media (min-width: 768px) { font-size: 1.1875rem; }
+}
+@utility numeral {
+  font-family: var(--font-stencil);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.9;
+}
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-brand-600);
+}
+
+/* Headline emphasis from the CMS (<span class="hl">). Darker saffron on
+   paper for contrast; bright saffron inside dark sections (.on-dark). */
+.hl { color: var(--color-accent-ink); }
+.on-dark .hl { color: var(--color-accent); }
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  height: 3.25rem;
+  padding-inline: 1.6rem;
+  border-radius: 9999px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.975rem;
+  white-space: nowrap;
+  transition: transform 0.25s var(--ease-out-expo), background-color 0.25s, box-shadow 0.25s, color 0.25s, border-color 0.25s;
+  -webkit-tap-highlight-color: transparent;
+  &:active { transform: translateY(1px) scale(0.985); }
+  &:disabled { opacity: 0.55; pointer-events: none; }
+}
+@utility btn-primary {
+  background: var(--color-accent);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-btn);
+  &:hover { background: var(--color-accent-600); }
+}
+@utility btn-dark {
+  background: var(--color-brand-800);
+  color: var(--color-surface);
+  &:hover { background: var(--color-brand-700); }
+}
+@utility btn-ghost {
+  background: transparent;
+  color: var(--color-ink);
+  box-shadow: inset 0 0 0 1.5px var(--color-line);
+  &:hover { background: var(--color-surface); box-shadow: inset 0 0 0 1.5px var(--color-ink-2); }
+}
+@utility btn-light {
+  background: var(--color-surface);
+  color: var(--color-brand-900);
+  &:hover { background: #ffffff; }
+}
+@utility btn-sm {
+  height: 2.625rem;
+  padding-inline: 1.15rem;
+  font-size: 0.9rem;
+}
+
+/* Arrow nudge on hover for any button/link holding .arrow */
+.group:hover .arrow, a:hover > .arrow, button:hover > .arrow { transform: translateX(3px); }
+.arrow { transition: transform 0.3s var(--ease-out-expo); }
+
+/* ── Forms ───────────────────────────────────────────────────────────── */
+@utility field {
+  width: 100%;
+  min-height: 3rem;
+  border-radius: var(--radius-field);
+  border: 1.5px solid var(--color-line);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  padding: 0.7rem 0.95rem;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  &::placeholder { color: #737d77; }
+  &:hover { border-color: var(--color-brand-300); }
+  &:focus { outline: none; border-color: var(--color-brand-600); box-shadow: 0 0 0 4px rgb(63 107 79 / 0.16); }
+}
+select.field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath stroke='%2336413b' stroke-width='1.6' d='m1 1.5 5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+/* ── Surfaces ────────────────────────────────────────────────────────── */
+@utility card {
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+@utility hairline {
+  border-color: var(--color-line);
+}
+
+/* ── Rich text coming from the CMS ───────────────────────────────────── */
+.rich-html p { margin: 0 0 0.75em; }
+.rich-html p:last-child { margin-bottom: 0; }
+.rich-html a { color: var(--color-accent-ink); text-decoration: underline; text-underline-offset: 3px; }
+.rich-html strong, .rich-html b { font-weight: 600; color: var(--color-ink); }
+.rich-html ul { list-style: disc; padding-left: 1.2em; margin: 0.5em 0; }
+.rich-html ol { list-style: decimal; padding-left: 1.2em; margin: 0.5em 0; }
+.rich-html h2, .rich-html h3 { margin: 1.4em 0 0.5em; font-size: 1.5em; }
+.rich-html blockquote { border-left: 3px solid var(--color-accent); padding-left: 1em; color: var(--color-ink-2); }
+
+.prose-article { font-size: 1.0625rem; line-height: 1.75; color: var(--color-ink-2); }
+.prose-article h2 { font-size: 1.75rem; margin: 2rem 0 0.75rem; color: var(--color-ink); }
+.prose-article h3 { font-size: 1.35rem; margin: 1.6rem 0 0.6rem; color: var(--color-ink); }
+.prose-article p { margin: 0 0 1.1em; }
+
+/* Word-art presets emitted by the CMS rich-text editor. */
+.wa-green { color: var(--color-brand-700); }
+.wa-tri {
+  background: linear-gradient(100deg, #e1731a, #8a948d 50%, #1f6b3a);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.wa-stencil { font-family: var(--font-stencil); font-weight: 800; letter-spacing: 0; }
+.wa-outline { color: transparent; -webkit-text-stroke: 1.2px currentColor; }
+/* Legacy class names from the reference build, mapped to this palette. */
+.tricolour-text, .wa-gold, .wa-saffron, .text-accent-legacy { color: var(--color-accent-ink); }
+.on-dark .tricolour-text, .on-dark .wa-gold, .on-dark .wa-saffron { color: var(--color-accent); }
+.wa-shadow { text-shadow: 0 2px 8px rgb(20 26 23 / 0.25); }
+/* Fonts chosen in the editor are stored as <font face="...">. */
+font[face="Cabinet Grotesk"] { font-family: var(--font-display); }
+font[face="Switzer"] { font-family: var(--font-sans); }
+font[face="Bespoke Stencil"] { font-family: var(--font-stencil); }
+
+/* ── Motion: initial states for GSAP reveals ─────────────────────────── */
+/* Content is only hidden once JS has marked the document ready, so the page
+   is fully readable with JS off or before hydration. */
+html.js-motion [data-reveal] { opacity: 0; }
+html.js-motion [data-reveal="clip"] { opacity: 1; clip-path: inset(0 0 100% 0); }
+html.js-motion [data-split] { opacity: 0; }
+/* SplitText line masks: reserve room for descenders (g, y, p) so they never clip. */
+.split-line-mask { padding-bottom: 0.12em; margin-bottom: -0.12em; }
+
+/* Intro screen: hidden on repeat visits (set before paint) and, as a
+   fail-safe, after 4s even if JavaScript never runs. */
+html.sa-intro-done .sa-preloader { display: none; }
+.sa-preloader { animation: sa-intro-failsafe 0s linear 4s forwards; }
+@keyframes sa-intro-failsafe { to { visibility: hidden; pointer-events: none; } }
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+
+/* Marquee (the one per page) */
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+/* Hide scrollbar on horizontal snap rails, keep them scrollable */
+.rail { scrollbar-width: none; }
+.rail::-webkit-scrollbar { display: none; }
+
+/* Admin CMS: neutral working surface. */
+.admin-root {
+  background: #eef1ec;
+  color: #1e2532;
+}
+.admin-root ::selection { background: var(--color-brand-600); color: #fff; }
+
+/* ── Reduced motion ──────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { width: auto; flex-wrap: wrap; row-gap: 0.75rem; padding-inline: 1.25rem; }
+  .marquee-dup { display: none; }
+  .marquee-mask { mask-image: none; }
+  .journey-wrap { height: auto !important; padding-block: 5rem !important; }
+  .journey-track { overflow-x: auto; padding-bottom: 1rem; }
+  html { scroll-behavior: auto; }
+  html.js-motion [data-reveal], html.js-motion [data-split] { opacity: 1 !important; clip-path: none !important; transform: none !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
