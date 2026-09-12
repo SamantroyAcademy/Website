@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { saveEnquiry } from "@/lib/enquiries";
 import { notifyAdmin } from "@/lib/mailer";
+import { fullPhone, isValidPhone, phoneDigits } from "@/lib/form-defaults";
 
 export const runtime = "nodejs";
 
@@ -17,11 +18,11 @@ type Body = {
 };
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE = /^[0-9+\-\s]{10,15}$/;
 
-/** Lightweight lead capture for the Eligibility Finder & Mock Tests.
- *  Stores to the CRM and emails the academy inbox - both best-effort, so a
- *  visitor's submission never fails because of a downstream outage. */
+/** Lightweight lead capture for the Eligibility Finder and Mock Tests.
+ *  Needs a way to reach the aspirant: a valid Indian mobile OR an email
+ *  (this audience is phone-first). Stores to the CRM, then emails the
+ *  academy; both best-effort so a downstream outage never fails the visitor. */
 export async function POST(req: Request) {
   const rl = rateLimit(`lead:${clientIp(req)}`, { limit: 8, windowMs: 60_000 });
   if (!rl.ok) return NextResponse.json({ error: "Too many requests." }, { status: 429 });
@@ -36,20 +37,23 @@ export async function POST(req: Request) {
 
   const name = (body.name ?? "").trim();
   const email = (body.email ?? "").trim();
-  const phone = (body.phone ?? "").trim();
+  const digits = phoneDigits(body.phone ?? "");
   if (name.length < 2 || name.length > 80) return NextResponse.json({ error: "Enter a valid name." }, { status: 400 });
-  if (!EMAIL.test(email)) return NextResponse.json({ error: "Enter a valid email." }, { status: 400 });
-  if (phone && !PHONE.test(phone)) return NextResponse.json({ error: "Enter a valid phone number." }, { status: 400 });
+  if (email && !EMAIL.test(email)) return NextResponse.json({ error: "Enter a valid email." }, { status: 400 });
+  if (digits && !isValidPhone(digits)) return NextResponse.json({ error: "Enter a valid 10-digit mobile number." }, { status: 400 });
+  if (!email && !digits) return NextResponse.json({ error: "Leave a phone number or an email so we can reach you." }, { status: 400 });
+  const phone = fullPhone(digits);
 
   const source = body.source === "mock_test" ? "mock_test" : "eligibility";
   const entry = (body.entry ?? "").slice(0, 200);
   const message = (body.message ?? "").slice(0, 2000);
   const meta = body.meta && typeof body.meta === "object" ? body.meta : {};
 
-  await saveEnquiry({ name, email, phone, entry, message, source, meta });
+  // enquiries.email is NOT NULL; a phone-only lead stores a blank email.
+  await saveEnquiry({ name, email: email || "", phone, entry, message, source, meta });
 
-  // Flatten whatever the tool captured (quiz score, eligible entries, answers)
-  // so the academy sees the full picture in the notification.
+  // Flatten what the tool captured (score, eligible exams, answers) so the
+  // academy sees the full picture in the notification.
   const metaRows = Object.entries(meta)
     .filter(([, v]) => v !== null && v !== undefined && v !== "")
     .slice(0, 12)
@@ -62,16 +66,17 @@ export async function POST(req: Request) {
   await notifyAdmin({
     subject: `${label} lead: ${name}`,
     subtitle: `New ${label.toLowerCase()} submission from the website`,
-    replyTo: email,
+    ...(email ? { replyTo: email } : {}),
     rows: [
       ["Name", name],
       ["Email", email],
       ["Phone", phone],
       ["Source", label],
-      ["Entry / Interest", entry],
+      ["Exam / interest", entry],
       ["Message", message],
       ...metaRows,
     ],
+    footer: email ? "Reply directly to this email to reach the aspirant." : "No email given: call or WhatsApp the number above.",
   });
 
   return NextResponse.json({ ok: true });

@@ -22,7 +22,8 @@ const strip = (html: string) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const exam = await getExamBySlug(slug);
-  if (!exam) return { title: "Exam not found" };
+  // Called here (before streaming starts) so an unknown slug gets a real 404.
+  if (!exam) notFound();
   const title = `${exam.name}: Eligibility, Pattern and Physical Standards`;
   const description = strip(exam.intro).slice(0, 155) || `Eligibility, exam pattern, syllabus and physical standards for ${exam.name}.`;
   return { title, description, openGraph: { title, description }, alternates: { canonical: `/exams/${exam.slug}` } };

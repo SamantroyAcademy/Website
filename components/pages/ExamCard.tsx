@@ -21,7 +21,8 @@ export default function ExamCard({ exam, heightLine }: { exam: Exam; heightLine?
       </div>
       <h3 className="mt-3 font-display text-2xl font-extrabold leading-tight tracking-tight text-ink">{exam.name}</h3>
       {exam.force && <p className="mt-1 text-sm text-ink-2">{exam.force}</p>}
-      <dl className="mt-auto grid grid-cols-2 gap-x-4 gap-y-3 border-t border-line pt-5 text-sm">
+      <span aria-hidden className="block min-h-5 flex-1" />
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-line pt-5 text-sm">
         <div><dt className="text-xs text-muted">Apply</dt><dd className="font-semibold text-ink">{exam.stage || "See notification"}</dd></div>
         <div><dt className="text-xs text-muted">Age</dt><dd className="font-semibold text-ink">{ageBand(exam)}</dd></div>
         <div><dt className="text-xs text-muted">Open to</dt><dd className="font-semibold text-ink">{genderLabel(exam.gender)}</dd></div>

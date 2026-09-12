@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Admin | Samantroy Academy CMS",
+  title: { absolute: "Admin | Samantroy Academy CMS" },
   robots: { index: false, follow: false },
 };
 

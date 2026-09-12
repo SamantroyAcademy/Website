@@ -71,9 +71,12 @@ export default function FloatingActions({ phoneHref, whatsapp }: { phoneHref: st
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with us on WhatsApp"
-          className="group flex h-14 items-center gap-2 rounded-full bg-brand-700 pl-4 pr-5 text-sm font-semibold text-surface shadow-[0_14px_30px_-12px_rgb(18_39_27/0.7)] transition-transform hover:-translate-y-0.5 hover:bg-brand-600"
+          className="group flex h-14 items-center overflow-hidden rounded-full bg-brand-700 px-4 text-sm font-semibold text-surface shadow-[0_14px_30px_-12px_rgb(18_39_27/0.7)] transition-colors hover:bg-brand-600"
         >
-          <WhatsappLogoIcon size={24} weight="fill" /> WhatsApp
+          <WhatsappLogoIcon size={24} weight="fill" className="shrink-0" />
+          <span className="max-w-0 whitespace-nowrap opacity-0 transition-all duration-500 ease-[var(--ease-out-expo)] group-hover:ml-2 group-hover:max-w-[8rem] group-hover:opacity-100 group-focus-visible:ml-2 group-focus-visible:max-w-[8rem] group-focus-visible:opacity-100">
+            WhatsApp
+          </span>
         </a>
       </div>
     </>

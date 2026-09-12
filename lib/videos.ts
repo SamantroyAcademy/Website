@@ -4,15 +4,8 @@ import { asArray } from "@/lib/shape";
 
 export type SiteVideo = { id: string; title: string; url: string };
 
-/** Pull the 11-character video id out of any YouTube URL form. */
-export function youtubeId(url: string): string | null {
-  const m =
-    url.match(/[?&]v=([\w-]{11})/) ||
-    url.match(/youtu\.be\/([\w-]{11})/) ||
-    url.match(/\/embed\/([\w-]{11})/) ||
-    url.match(/\/shorts\/([\w-]{11})/);
-  return m ? m[1] : null;
-}
+export { youtubeId } from "@/lib/youtube";
+import { youtubeId } from "@/lib/youtube";
 
 type ResourceRow = { kind: string; title: string; url: string | null; sort_order: number };
 
