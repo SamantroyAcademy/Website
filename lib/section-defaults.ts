@@ -18,14 +18,14 @@ import { HEADING_DEFAULTS } from "@/lib/heading-defaults";
 const em = (s: string) => `<span class="hl">${s}</span>`;
 
 export const HERO = {
-  badge: "Defence and government job coaching, Odisha",
-  headingLine1: "Train for the test",
-  headingLine2: "that decides the uniform.",
+  badge: "Admissions are on: NDA batch from 21 September",
+  headingLine1: "Train in Brahmapur.",
+  headingLine2: "Serve the nation.",
   paragraph:
-    "Written exam, physical test and medical, prepared together. Every run is timed against your exam's cut-off, every mock marked the way the real one is.",
+    "Samantroy Academy for Defence Career Studies has coached aspirants in Brahmapur (Berhampur), Ganjam since 2001, with <strong>4000+ recruitments</strong> across the Army, Navy, Air Force, CAPF, Odisha Police, bank, railway and SSC. Join after +2 Science, Commerce or Arts, or after graduation.",
   rating: "",
   typedPrefix: "Become ",
-  typedWords: ["an Agniveer", "a Constable", "a Sailor", "an Airman", "a Sub-Inspector"],
+  typedWords: ["an Agniveer", "a Sailor", "an Airman", "a CAPF Constable", "a Police SI", "a Bank PO", "an Officer"],
   primaryCta: "Book free counselling",
   primaryCtaHref: "/contact",
   secondaryCta: "Check eligibility",
@@ -48,22 +48,22 @@ export const STORY_GAPS = [
 export const WHYUS = {
   kicker: "",
   title: `Why aspirants choose ${em("Samantroy")}`,
-  subtitle: "Coaching that treats the ground as seriously as the classroom.",
+  subtitle: "25 years of results from one centre in Brahmapur.",
 };
 
 export const WHYUS_ITEMS = [
-  { icon: "run", title: "A real ground, every morning", body: "Running track, beam, pits and a ditch on campus. You rehearse the exact events you will face." },
-  { icon: "timer", title: "Every run is timed and logged", body: "Your times are recorded against your exam's cut-off, so you can see the gap closing week by week." },
-  { icon: "exam", title: "Mocks on the real pattern", body: "Weekly full-length CBTs with negative marking and section-wise analysis." },
+  { icon: "trophy", title: "Since 2001, 4000+ recruitments", body: "A quarter century of coaching in Brahmapur, with selections every year across defence, police, bank and government jobs." },
+  { icon: "shield", title: "Defence to desk jobs, one centre", body: "Army, Navy, Air Force, CAPF and Odisha Police, plus Bank, Railway, SSC, OSSC and OPSC. Change track without changing academy." },
+  { icon: "exam", title: "The real exam pattern", body: "Classes and practice tests on the actual pattern of your exam, with negative marking where the exam has it." },
+  { icon: "run", title: "Physical test prepared early", body: "Height, chest and running standards checked well before test day, while there is still time to close the gap." },
   { icon: "translate", title: "Odia and Odisha GK built in", body: "State exams test Odia and Odisha GK. We teach both, not just the central syllabus." },
-  { icon: "stethoscope", title: "Medical pre-checks", body: "Height, chest, vision and common medical issues checked early, while there is still time to act." },
-  { icon: "handshake", title: "Honest about your chances", body: "No guarantees. A clear picture of where you stand and what it will take." },
+  { icon: "graduation", title: "Every stream welcome", body: "Science, Commerce or Arts after +2, or graduates. Arts and Commerce students qualify for Air Force Y group, Navy MR, Army GD and SSC GD." },
 ];
 
 export const CTA = {
-  eyebrow: "New batches start every month",
-  title: `The next notification ${em("won't wait.")}`,
-  paragraph: "Book a free counselling call. A trainer will check your eligibility and suggest the batch that fits your exam.",
+  eyebrow: "Admissions are on",
+  title: `The next batch starts ${em("21 September.")}`,
+  paragraph: "NDA and other competitive exams from 21 September, CDS from 14 October. Book a free counselling call and we will check which exams you qualify for.",
 };
 
 export const RECENT_WINS: string[] = [];
@@ -76,16 +76,16 @@ export const ABOUT_VALUES = [
 
 export const ABOUT_MISSION = {
   kicker: "",
-  title: `Built for the aspirants ${em("coaching forgot")}`,
+  title: `Shaping the nation's warriors ${em("since 2001")}`,
   body:
-    "<p>Most coaching in the state is built for the written exam. But for Agniveer, SSC GD, Odisha Police and Railways, the written paper is only the first filter. The physical test and the medical decide who actually joins.</p><p>Samantroy Academy was set up to train both, together, with a real ground on campus and trainers who time every run against the exam's own cut-off.</p>",
-  image: "/images/scenes/field-training.jpg",
+    "<p>Samantroy Academy for Defence Career Studies has trained aspirants in Brahmapur (Berhampur), Ganjam since 2001. In 2026 the academy marks its 25th anniversary, with more than 4000 of its aspirants recruited into the Army, Navy, Air Force, the central armed police forces and Odisha Police, and into bank, railway, SSC and Odisha government jobs.</p><p>Aspirants join after +2 in Science, Commerce or Arts, or after graduation, from across Ganjam, Gajapati, Kandhamal, Khordha, Puri and Cuttack. Classes run at our centre on Sishu Mandir Road, Gosaninuagaon, 300 m from Brahmapur railway station.</p>",
+  image: "hero/result-collage-2025-26.webp",
 };
 
 export const GATEWAYS = [
-  { icon: "student", title: "After 10th", body: "Army Agniveer GD, SSC GD, Navy MR, RPF Constable and RRB Group D all open after Class 10.", tags: ["Agniveer GD", "SSC GD", "Navy MR", "Group D"] },
-  { icon: "graduation", title: "After 12th", body: "Navy SSR, Airman X and Y, Agniveer Technical and Clerk, Odisha Police Constable and NTPC need Class 12.", tags: ["Navy SSR", "Airman X / Y", "OP Constable", "NTPC"] },
-  { icon: "certificate", title: "After graduation", body: "Sub-Inspector posts, SSC CGL and the officer entries CDS and AFCAT open after a degree.", tags: ["OP SI", "SSC CPO", "CGL", "CDS / AFCAT"] },
+  { icon: "student", title: "After 10th", body: "Army GD, SSC GD for BSF, CRPF, CISF, ITBP and SSB, Navy MR, RPF Constable and RRB Group D all open after Class 10.", tags: ["Army GD", "SSC GD", "Navy MR", "Group D"] },
+  { icon: "graduation", title: "After +2", body: "Navy SSR, Air Force X and Y, Army Technical and Clerk, Odisha Police Constable, NDA and NTPC. Arts and Commerce students qualify for Air Force Y group.", tags: ["Navy SSR", "Air Force X / Y", "NDA", "OP Constable"] },
+  { icon: "certificate", title: "After graduation", body: "Sub-Inspector posts, Bank PO and Clerk, SSC CGL, OSSC and OPSC, and the officer entries CDS and AFCAT open after a degree.", tags: ["OP SI", "Bank PO", "OPSC / ASO", "CDS / AFCAT"] },
 ];
 
 export const JOURNEY_INTRO = {

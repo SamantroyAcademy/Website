@@ -1,6 +1,6 @@
 /** Icon registry for CMS-editable cards.
  *
- *  SSB Wings stored an emoji per card. Samantroy stores an icon KEY instead so
+ *  Cards store an icon KEY (not an emoji) so
  *  every card renders a consistent Phosphor glyph (see components/Icon.tsx).
  *  Plain data, safe for server and client: the admin editor uses ICON_OPTIONS
  *  as its dropdown, and the public site maps the key to a component.

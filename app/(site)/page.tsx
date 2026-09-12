@@ -8,6 +8,7 @@ import HeroSection from "@/components/home/HeroSection";
 import ExamsMarquee from "@/components/home/ExamsMarquee";
 import ToppersRail from "@/components/home/ToppersRail";
 import SelectionWall from "@/components/home/SelectionWall";
+import ShortsSection from "@/components/home/ShortsSection";
 import Courses from "@/components/home/Courses";
 import CampusGallery from "@/components/home/CampusGallery";
 import BooksSection from "@/components/home/BooksSection";
@@ -39,6 +40,7 @@ const SECTION_VIEWS: Record<HomeSectionKey, ReactNode> = {
   entries_marquee: <ExamsMarquee />,
   air1_marquee: <ToppersRail />,
   wall: <SelectionWall />,
+  shorts: <ShortsSection />,
   courses: <Courses />,
   campus: <CampusGallery />,
   books: <BooksSection />,

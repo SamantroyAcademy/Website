@@ -12,17 +12,17 @@ export type CountdownDoc = {
 };
 
 /** Fallback shown before the CMS is populated. Dates are ISO (YYYY-MM-DD).
- *  Only the academy's own batch dates ship as defaults (placeholders). Exam
- *  dates must come from official notifications, so the admin adds those in
- *  Admin -> Countdown rather than us guessing them here. */
+ *  The two batch dates are from the academy's "New batch starts" poster.
+ *  Exam dates must come from official notifications, so the admin adds those
+ *  in Admin -> Countdown rather than us guessing them here. */
 export const COUNTDOWN: CountdownDoc = {
   kicker: "",
   heading: "Next batches start in",
-  bg: "#e8ebe4",
-  textColor: "#141a17",
-  kickerColor: "#2d553c",
+  bg: "#e9eaee",
+  textColor: "#12151f",
+  kickerColor: "#b30508",
   items: [
-    { label: "Next offline batch", date: "2026-10-01", kind: "batch" },
-    { label: "Next online batch", date: "2026-10-05", kind: "batch" },
+    { label: "NDA and other competitive exams", date: "2026-09-21", kind: "batch" },
+    { label: "CDS and other competitive exams", date: "2026-10-14", kind: "batch" },
   ],
 };

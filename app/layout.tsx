@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { LOCATION } from "@/lib/data";
+import { ogImages } from "@/lib/seo";
 
 /* Self-hosted type from Fontshare (Indian Type Foundry, free commercial
    licence). No Google Fonts request is ever made. */
@@ -40,40 +42,53 @@ const SITE_URL = "https://www.samantroyacademy.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  applicationName: "Samantroy Academy",
   title: {
-    default: "Samantroy Academy | Defence and Government Job Coaching in Odisha",
+    default: "Samantroy Academy, Berhampur | Defence, Police, Bank and SSC Coaching",
     template: "%s | Samantroy Academy",
   },
   description:
-    "Samantroy Academy, Odisha: coaching for Army Agniveer, Navy SSR and MR, Air Force X and Y, SSC GD, Odisha Police, Railways and SSC. Written exam, physical test and medical, trained together.",
+    "Defence coaching in Brahmapur (Berhampur), Ganjam since 2001, with 4000+ recruitments. Army, Navy, Air Force, BSF, CRPF, CISF, Odisha Police, OSSC, OPSC, Bank, Railway, SSC, NDA and CDS.",
   keywords: [
-    "Agniveer coaching Odisha", "defence coaching Odisha", "SSC GD coaching Bhubaneswar",
-    "Odisha Police constable coaching", "Navy SSR MR coaching", "Air Force X Y group coaching",
-    "RRB Group D coaching", "physical training academy Odisha", "Samantroy Academy",
+    "Samantroy Academy", "Samantroy Academy Berhampur", "Samantroy Academy Brahmapur", "defence coaching in Berhampur",
+    "defence academy Brahmapur", "defence coaching Ganjam", "Agniveer coaching Berhampur", "Army GD coaching Odisha",
+    "Navy SSR MR coaching Berhampur", "Air Force X Y group coaching Odisha", "SSC GD coaching Berhampur",
+    "BSF CRPF CISF SSB coaching Odisha", "Odisha Police constable coaching Berhampur", "Odisha Police SI coaching",
+    "OSSC OSSSC coaching Berhampur", "OPSC ASO coaching Odisha", "bank PO clerk coaching Berhampur",
+    "railway exam coaching Berhampur", "SSC CGL coaching Berhampur", "NDA coaching Berhampur", "CDS AFCAT coaching Odisha",
   ],
   authors: [{ name: "Samantroy Academy" }],
   creator: "Samantroy Academy",
-  alternates: { canonical: SITE_URL },
+  publisher: "Samantroy Academy",
+  category: "education",
+  formatDetection: { telephone: true, address: true, email: false },
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: SITE_URL,
+    url: "/",
     siteName: "Samantroy Academy",
-    title: "Samantroy Academy | Defence and Government Job Coaching",
-    description: "Written exam, physical test and medical, trained together. Agniveer, SSC GD, Odisha Police, Railways.",
-    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Samantroy Academy" }],
+    title: "Samantroy Academy, Berhampur | Shaping Nation's Warriors since 2001",
+    description: "4000+ recruitments since 2001. Coaching in Brahmapur, Ganjam for Army, Navy, Air Force, CAPF, Odisha Police, OSSC, OPSC, Bank, Railway and SSC.",
+    images: ogImages(),
   },
   twitter: {
     card: "summary_large_image",
-    title: "Samantroy Academy",
-    description: "Defence and government job coaching in Odisha.",
-    images: ["/og.jpg"],
+    title: "Samantroy Academy, Berhampur",
+    description: "Defence, police, bank and SSC coaching in Brahmapur, Ganjam since 2001. 4000+ recruitments.",
+    images: ogImages().map((i) => i.url),
   },
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
+  // Local search: where the academy is (see LOCATION in lib/data.ts).
+  other: {
+    "geo.region": LOCATION.regionCode,
+    "geo.placename": `${LOCATION.locality} (${LOCATION.altLocality}), ${LOCATION.district}, ${LOCATION.region}`,
+    "geo.position": `${LOCATION.lat};${LOCATION.lng}`,
+    ICBM: `${LOCATION.lat}, ${LOCATION.lng}`,
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f3f4f0",
+  themeColor: "#f4f4f1",
   colorScheme: "light",
 };
 

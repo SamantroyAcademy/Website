@@ -1,23 +1,25 @@
 /** Plain data for the homepage sections. Importable from server and client. */
 
+import { RESULT_POSTERS } from "@/lib/hero-slides";
+
 /** Exams marquee: exam name + optional selected count. A blank count shows
  *  the exam name alone (we never print a number the academy has not given). */
 export type EntryCount = { entry: string; count: number | string };
 export const ENTRY_COUNTS: EntryCount[] = [
-  { entry: "Army Agniveer GD", count: "" },
-  { entry: "SSC GD Constable", count: "" },
-  { entry: "Navy Agniveer SSR", count: "" },
-  { entry: "Navy Agniveer MR", count: "" },
-  { entry: "Airman X and Y", count: "" },
-  { entry: "Odisha Police", count: "" },
-  { entry: "RRB Group D", count: "" },
-  { entry: "RPF Constable", count: "" },
+  { entry: "Army GD and Technical", count: "" },
+  { entry: "Navy SSR and MR", count: "" },
+  { entry: "Air Force X and Y", count: "" },
+  { entry: "BSF, CRPF, CISF, SSB", count: "" },
+  { entry: "Odisha Police and SI", count: "" },
+  { entry: "OSSC, OSSSC, OPSC, ASO", count: "" },
+  { entry: "Bank PO and Clerk", count: "" },
+  { entry: "Railway and SSC CGL", count: "" },
+  { entry: "NDA, CDS, AFCAT", count: "" },
   { entry: "Coast Guard Navik", count: "" },
-  { entry: "Forest Guard", count: "" },
 ];
 
-/** Top-rank / result cards (image list). Empty until the academy uploads them. */
-export const AIR1_IMAGES: string[] = [];
+/** Result posters (image list), newest first. */
+export const AIR1_IMAGES: string[] = RESULT_POSTERS;
 
 /** Campus / ground gallery. Generic training photography until real campus
  *  photos are uploaded in Admin -> Campus Gallery. */
@@ -39,7 +41,7 @@ export const COURSES_OPTIONS: CoursesOptions = { showPrices: "on" };
 
 /** Hostel / facilities note under the courses section. */
 export const COURSES_NOTE =
-  "Residential seats for the offline batch are allotted on a first-come basis. Ask at enquiry for availability.";
+  "Coming from outside Brahmapur? Call the academy and we will help you with accommodation near the centre.";
 
 /** Google reviews: the admin imports or types them in. */
 export type GoogleReview = {
@@ -53,7 +55,7 @@ export type GoogleReview = {
 export const GOOGLE_REVIEWS: GoogleReview[] = [];
 
 /** Google Business profile link for the "see all reviews" button. */
-export const GOOGLE_PLACE_URL = "https://maps.google.com/maps?q=Samantroy%20Academy%20Odisha";
+export const GOOGLE_PLACE_URL = "https://maps.google.com/maps?q=Samantroy%20Academy%2C%20Brahmapur%2C%20Odisha";
 
 /** The enquiry popup that opens shortly after the site loads. */
 export type EnquiryPopupDoc = {
@@ -67,6 +69,6 @@ export const ENQUIRY_POPUP: EnquiryPopupDoc = {
   enabled: "on",
   title: "Book a free counselling call",
   subtitle: "Find out which exams you qualify for",
-  body: "Tell us your age, education and height. A trainer will call back with the exams you can apply for and the batch that fits.",
+  body: "New batches: NDA from 21 September, CDS from 14 October. Tell us your age, education and height and we will call back with the exams you can apply for.",
   delayMs: "6000",
 };

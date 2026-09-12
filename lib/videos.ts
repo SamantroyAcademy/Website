@@ -29,7 +29,7 @@ export async function getSiteVideos(limit?: number): Promise<SiteVideo[]> {
 
   const list = fromCms.length
     ? fromCms
-    : YT_VIDEOS.map((id) => ({ id, title: "Samantroy Academy video", url: `https://www.youtube.com/watch?v=${id}` }));
+    : YT_VIDEOS.map((v) => ({ id: v.id, title: v.title, url: `https://www.youtube.com/watch?v=${v.id}` }));
 
   return limit ? list.slice(0, limit) : list;
 }

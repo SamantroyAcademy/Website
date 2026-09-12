@@ -1,16 +1,16 @@
 # Samantroy Academy website
 
-Marketing site and content manager for Samantroy Academy, a defence and government-job
-coaching institute in Odisha (Army Agniveer, Navy SSR and MR, Air Force X and Y, SSC GD
-for the CAPFs, Odisha Police, Railways and SSC, with officer entries alongside).
+Website and content manager for **Samantroy Academy for Defence Career Studies**,
+Brahmapur (Berhampur), Ganjam, Odisha: coaching since 2001 for the Army, Navy, Air Force,
+CAPF (BSF, CRPF, CISF, ITBP, SSB), Odisha Police and SI, OSSC, OSSSC, OPSC and ASO, Bank,
+Railway and SSC, plus NDA, CDS and AFCAT. Live at https://www.samantroyacademy.com.
 
 Built with **Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Supabase
 (Postgres, Auth), Cloudflare R2 (images and files), GSAP + ScrollTrigger + Lenis and Resend.**
 Hosting is Vercel.
 
-It carries over every feature of the SSB Wings reference build (same CMS, same admin,
-same security model) with a new design system and a content model rebuilt for
-other-rank recruitment. The full specification is in
+It has a full content manager (draft, publish, rollback), an admin panel with roles,
+and a content model built for other-rank recruitment. The full specification is in
 [`docs/PROJECT-BLUEPRINT.md`](docs/PROJECT-BLUEPRINT.md); the admin guide is
 [`docs/CMS.md`](docs/CMS.md).
 
@@ -65,7 +65,8 @@ Run the files in `supabase/migrations/` in order (Supabase, SQL Editor), then th
 | `0002_features.sql` | Enquiries CRM, blog, selection tracker, mock questions, analytics RPC |
 | `0003_resources.sql` | Resource folders and files |
 | `0004_exams_standards.sql` | Exam catalogue and physical standards |
-| `seed/0001_catalogue.sql` | 22 exams, 20 standards rows, sample questions, FAQs (idempotent) |
+| `0005_candidate_hometown.sql` | Hometown on selected candidates |
+| `seed/0001_catalogue.sql` | 27 exams, 20 standards rows, sample questions, FAQs (idempotent) |
 
 Regenerate the seed after editing `lib/exams.ts` or `lib/standards.ts`:
 `node scripts/generate-seed.ts`.
@@ -81,8 +82,12 @@ Regenerate the seed after editing `lib/exams.ts` or `lib/standards.ts`:
 
 - **Type**: Cabinet Grotesk (display), Switzer (text), Bespoke Stencil (numerals and
   wordmark), self-hosted from Fontshare (Indian Type Foundry, free commercial licence).
-- **Colour**: cool paper neutrals, regimental green brand, a single saffron accent. Light
-  theme; the CTA banner and footer form the only dark block.
+- **Colour**: from the academy logo: logo red `#ce0608` as the single accent, a deep
+  regimental navy brand, clean paper neutrals. Light theme; the CTA banner and footer form
+  the only dark block.
+- **Logo**: traced to vectors in `lib/logo-art.ts` (navbar mark, footer lockup, preloader,
+  favicon, share card). Regenerate icons with `node scripts/generate-brand-assets.mjs` and
+  the share card with `node scripts/generate-og-image.mjs`.
 - **Shape**: pill buttons, 20px cards, 12px inputs.
 - **Motion**: Lenis smooth scroll synced to GSAP ScrollTrigger. Sections opt in with
   `data-reveal`, `data-split` and `data-parallax` (see `components/motion/`). Everything
@@ -103,21 +108,26 @@ Regenerate the seed after editing `lib/exams.ts` or `lib/standards.ts`:
 | `lib/sections.ts` | Field schema that drives the universal section editor |
 | `lib/exams.ts`, `lib/standards.ts`, `lib/eligibility.ts` | Exam catalogue, PST/PET data, eligibility engine |
 | `lib/sample-content.ts` | Labelled sample entries shown only until real ones are added |
+| `lib/structured-data.ts`, `lib/seo.ts`, `app/llms.txt` | JSON-LD (local business, FAQ), per-page meta and share cards, AI summary |
+| `lib/shorts.ts` | Student stories (YouTube Shorts) defaults; managed at Admin, Student Shorts |
 | `supabase/` | Migrations and seed |
 
 ## Before launch
 
-- Replace the placeholder phone, WhatsApp, email and address (Admin, Footer and Contact).
-- Add real selected candidates, faculty and testimonials (samples disappear automatically).
+- Contact details, socials and 192 selected candidates are in. Add an email address and
+  office hours (Admin, Footer and Contact) if you want them shown; they stay hidden while blank.
+- Add real faculty and testimonials (samples disappear automatically).
 - **Verify every physical and medical standard and exam age band against the current
   official notifications.** They are indicative and change each cycle.
-- Add a Resend API key and verified sending domain so enquiries are emailed.
-- R2: add the production domain to the bucket's CORS rule, and move from the r2.dev URL
-  (rate-limited, meant for development) to a custom domain on Cloudflare.
+- Resend is connected (samantroyacademy.com verified); enquiries go to CONTACT_ADMIN_EMAIL.
+- R2: the production domain is in the CORS rule. Move from the r2.dev URL (rate-limited)
+  to a custom domain once the DNS is on Cloudflare.
+- Confirm the Google Maps pin (`mapUrl` and `LOCATION` coordinates in `lib/data.ts`).
 - Replace the placeholder photography with the academy's own ground and campus photos.
 - See `lib/image-credits.json` for the licences of the bundled photographs.
 
 ## Deploy (Vercel)
 
-Import the repository, add the variables from `.env.example` to Production and Preview,
-deploy, then add the domain and update `SITE.url` in `lib/data.ts` if it differs.
+The repository deploys to Vercel on every push to `main`; the domain is
+`www.samantroyacademy.com` (the apex redirects to it). Add every variable from
+`.env.example` to Production and Preview (Supabase, R2, Resend, CONTACT_*).

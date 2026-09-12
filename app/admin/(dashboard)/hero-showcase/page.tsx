@@ -13,9 +13,9 @@ export default async function HeroShowcaseAdmin() {
 
   return (
     <div className="max-w-4xl">
-      <h1 className="text-2xl font-bold text-slate-900">Hero Showcase</h1>
+      <h1 className="text-2xl font-bold text-slate-900">Hero Posters</h1>
       <p className="mt-1 text-sm text-slate-500">
-        The rotating photos beside the homepage headline, each with a short caption.</p>
+        The rotating posters beside the homepage headline (shown whole, any shape), each with a short caption. Put the newest batch or result first.</p>
       <HeroSlidesManager initial={initial} />
     </div>
   );

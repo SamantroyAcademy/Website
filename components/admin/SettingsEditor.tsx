@@ -8,9 +8,13 @@ import { uploadMedia } from "@/lib/upload-client";
 
 const FIELDS: { key: string; label: string; hint?: string }[] = [
   { key: "name", label: "Brand name" },
+  { key: "legalName", label: "Full name", hint: "e.g. Samantroy Academy for Defence Career Studies. Used in the footer and for Google." },
   { key: "tagline", label: "Tagline" },
+  { key: "foundedYear", label: "Founded (year)", hint: "Shown as \"since\" and sent to Google" },
+  { key: "contactName", label: "Contact person", hint: "Shown next to Phone 1 and Phone 2" },
   { key: "phone1", label: "Phone 1" },
   { key: "phone2", label: "Phone 2", hint: "Leave blank to show only one number across the site" },
+  { key: "helplines", label: "More helpline numbers", hint: "Comma separated. Listed on the Contact page." },
   { key: "email", label: "Email" },
   { key: "whatsapp", label: "WhatsApp link", hint: "Full https://wa.me/… URL" },
   { key: "address", label: "Address" },

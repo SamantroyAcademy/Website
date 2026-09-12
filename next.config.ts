@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 // Public origin of the R2 bucket, allowed to be framed for PDF previews.
 const R2_ORIGIN = (() => {
-  try { return new URL(process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? "").origin; } catch { return ""; }
+  try { return new URL(process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "https://pub-9a00cb9b6e284249a3a4c2795c99118c.r2.dev").origin; } catch { return ""; }
 })();
 
 const securityHeaders = [

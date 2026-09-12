@@ -6,6 +6,7 @@ export type HomeSectionKey =
   | "entries_marquee"
   | "air1_marquee"
   | "wall"
+  | "shorts"
   | "courses"
   | "campus"
   | "books"
@@ -30,13 +31,14 @@ export type HomeSectionMeta = { key: HomeSectionKey; label: string; hint?: strin
  *  (The hero is always first and is not part of this list.) */
 export const HOME_SECTIONS: HomeSectionMeta[] = [
   { key: "entries_marquee", label: "Exams Marquee", hint: "Exam names scrolling band", editHref: "/admin/sections/exam_counts" },
-  { key: "four_forces", label: "Six Verticals", hint: "Armed forces, CAPF, Odisha, Railways, SSC, Officer", editHref: "/admin/verticals" },
+  { key: "four_forces", label: "Six Verticals", hint: "Armed forces, CAPF, Odisha, Bank and SSC, Railways, Officer", editHref: "/admin/verticals" },
   { key: "journey", label: "Recruitment Journey", hint: "The seven stages", editHref: "/admin/sections/journey" },
   { key: "courses", label: "Courses", hint: "Batch cards + facilities note", editHref: "/admin/courses" },
   { key: "stats", label: "Scoreboard + Recent Wins", editHref: "/admin/stats" },
   { key: "whyus", label: "Why Samantroy", hint: "Heading + reasons", editHref: "/admin/sections/whyus_items" },
   { key: "wall", label: "Wall of Selection", hint: "Selected candidate tiles", editHref: "/admin/candidates" },
-  { key: "air1_marquee", label: "Top Rank Cards", hint: "Hidden until images are added", editHref: "/admin/toppers" },
+  { key: "shorts", label: "Student Stories", hint: "YouTube Shorts and result clips", editHref: "/admin/shorts" },
+  { key: "air1_marquee", label: "Result Posters", hint: "Swipeable result posters", editHref: "/admin/toppers" },
   { key: "countdown", label: "Countdown", hint: "Batch and exam dates", editHref: "/admin/countdown" },
   { key: "campus", label: "Campus Gallery", hint: "Ground and classroom photos", editHref: "/admin/campus" },
   { key: "mentors", label: "Faculty", hint: "Trainers and subject faculty", editHref: "/admin/mentors" },

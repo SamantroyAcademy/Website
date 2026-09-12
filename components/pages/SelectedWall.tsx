@@ -25,7 +25,7 @@ export default function SelectedWall({ initial, sample }: { initial: Candidate[]
     setBusy(true);
     const { data, error } = await createClient()
       .from("published_selected_candidates")
-      .select("id, name, exam, post, force, year, image_path, selected_on")
+      .select("id, name, exam, post, force, year, image_path, selected_on, hometown")
       .order("selected_on", { ascending: false, nullsFirst: false })
       .order("sort_order", { ascending: true })
       .range(items.length, items.length + PAGE - 1);
@@ -54,7 +54,8 @@ export default function SelectedWall({ initial, sample }: { initial: Candidate[]
           <li key={(c.id ?? c.name) + i}>
             <Portrait src={c.image_path} name={c.name} className="aspect-[4/5]" sizes="(min-width: 1024px) 16vw, 50vw" />
             <p className="mt-3 font-display text-lg font-bold leading-tight tracking-tight text-ink">{c.name}</p>
-            <p className="mt-0.5 text-sm text-muted">{[c.post || c.exam, c.force, c.year].filter(Boolean).join(", ")}</p>
+            <p className="mt-0.5 text-sm font-medium text-ink-2">{[c.post || c.exam, c.year].filter(Boolean).join(", ")}</p>
+            {c.hometown && <p className="mt-0.5 text-[0.8rem] text-muted">{c.hometown}</p>}
           </li>
         ))}
       </ul>

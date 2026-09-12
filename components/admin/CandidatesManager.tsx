@@ -10,7 +10,7 @@ import { FRAMES } from "./useImageCropper";
 import { EXAM_OPTIONS } from "@/lib/data";
 import { uploadMedia } from "@/lib/upload-client";
 
-const FORCES = ["Army", "Navy", "Air Force", "Coast Guard", "CAPF", "Odisha Police", "Odisha State", "Railways", "Central Govt", "Officer"];
+const FORCES = ["Army", "Navy", "Air Force", "Coast Guard", "CAPF", "Odisha Police", "Odisha State", "Railways", "Bank", "Central Govt", "Officer"];
 
 export type Candidate = {
   id: string;
@@ -23,6 +23,7 @@ export type Candidate = {
   sort_order: number;
   published: boolean;
   selected_on?: string | null;
+  hometown?: string | null;
 };
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -44,6 +45,7 @@ export default function CandidatesManager({ initial }: { initial: Candidate[] })
   const [exam, setExam] = useState("");
   const [post, setPost] = useState("");
   const [force, setForce] = useState("");
+  const [hometown, setHometown] = useState("");
   const [date, setDate] = useState(today);
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
@@ -68,12 +70,12 @@ export default function CandidatesManager({ initial }: { initial: Candidate[] })
       const sort_order = rows.length ? Math.max(...rows.map((r) => r.sort_order)) + 1 : 0;
       const { data, error } = await supabase
         .from("selected_candidates")
-        .insert({ name, exam, post: post || null, force: force || null, year, image_path, sort_order, published: true, selected_on: date || null })
-        .select("id, name, exam, post, force, year, image_path, sort_order, published, selected_on")
+        .insert({ name, exam, post: post || null, force: force || null, hometown: hometown.trim() || null, year, image_path, sort_order, published: true, selected_on: date || null })
+        .select("id, name, exam, post, force, year, image_path, sort_order, published, selected_on, hometown")
         .single();
       if (error) throw new Error(error.message);
       setRows((r) => sortCands([...r, data as Candidate]));
-      setName(""); setExam(""); setPost(""); setForce(""); setFile(null); setDate(today());
+      setName(""); setExam(""); setPost(""); setForce(""); setHometown(""); setFile(null); setDate(today());
       setMsg({ ok: true, text: "Candidate added." }); void bustCmsCache();
     } catch (err) {
       setMsg({ ok: false, text: err instanceof Error ? err.message : "Failed to add." });
@@ -143,6 +145,11 @@ export default function CandidatesManager({ initial }: { initial: Candidate[] })
             </select>
           </div>
           <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">Hometown (optional)</label>
+            <input value={hometown} onChange={(e) => setHometown(e.target.value)}
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100" placeholder="e.g. Aska, Ganjam" />
+          </div>
+          <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">Date of selection</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100" />
@@ -179,6 +186,7 @@ export default function CandidatesManager({ initial }: { initial: Candidate[] })
               </div>
               <p className="mt-2 truncate text-sm font-semibold text-slate-900">{c.name}</p>
               <p className="truncate text-xs text-slate-500">{c.exam}{c.force ? ` · ${c.force}` : ""}</p>
+              {c.hometown && <p className="truncate text-xs text-slate-400">{c.hometown}</p>}
               <div className="mt-2 flex items-center justify-between gap-1">
                 <div className="flex gap-1">
                   <button onClick={() => move(i, -1)} title="Move up" className="rounded border border-slate-200 px-1.5 text-slate-600 hover:bg-slate-50">↑</button>

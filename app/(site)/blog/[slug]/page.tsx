@@ -6,6 +6,7 @@ import { ArrowLeftIcon } from "@phosphor-icons/react/ssr";
 import { getPost, getPosts } from "@/lib/public-data";
 import { getSettings } from "@/lib/content";
 import { mediaUrl } from "@/lib/supabase/media";
+import { ogImages } from "@/lib/seo";
 import PostCard, { postDate } from "@/components/pages/PostCard";
 import OpenEnquiry from "@/components/site/OpenEnquiry";
 import CtaBanner from "@/components/site/CtaBanner";
@@ -23,7 +24,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: post.title,
     description,
     alternates: { canonical: `/blog/${post.slug}` },
-    openGraph: { type: "article", title: post.title, description, ...(post.cover_path ? { images: [mediaUrl(post.cover_path)] } : {}) },
+    openGraph: { type: "article", locale: "en_IN", siteName: "Samantroy Academy", url: `/blog/${post.slug}`, title: post.title, description, images: post.cover_path ? [mediaUrl(post.cover_path)] : ogImages() },
+    twitter: { card: "summary_large_image", title: post.title, description },
   };
 }
 

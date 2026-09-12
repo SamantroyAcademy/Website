@@ -71,7 +71,8 @@ const PAGE_HERO_SECTIONS: SectionDef[] = Object.keys(PAGE_HEROES).map((k) => ({
 /** Every homepage section heading is editable under `heading.<key>`. */
 export const HEADING_KEYS: { key: string; label: string }[] = [
   { key: "wall", label: "Wall of Selection" },
-  { key: "toppers", label: "Top Rank Cards" },
+  { key: "shorts", label: "Student Stories" },
+  { key: "toppers", label: "Result Posters" },
   { key: "courses", label: "Courses" },
   { key: "campus", label: "Campus Gallery" },
   { key: "books", label: "Study Material" },

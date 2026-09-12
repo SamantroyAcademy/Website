@@ -47,10 +47,11 @@ const GROUPS: Group[] = [
     label: "Homepage",
     items: [
       { href: "/admin/homepage", label: "Section Order" },
-      { href: "/admin/hero-showcase", label: "Hero Showcase" },
+      { href: "/admin/hero-showcase", label: "Hero Posters" },
+      { href: "/admin/shorts", label: "Student Shorts" },
       { href: "/admin/verticals", label: "Six Verticals" },
       { href: "/admin/campus", label: "Campus Gallery" },
-      { href: "/admin/toppers", label: "Top Rank Cards" },
+      { href: "/admin/toppers", label: "Result Posters" },
       { href: "/admin/officer-banners", label: "Now Serving" },
       { href: "/admin/stats", label: "Scoreboard" },
       { href: "/admin/countdown", label: "Countdown" },

@@ -15,8 +15,8 @@ export default function SocialIcons({ settings, className = "", tone = "dark" }:
   ].filter((i) => isReal(i.href));
   if (!items.length) return null;
   const cls = tone === "dark"
-    ? "bg-white/8 text-brand-100 hover:bg-accent hover:text-ink"
-    : "bg-surface text-ink shadow-[inset_0_0_0_1.5px_var(--color-line)] hover:bg-accent";
+    ? "bg-white/8 text-brand-100 hover:bg-accent hover:text-white"
+    : "bg-surface text-ink shadow-[inset_0_0_0_1.5px_var(--color-line)] hover:bg-accent hover:text-white";
   return (
     <ul className={`flex flex-wrap gap-2.5 ${className}`}>
       {items.map(({ href, label, Icon }) => (

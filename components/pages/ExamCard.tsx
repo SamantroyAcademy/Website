@@ -26,7 +26,7 @@ export default function ExamCard({ exam, heightLine }: { exam: Exam; heightLine?
         <div><dt className="text-xs text-muted">Apply</dt><dd className="font-semibold text-ink">{exam.stage || "See notification"}</dd></div>
         <div><dt className="text-xs text-muted">Age</dt><dd className="font-semibold text-ink">{ageBand(exam)}</dd></div>
         <div><dt className="text-xs text-muted">Open to</dt><dd className="font-semibold text-ink">{genderLabel(exam.gender)}</dd></div>
-        <div><dt className="text-xs text-muted">Height (men, UR)</dt><dd className="font-semibold text-ink">{heightLine || "See notification"}</dd></div>
+        <div><dt className="text-xs text-muted">Height (men, UR)</dt><dd className="font-semibold text-ink">{heightLine || (exam.stages?.includes("PST") ? "See notification" : "No physical test")}</dd></div>
       </dl>
     </Link>
   );

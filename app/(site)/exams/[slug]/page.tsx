@@ -7,6 +7,7 @@ import { getExamBySlug, getExams, getStandards, getCandidates } from "@/lib/publ
 import { STAGE_LABELS, verticalLabel } from "@/lib/exams";
 import { lookupStandard } from "@/lib/standards";
 import { mediaUrl } from "@/lib/supabase/media";
+import { shareMeta } from "@/lib/seo";
 import PageHero from "@/components/ui/PageHero";
 import OpenEnquiry from "@/components/site/OpenEnquiry";
 import StandardsTable from "@/components/pages/StandardsTable";
@@ -24,9 +25,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const exam = await getExamBySlug(slug);
   // Called here (before streaming starts) so an unknown slug gets a real 404.
   if (!exam) notFound();
-  const title = `${exam.name}: Eligibility, Pattern and Physical Standards`;
-  const description = strip(exam.intro).slice(0, 155) || `Eligibility, exam pattern, syllabus and physical standards for ${exam.name}.`;
-  return { title, description, openGraph: { title, description }, alternates: { canonical: `/exams/${exam.slug}` } };
+  const title = `${exam.name}: Eligibility, Pattern and Coaching in Berhampur`;
+  const intro = strip(exam.intro);
+  const description = `${intro ? intro + " " : ""}Eligibility, pattern and standards, with coaching at Samantroy Academy, Brahmapur (Ganjam).`.slice(0, 158);
+  return { title, description, ...shareMeta(title, description, `/exams/${exam.slug}`) };
 }
 
 export default async function ExamPage({ params }: { params: Promise<{ slug: string }> }) {

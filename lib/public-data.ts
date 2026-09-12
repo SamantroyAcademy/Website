@@ -55,6 +55,7 @@ export type Candidate = {
   year: number | null;
   image_path: string | null;
   selected_on?: string | null;
+  hometown?: string | null;
 };
 
 export const getCandidates = (limit?: number) =>

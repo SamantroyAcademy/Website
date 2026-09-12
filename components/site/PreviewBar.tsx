@@ -36,7 +36,7 @@ export default function PreviewBar() {
       : "/admin/sections";
 
   return (
-    <div className="fixed inset-x-0 top-0 z-[90] flex flex-wrap items-center justify-center gap-2 bg-accent px-4 py-2 text-sm text-ink shadow-lg">
+    <div className="fixed inset-x-0 top-0 z-[90] flex flex-wrap items-center justify-center gap-2 bg-accent px-4 py-2 text-sm text-white shadow-lg">
       <span className="font-semibold">Draft preview: you are seeing unpublished changes</span>
       <Link href={editHref} className="rounded-full bg-ink px-3 py-1 text-xs font-semibold text-surface">Edit this page</Link>
       <Link href="/admin" className="rounded-full px-3 py-1 text-xs font-semibold shadow-[inset_0_0_0_1.5px_var(--color-ink)]">Open CMS</Link>

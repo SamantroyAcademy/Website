@@ -1,14 +1,14 @@
 # SAMANTROY ACADEMY — Complete Website Blueprint
 
 **Version** 1.0 · **Date** 10 September 2026 · **Status** Pre-development specification
-**Reference implementation** `D:\Freelance\ssb wings` (SSBWINGS — Next.js 16 + Supabase CMS)
+**Reference implementation** a private Next.js 16 + Supabase CMS codebase
 
 ---
 
 ## 0. How to read this document
 
 This is the complete, implementation-ready specification for the Samantroy Academy
-website. It replicates **every** functionality of the SSB Wings build, re-mapped to
+website. It replicates **every** functionality of the reference build, re-mapped to
 Samantroy Academy's domain (other-ranks / Agniveer / CAPF / Odisha State / Railways
 recruitment, with officer entries as a secondary vertical).
 
@@ -17,7 +17,7 @@ Sections are ordered so you can build top-to-bottom:
 | § | Section | What it gives you |
 |---|---------|-------------------|
 | 1 | Domain & positioning | What the site is, who it serves |
-| 2 | Feature parity matrix | Every SSB Wings feature → Samantroy equivalent |
+| 2 | Feature parity matrix | Every reference feature → Samantroy equivalent |
 | 3 | Tech stack | Exact packages and versions |
 | 4 | Environment variables | Every secret and config value |
 | 5 | Repository structure | Every folder and file |
@@ -44,7 +44,7 @@ Sections are ordered so you can build top-to-bottom:
 ### 1.1 What Samantroy Academy is
 
 Samantroy Academy is a defence and government-jobs coaching institute in **Odisha**.
-Unlike SSB Wings (which is exclusively an officer-entry / SSB-interview academy),
+Unlike the reference build (which is exclusively an officer-entry / SSB-interview academy),
 Samantroy Academy's centre of gravity is **other-rank and constable-level recruitment**,
 where the decisive filters are the **written CBT/CEE**, the **Physical Standard Test
 (PST)**, the **Physical Efficiency Test (PET)** and the **Medical Board** — not a
@@ -133,7 +133,7 @@ Selection Tracker.
 
 ### 1.3 The Recruitment Journey (7 stages)
 
-SSB Wings' flagship "5-Day SSB Process" page becomes Samantroy's **7-Stage Recruitment
+The reference build's flagship "5-Day SSB Process" page becomes Samantroy's **7-Stage Recruitment
 Journey** — the single most important explainer on the site, reused on the homepage
 and on its own page at `/recruitment-process`.
 
@@ -181,13 +181,13 @@ page all work unchanged.
 
 ---
 
-## 2. Feature parity matrix — SSB Wings → Samantroy Academy
+## 2. Feature parity matrix — Reference build → Samantroy Academy
 
 Every feature in the reference build, with its Samantroy equivalent. Nothing is dropped.
 
 ### 2.1 Public-site features (41)
 
-| # | SSB Wings feature | Samantroy Academy equivalent | Change |
+| # | Reference feature | Samantroy Academy equivalent | Change |
 |---|-------------------|------------------------------|--------|
 | 1 | Lottie preloader + wordmark | Same, Samantroy wordmark + tricolour | Rebrand |
 | 2 | Custom cursor (dot + easing ring), desktop only | Same | 1:1 |
@@ -233,7 +233,7 @@ Every feature in the reference build, with its Samantroy equivalent. Nothing is 
 
 ### 2.2 Admin / CMS features (29)
 
-| # | SSB Wings capability | Samantroy Academy | Change |
+| # | Reference capability | Samantroy Academy | Change |
 |---|----------------------|-------------------|--------|
 | 1 | Email/password auth; first user = `super_admin` | Same | 1:1 |
 | 2 | Roles: `pending` / `admin` / `super_admin` | Same | 1:1 |
@@ -265,7 +265,7 @@ Every feature in the reference build, with its Samantroy equivalent. Nothing is 
 | 28 | — | **Exams manager** — full exam catalogue as a first-class table | **New** |
 | 29 | — | **Physical Standards manager** — PST/PET benchmark rows | **New** |
 
-> **Why #28 and #29 are new tables rather than JSON repeaters.** SSB Wings stored its
+> **Why #28 and #29 are new tables rather than JSON repeaters.** the reference build stored its
 > ~30 entry routes inside a single `site_content.join_routes` JSONB repeater. Samantroy
 > has 35+ exams, each needing its own detail page, its own SEO record, its own
 > selected-candidate filter and its own standards rows. A JSON blob of that size becomes
@@ -589,7 +589,7 @@ physically demanding recruitment. The design must read as **disciplined, credibl
 proof-heavy** — photographs of real selected candidates and real ground training, not
 stock imagery.
 
-Reference direction carried from SSB Wings: **light tricolour + skeuomorphic** — warm
+Reference direction carried from the reference build: **light tricolour + skeuomorphic** — warm
 paper canvas, brass/gold plates, tactile pressable buttons, inset form fields,
 medal-ringed avatars. No dark overlays, no flat grid patterns.
 
@@ -826,7 +826,7 @@ Every one of these 20 sections can be **reordered or switched off** from
 
 ### 7.4 `/recruitment-process` — the 7-stage journey
 
-The flagship explainer. Structure mirrors SSB Wings' `/ssb-process`.
+The flagship explainer. Structure mirrors the reference build's `/ssb-process`.
 
 | Block | Source |
 |-------|--------|
@@ -916,7 +916,7 @@ and a CTA.
 
 ### 7.7 `/standards` — Physical & Medical Standards
 
-The domain-critical page. Replaces SSB Wings' `/medical` and absorbs PST/PET.
+The domain-critical page. Replaces the reference build's `/medical` and absorbs PST/PET.
 
 | Block | Source |
 |-------|--------|
@@ -1544,7 +1544,7 @@ policy that could be misconfigured, but absent from the view they are granted.
 
 ### 10.4 `selected_candidates` — Wall of Selection
 
-*(SSB Wings: `recommended_candidates`)*
+*(the reference build: `recommended_candidates`)*
 
 | Column | Type | Notes |
 |--------|------|-------|
@@ -3299,7 +3299,7 @@ Manual QA covers rendering, responsiveness and the admin flows.
 
 ### 20.2 Naming migration reference
 
-| SSB Wings | Samantroy Academy |
+| Reference build | Samantroy Academy |
 |-----------|-------------------|
 | `recommended_candidates` | `selected_candidates` |
 | `published_candidates` | `published_selected_candidates` |
@@ -3316,8 +3316,8 @@ Manual QA covers rendering, responsiveness and the admin flows.
 | `join_routes` (JSON) | `exams` (table) ★ |
 | `medical` (doc) | `standards` (doc) + `physical_standards` (table) ★ |
 | `academies` (doc) | `centres` (doc) |
-| `ssbw-preview` cookie | `sa-preview` cookie |
-| `ssbwings_role_guard` lock | `samantroy_role_guard` lock |
+| preview cookie | `sa-preview` cookie |
+| role-guard advisory lock | `samantroy_role_guard` lock |
 | OIR / SRT question types | Subject-based MCQ ★ |
 
 ### 20.3 Content checklist for launch
@@ -3365,5 +3365,4 @@ activity trail.
 
 ---
 
-*End of blueprint. Generated 10 September 2026 from the SSB Wings reference
-implementation at `D:\Freelance\ssb wings`.*
+*End of blueprint. Generated 10 September 2026.*

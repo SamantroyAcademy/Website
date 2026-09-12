@@ -1,6 +1,5 @@
-/** Six Verticals section (CMS key: verticals). Replaces SSB Wings' Four
- *  Forces with the six recruitment verticals Samantroy covers. Same doc shape
- *  (kicker/title/subtitle/cards) so the manager component carries over. */
+/** Six Verticals section (CMS key: verticals): the six recruitment verticals
+ *  Samantroy covers, as kicker/title/subtitle/cards for the manager. */
 
 import type { Tone } from "@/lib/data";
 
@@ -48,13 +47,13 @@ export const VERTICAL_CARDS: VerticalCard[] = [
   },
   {
     name: "Odisha State",
-    motto: "Police, forest, fire",
-    desc: "Odisha Police constable and SI, forest guard, fire services and OSSSC posts, with Odia and Odisha GK built in.",
+    motto: "Police, SI, OSSC, OPSC",
+    desc: "Odisha Police constable and SI, OSSC, OSSSC, OPSC and ASO, forest and fire services, with Odia and Odisha GK built in.",
     image: "/images/scenes/police-training.jpg",
     alt: "Police recruits in a training session outdoors",
     tone: "odisha",
     icon: "police",
-    entries: ["OP Constable", "OP SI", "Forest Guard", "Fireman", "OSSSC"],
+    entries: ["OP Constable", "OP SI", "OSSC", "OSSSC", "OPSC", "ASO"],
     link: "/exams?vertical=odisha",
   },
   {
@@ -69,25 +68,25 @@ export const VERTICAL_CARDS: VerticalCard[] = [
     link: "/exams?vertical=railways",
   },
   {
-    name: "SSC and central",
-    motto: "MTS, CHSL, CGL",
-    desc: "Desk posts across central government. Pure written preparation, sharpened with timed test series.",
+    name: "Bank and SSC",
+    motto: "Bank PO, Clerk, CGL",
+    desc: "Bank PO and Clerk, SSC CGL and central desk posts. Pure written preparation, sharpened with timed test series.",
     image: "/images/scenes/odisha-police-hq.jpg",
-    alt: "Government office building in Bhubaneswar",
+    alt: "Government office building in Odisha",
     tone: "navy",
     icon: "buildings",
-    entries: ["SSC MTS", "Havaldar", "CHSL", "CGL"],
+    entries: ["Bank PO", "Bank Clerk", "SSC CGL", "CHSL", "MTS"],
     link: "/exams?vertical=ssc",
   },
   {
     name: "Officer entries",
-    motto: "NDA, CDS, AFCAT",
-    desc: "For aspirants aiming for a commission: written preparation plus the five-day SSB interview.",
+    motto: "NDA, TES, CDS, AFCAT",
+    desc: "For aspirants aiming for a commission: written preparation plus the SSB interview. Recent results include AFCAT AIR 183 and Army ACC AIR 26.",
     image: "/images/scenes/ima-guard.jpg",
     alt: "Cadets on parade at a military academy",
     tone: "airforce",
     icon: "star",
-    entries: ["NDA", "CDS", "AFCAT", "SSB interview"],
+    entries: ["NDA", "NA", "TES", "CDS", "AFCAT", "NCC"],
     link: "/exams?vertical=officer",
   },
 ];

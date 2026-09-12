@@ -3,10 +3,9 @@
  * has no published value, so the site works before Supabase is configured.
  * Every value here is editable from /admin once the CMS is connected.
  *
- * PLACEHOLDERS - replace before launch (Admin -> Footer & Contact):
- *   phone, WhatsApp, email, address, map link, socials, payment links.
- *   The phone number below is deliberately invalid so it can never ring a
- *   real person by accident.
+ * Contact details come from the academy's own printed flyers (2026). Email
+ * and office hours were not on them, so they ship blank and stay hidden
+ * until the admin fills them in.
  *
  * SAMPLE CONTENT - see lib/sample-content.ts. Faculty, testimonials and the
  * Wall of Selection ship with clearly-labelled samples so the design can be
@@ -17,36 +16,60 @@ import type { IconKey } from "@/lib/icons";
 
 export const SITE = {
   name: "Samantroy Academy",
-  tagline: "Discipline. Fitness. Selection.",
-  phone1: "+91 00000 00000",
-  phone1Href: "tel:+910000000000",
+  /** Full name as printed on the academy's material. */
+  legalName: "Samantroy Academy for Defence Career Studies",
+  tagline: "Shaping Nation's Warriors",
+  foundedYear: "2001",
+  /** Person named against the main numbers on the flyer. */
+  contactName: "Debesh Samantroy",
+  phone1: "+91 98610 77371",
+  phone1Href: "tel:+919861077371",
   // Second line: leave blank and the site hides it everywhere.
-  phone2: "",
-  phone2Href: "",
-  whatsapp: "https://wa.me/910000000000?text=Jai%20Hind!%20I%20want%20to%20know%20about%20Samantroy%20Academy%20batches.",
-  email: "info@samantroyacademy.com",
-  address: "Samantroy Academy, Bhubaneswar, Odisha",
-  /** Opens the academy on Google Maps. Every address on the site links here. */
-  mapUrl: "https://maps.google.com/maps?q=Bhubaneswar%2C%20Odisha",
-  instagram: "https://www.instagram.com/",
-  youtube: "https://www.youtube.com/",
-  telegram: "https://t.me/",
-  facebook: "https://www.facebook.com/",
+  phone2: "+91 90906 99770",
+  phone2Href: "tel:+919090699770",
+  /** More numbers from the flyer, comma separated. Shown on the Contact page. */
+  helplines: "82499 62287, 94396 27247, 90902 05131, 98615 67963, 95838 54271, 88478 11094, 70777 77184",
+  whatsapp: "https://wa.me/919861077371?text=Jai%20Hind!%20I%20want%20to%20know%20about%20Samantroy%20Academy%20batches.",
+  email: "",
+  address: "Gosaninuagaon, Sishu Mandir Road, 300 m left of Railway Station, Brahmapur, Ganjam, Odisha 760003",
+  /** Opens the academy on Google Maps. Every address on the site links here.
+   *  Replace with the academy's own Google Maps pin link when available. */
+  mapUrl: "https://maps.google.com/maps?q=Samantroy%20Academy%2C%20Gosaninuagaon%2C%20Brahmapur%2C%20Odisha%20760003",
+  instagram: "https://www.instagram.com/samantroyacademy07/",
+  youtube: "https://www.youtube.com/@samantroyacademy5722",
+  telegram: "",
+  facebook: "https://www.facebook.com/p/Samantroy-Academy-Brahmapur-100057121733570/",
   url: "https://www.samantroyacademy.com",
   brochure: "",
   /** "off" hides the download and sends those links to the contact page. */
   brochureEnabled: "off",
   enrollOffline: "",
   enrollOnline: "",
-  officeHours: "Mon to Sat, 6:00 AM to 8:00 PM",
+  officeHours: "",
+};
+
+/** Where the academy is, for structured data and local search. Coordinates
+ *  are Brahmapur railway station (the academy is 300 m from it); refine them
+ *  from the academy's Google Maps pin. */
+export const LOCATION = {
+  streetAddress: "Gosaninuagaon, Sishu Mandir Road, 300 m left of Railway Station",
+  locality: "Brahmapur",
+  altLocality: "Berhampur",
+  district: "Ganjam",
+  region: "Odisha",
+  regionCode: "IN-OR",
+  postalCode: "760003",
+  country: "IN",
+  lat: 19.2968,
+  lng: 84.7974,
 };
 
 /** Batch cadence shown on the Courses page. */
 export const BATCH_INFO = {
   offline:
-    "New offline batches start every month at the Bhubaneswar campus. Ground training runs every morning; classroom sessions follow. Exact dates are confirmed at enrolment.",
+    "Admissions are on at the Brahmapur centre, 300 m from the railway station. Join after +2 (Science, Commerce or Arts) or after graduation. Batch dates are confirmed at enrolment.",
   online:
-    "Live online batches run every evening with recordings. The next start date is shared on enrolment or over WhatsApp.",
+    "Ask about live online classes for the written exam. The next start date is shared on enrolment or over WhatsApp.",
 };
 
 /** Colour theme per force / vertical. Drives the accent strip on journey
@@ -62,13 +85,14 @@ export const TONE_OPTIONS: { value: Tone; label: string }[] = [
 ];
 
 /** Scoreboard. `suffix` follows the number; the admin can blank it or use %.
- *  PLACEHOLDER numbers: replace with real figures in Admin -> Scoreboard. */
+ *  4000+ recruitments and "since 2001" are the academy's own published
+ *  figures (printed flyers). */
 export type Stat = { value: number; label: string; suffix?: string };
 export const STATS: Stat[] = [
-  { value: 1200, label: "Aspirants trained", suffix: "+" },
-  { value: 380, label: "Selections", suffix: "+" },
-  { value: 12, label: "Forces and departments", suffix: "" },
-  { value: 6, label: "Days a week on the ground", suffix: "" },
+  { value: 4000, label: "Recruitments", suffix: "+" },
+  { value: 2001, label: "Training aspirants since", suffix: "" },
+  { value: 14, label: "Recruiting boards we coach for", suffix: "+" },
+  { value: 3, label: "Streams welcome: Science, Commerce, Arts", suffix: "" },
 ];
 
 /** Study material / books. Hidden on the homepage when empty. */
@@ -103,51 +127,53 @@ export type CourseItem = {
 
 export const COURSES: CourseItem[] = [
   {
-    tag: "Most chosen",
+    tag: "Army, Navy, Air Force",
     highlight: true,
-    title: "Complete Selection Batch",
-    where: "Bhubaneswar campus, residential option",
+    title: "Defence Careers Batch",
+    where: "Brahmapur centre, near the railway station",
     price: "Enquire",
     service: "army",
-    desc: "Written exam, ground training and medical guidance in one routine. Built for aspirants who want to clear every stage in a single attempt.",
+    desc: "For every Army, Navy and Air Force entry, from Agniveer to officer. Written exam coaching with physical test and medical preparation.",
     features: [
-      "Daily morning ground: 1.6 km runs, beam, long and high jump, ditch",
-      "Classroom for GK, maths, reasoning, science, English and Odia",
-      "Weekly full-length CBT mocks with negative marking",
-      "Height, chest and medical pre-checks before the real board",
-      "Document and form-filling support for every notification",
+      "Army GD, Technical and Non-Technical",
+      "Navy SSR, MR and AA; Air Force X and Y group",
+      "Officer entries: NDA, NA, TES, CDS, AFCAT and NCC",
+      "Physical test and medical standards prepared early",
+      "New batches: NDA from 21 September, CDS from 14 October",
     ],
     cta: "Enquire about this batch",
   },
   {
-    tag: "Written only",
+    tag: "Police and CAPF",
     highlight: false,
-    title: "CBT and Written Batch",
-    where: "Offline and live online",
-    price: "Enquire",
-    service: "navy",
-    desc: "Subject coaching and test series for SSC GD, Agniveer CEE, RRB, Navy SSR/MR, Air Force X/Y and Odisha Police written exams.",
-    features: [
-      "Exam-wise syllabus plans with weekly targets",
-      "Previous papers solved in class, section by section",
-      "Speed and accuracy drills against the real exam clock",
-      "Doubt sessions after every class",
-    ],
-    cta: "Enquire about this batch",
-  },
-  {
-    tag: "Ground only",
-    highlight: false,
-    title: "Physical Training Batch",
-    where: "Early morning, on campus ground",
+    title: "Police and CAPF Batch",
+    where: "Brahmapur centre, offline",
     price: "Enquire",
     service: "capf",
-    desc: "For aspirants who have cleared the written exam and have weeks, not months, before PST and PET. Timed, measured, recorded every day.",
+    desc: "SSC GD for BSF, CRPF, CISF, ITBP and SSB, plus Odisha Police Constable and SI. The written exam and the physical test, prepared together.",
     features: [
-      "Timed runs against your exam's cut-off, logged daily",
-      "Beam (pull-up), long jump, high jump and 9-foot ditch technique",
-      "Zig-zag balance and endurance conditioning",
-      "Diet and recovery guidance from trainers",
+      "SSC GD Constable: BSF, CRPF, CISF, ITBP, SSB",
+      "Odisha Police Constable and Sub-Inspector (SI)",
+      "Odia and Odisha GK for state exams",
+      "Height, chest and running standards checked early",
+      "Form filling and document checks for every notification",
+    ],
+    cta: "Enquire about this batch",
+  },
+  {
+    tag: "Bank, Railway, SSC",
+    highlight: false,
+    title: "Bank, Railway and SSC Batch",
+    where: "Brahmapur centre, offline",
+    price: "Enquire",
+    service: "railway",
+    desc: "Written exam coaching for bank, railway, SSC and Odisha government jobs. Open to +2 and graduate students from every stream.",
+    features: [
+      "Bank PO and Clerk (IBPS, SBI)",
+      "Railway (RRB) and SSC CGL",
+      "OSSC, OSSSC, OPSC and ASO",
+      "Quantitative aptitude, reasoning, English and GK",
+      "Join after +2 Science, Commerce or Arts, or after graduation",
     ],
     cta: "Enquire about this batch",
   },
@@ -282,28 +308,40 @@ export const DAYS: JourneyStage[] = [
 
 export const FAQS = [
   {
-    q: "Which exams does Samantroy Academy prepare for?",
-    a: "Army Agniveer (GD, Technical, Clerk, Tradesman), Navy Agniveer SSR and MR, Air Force Agniveervayu X and Y, SSC GD Constable for BSF, CRPF, CISF, ITBP, SSB and Assam Rifles, Odisha Police Constable and SI, RRB Group D, NTPC, ALP, RPF, and SSC MTS, CHSL and CGL. We also run officer-entry coaching for NDA, CDS and AFCAT.",
+    q: "Where is Samantroy Academy?",
+    a: "Samantroy Academy is at Gosaninuagaon, Sishu Mandir Road, 300 m left of the railway station in Brahmapur (Berhampur), Ganjam, Odisha 760003. Call Debesh Samantroy on 98610 77371 or 90906 99770.",
   },
   {
-    q: "Do you train for both the written exam and the physical test?",
-    a: "Yes. The Complete Selection Batch combines daily ground training with classroom coaching. If you have already cleared the written exam, the Physical Training Batch focuses only on PST and PET.",
+    q: "Which exams does Samantroy Academy coach for?",
+    a: "Army (GD, Technical and Non-Technical), Navy SSR, MR and AA, Air Force X and Y group, SSC GD for BSF, CRPF, CISF, ITBP and SSB, Odisha Police Constable and SI, OSSC, OSSSC, OPSC and ASO, Bank PO and Clerk, Railway (RRB) and SSC CGL. Officer entries too: NDA, NA, TES, CDS, AFCAT and NCC.",
+  },
+  {
+    q: "Can Arts and Commerce students join the Army, Navy or Air Force?",
+    a: "Yes. Arts and Commerce students are eligible for Air Force Y group, Navy MR, Army GD and SSC GD. Science students with Physics and Maths can also apply for Navy SSR, Air Force X group and Army Technical.",
+  },
+  {
+    q: "When can I join, and when do new batches start?",
+    a: "Admissions are on. You can join after +2 (Science, Commerce or Arts) or after graduation. The next NDA batch starts on 21 September and the CDS batch on 14 October.",
+  },
+  {
+    q: "How long has Samantroy Academy been running?",
+    a: "Since 2001. The academy marks its 25th anniversary in 2026, with 4000+ recruitments across the Army, Navy, Air Force, CAPF, Odisha Police, bank, railway and Odisha government jobs.",
+  },
+  {
+    q: "Do you coach for officer entries like NDA, CDS and AFCAT?",
+    a: "Yes: NDA, NA, TES, CDS, AFCAT and NCC special entry. Recent officer results include AFCAT All India Rank 183 and Army ACC All India Rank 26.",
+  },
+  {
+    q: "I live outside Brahmapur. Can I still join?",
+    a: "Yes. Our selected candidates come from across Ganjam, Gajapati, Kandhamal, Khordha, Puri, Cuttack, Nayagarh and beyond. Call the academy and we will help with accommodation near the centre.",
   },
   {
     q: "I am a few centimetres short of the height requirement. Can I still apply?",
     a: "Possibly. Height standards differ by force, category and region, and ST candidates and some regions get relaxations. Use the Eligibility Finder or the Standards page, then talk to us so we can check the exact notification for you.",
   },
   {
-    q: "Is there hostel accommodation?",
-    a: "Residential seats are available for the offline batch on a first-come basis. Ask at enquiry for current availability and charges.",
-  },
-  {
     q: "Do you guarantee selection?",
-    a: "No academy can honestly guarantee selection. What we guarantee is daily training measured against the real cut-offs, regular mocks, and honest feedback on where you stand.",
-  },
-  {
-    q: "Can I join online?",
-    a: "Written coaching is available as a live online batch with recordings. Physical training needs a ground, so it is offline only.",
+    a: "No academy can honestly guarantee selection. What we promise is regular practice against the real exam pattern and cut-offs, and honest feedback on where you stand.",
   },
 ];
 
@@ -318,19 +356,23 @@ export const EXAM_OPTIONS: string[] = [
   "Air Force Agniveervayu (X group)",
   "Air Force Agniveervayu (Y group)",
   "Coast Guard Navik / Yantrik",
-  "SSC GD Constable (CAPF)",
+  "SSC GD Constable (BSF, CRPF, CISF, ITBP, SSB)",
   "SSC CPO (SI)",
   "Odisha Police Constable",
   "Odisha Police SI",
   "Odisha Forest Guard / Forester",
   "Odisha Fire Services",
-  "OSSSC / OSSC posts",
+  "OSSC / OSSSC posts",
+  "OPSC (OCS / ASO)",
+  "Bank PO",
+  "Bank Clerk",
   "RRB Group D",
   "RRB NTPC",
   "RRB ALP / Technician",
   "RPF Constable / SI",
   "SSC MTS / CHSL / CGL",
-  "NDA / CDS / AFCAT",
+  "NDA / NA / TES",
+  "CDS / AFCAT / NCC",
   "Not sure yet",
 ];
 
@@ -346,10 +388,11 @@ export const NAV: NavEntry[] = [
     items: [
       { href: "/exams", label: "All exams", desc: "Every exam we prepare for, in one place" },
       { href: "/exams?vertical=armed-forces", label: "Army, Navy, Air Force", desc: "Agniveer, SSR, MR, X and Y group" },
-      { href: "/exams?vertical=capf", label: "CAPF", desc: "SSC GD for BSF, CRPF, CISF, ITBP" },
-      { href: "/exams?vertical=odisha", label: "Odisha State", desc: "Police, forest, fire, OSSSC" },
+      { href: "/exams?vertical=capf", label: "CAPF", desc: "SSC GD for BSF, CRPF, CISF, ITBP, SSB" },
+      { href: "/exams?vertical=odisha", label: "Odisha State", desc: "Police, SI, OSSC, OSSSC, OPSC, ASO" },
+      { href: "/exams?vertical=ssc", label: "Bank and SSC", desc: "Bank PO and Clerk, SSC CGL" },
       { href: "/exams?vertical=railways", label: "Railways", desc: "Group D, NTPC, ALP, RPF" },
-      { href: "/exams?vertical=officer", label: "Officer entries", desc: "NDA, CDS, AFCAT" },
+      { href: "/exams?vertical=officer", label: "Officer entries", desc: "NDA, TES, CDS, AFCAT, NCC" },
     ],
   },
   {
@@ -394,8 +437,16 @@ export const FOOTER_LINKS: NavLink[] = [
   { href: "/contact", label: "Contact" },
 ];
 
-/** YouTube ids for the video grid when the CMS has none. Empty hides it. */
-export const YT_VIDEOS: string[] = [];
+/** Videos from the academy's YouTube channel (@samantroyacademy5722), shown
+ *  when the admin has not added any under Resources. Empty hides the grid. */
+export const YT_VIDEOS: { id: string; title: string }[] = [
+  { id: "2Yg0zmBFLjg", title: "111 Agniveer result: media coverage" },
+  { id: "nKzzvRBmbRA", title: "Girl achievers of Samantroy Academy" },
+  { id: "AzsAL1HXlFI", title: "Career in defence" },
+  { id: "CfCZgce2GFQ", title: "Officer Like Qualities, by Debesh Sir" },
+  { id: "-ELEa1kWDRo", title: "Kargil Vijay Diwas blood donation camp" },
+  { id: "rVctl7bJ6ns", title: "Current affairs, 6 to 12 February" },
+];
 
 /** Card shape for why-us / values / gateway style repeaters. */
 export type IconCard = { icon: IconKey | string; title: string; body: string };

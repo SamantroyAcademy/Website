@@ -3,7 +3,7 @@
  * Pure and dependency-free so it runs on the client for the interactive
  * finder and can be unit-tested with `node --test`.
  *
- * Extends the SSB Wings finder (age, gender, marital, education) with the
+ * Checks age, gender, marital status and education, plus the
  * checks that decide other-rank eligibility: height, chest, category and
  * domicile. Every rejected entry comes back with the reason, so the finder
  * can show "near misses" ("2 cm short of the SSC GD height") instead of just
@@ -48,12 +48,17 @@ export const EDUCATION_RULES: Record<string, EducationRule> = {
   "odisha-police-constable": { min: "12th-other" },
   "odisha-police-si": { min: "graduate" },
   "odisha-forest-guard": { min: "10th" },
+  "opsc-ocs": { min: "graduate" },
+  "opsc-aso": { min: "graduate" },
+  "ossc-osssc": { min: "10th" },
   "rrb-group-d": { min: "10th" },
   "rrb-ntpc": { min: "12th-other" },
   "rrb-alp": { min: "iti-diploma" },
   "rpf-constable": { min: "10th" },
   "ssc-mts": { min: "10th" },
   "ssc-chsl-cgl": { min: "12th-other" },
+  "bank-po": { min: "graduate" },
+  "bank-clerk": { min: "graduate" },
   nda: { min: "12th-other" },
   "cds-afcat": { min: "graduate" },
 };

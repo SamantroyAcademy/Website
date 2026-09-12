@@ -36,3 +36,6 @@ next-env.d.ts
 
 # compressed copies staged for R2
 /.r2-upload
+
+# raw posters from the academy (processed copies live in R2)
+/images/

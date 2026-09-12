@@ -24,6 +24,23 @@ export function FaqList({ items }: { items: Faq[] }) {
   );
 }
 
+const plain = (html: string) => html.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+
+/** FAQPage structured data from the same questions the page shows, so search
+ *  engines and AI answer engines can quote them directly. */
+export function FaqJsonLd({ items }: { items: Faq[] }) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((f) => ({
+      "@type": "Question",
+      name: plain(f.question),
+      acceptedAnswer: { "@type": "Answer", text: plain(f.answer) },
+    })),
+  };
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }} />;
+}
+
 /** FAQs (CMS: faqs). Split: heading and a direct line on the left, answers
  *  on the right. */
 export default async function FaqSection() {
@@ -31,6 +48,7 @@ export default async function FaqSection() {
   if (!items.length) return null;
   return (
     <section id="faq" className="section-y" aria-label="Frequently asked questions">
+      <FaqJsonLd items={items} />
       <div className="container-x grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-5">
           <div className="lg:sticky lg:top-28">

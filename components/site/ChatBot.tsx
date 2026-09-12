@@ -15,6 +15,7 @@ type Entry = { id: string; keys: string[]; a: string; links?: LinkItem[] };
 export type ChatSettings = {
   whatsapp: string;
   phone: string;
+  contactName?: string;
   address: string;
   email: string;
   brochure: string;
@@ -52,8 +53,8 @@ function knowledge(s: ChatSettings): Entry[] {
     },
     {
       id: "exams",
-      keys: ["exam", "agniveer", "ssc gd", "navy", "ssr", "mr", "air force", "airman", "x group", "y group", "odisha police", "constable", "railway", "rrb", "group d", "rpf", "bsf", "crpf", "cisf"],
-      a: "We prepare for Army Agniveer, Navy SSR and MR, Air Force X and Y, SSC GD for all CAPFs, Odisha Police Constable and SI, RRB Group D, NTPC, ALP, RPF and SSC exams. Each has its own page with eligibility, pattern and standards.",
+      keys: ["exam", "agniveer", "ssc gd", "navy", "ssr", "mr", "air force", "airman", "x group", "y group", "odisha police", "constable", "railway", "rrb", "group d", "rpf", "bsf", "crpf", "cisf", "bank", "ibps", "sbi", "clerk", "ossc", "osssc", "opsc", "aso", "cgl", "nda", "cds", "afcat", "tes", "ncc"],
+      a: "Army (Agniveer GD, Technical, Clerk), Navy SSR and MR, Air Force X and Y, SSC GD for BSF, CRPF, CISF, ITBP and SSB, Odisha Police Constable and SI, OSSC, OSSSC, OPSC and ASO, Bank PO and Clerk, Railway (RRB) and SSC CGL. Officer entries too: NDA, TES, CDS, AFCAT and NCC. Each exam has its own page with eligibility and pattern.",
       links: [{ label: "Browse all exams", href: "/exams" }],
     },
     {
@@ -61,6 +62,18 @@ function knowledge(s: ChatSettings): Entry[] {
       keys: ["process", "stages", "selection process", "how selection", "steps", "document", "medical", "merit"],
       a: "Every recruitment follows seven stages: application, written exam, physical standard test, physical efficiency test, document verification, medical and merit list.",
       links: [{ label: "See all seven stages", href: "/recruitment-process" }],
+    },
+    {
+      id: "streams",
+      keys: ["arts", "commerce", "science", "stream", "+2", "graduation", "graduate"],
+      a: "Arts and Commerce students can apply for Air Force Y group, Navy MR, Army GD and SSC GD. Science students add Navy SSR, Air Force X and Army Technical. Graduates add Bank, SSC CGL, OSSC, OPSC, SI, CDS and AFCAT. You can join after +2 or after graduation.",
+      links: [{ label: "Check my eligibility", href: "/eligibility" }],
+    },
+    {
+      id: "about",
+      keys: ["about", "since", "how old", "who", "samantroy", "director", "debesh"],
+      a: `Samantroy Academy for Defence Career Studies has trained aspirants in Brahmapur (Ganjam) since 2001, with 4000+ recruitments. Call ${s.contactName || "the academy"} on ${s.phone}.`,
+      links: [{ label: "About the academy", href: "/about" }],
     },
     {
       id: "batches",
@@ -77,7 +90,7 @@ function knowledge(s: ChatSettings): Entry[] {
     {
       id: "hostel",
       keys: ["hostel", "stay", "room", "food", "mess", "accommodation", "outstation"],
-      a: "Residential seats are available for the offline batch on a first-come basis. Ask us for current availability and charges.",
+      a: "Many aspirants join from outside Brahmapur. Call or WhatsApp the academy and we will help you find accommodation near the centre.",
       links: [{ label: "Ask on WhatsApp", href: s.whatsapp }],
     },
     {
@@ -101,13 +114,13 @@ function knowledge(s: ChatSettings): Entry[] {
     {
       id: "results",
       keys: ["result", "selected", "selection", "success", "topper", "how many"],
-      a: "Our selected candidates are on the Wall of Selection, grouped by exam and force.",
+      a: "4000+ recruitments since 2001, across the Army, Navy, Air Force, CAPF, Odisha Police, Bank, Railway, SSC and OSSC/OSSSC. Recent names and photos are on the Wall of Selection.",
       links: [{ label: "See the Wall of Selection", href: "/selected" }],
     },
     {
       id: "contact",
       keys: ["contact", "address", "location", "where", "phone", "call", "email", "reach", "visit"],
-      a: `${s.address}\nPhone: ${s.phone}\nEmail: ${s.email}`,
+      a: `${s.address}\nPhone: ${s.phone}${s.email ? `\nEmail: ${s.email}` : ""}`,
       links: [{ label: "Chat on WhatsApp", href: s.whatsapp }, { label: "Contact page", href: "/contact" }],
     },
   ];
@@ -179,7 +192,7 @@ export default function ChatBot({ settings }: { settings: ChatSettings }) {
     window.setTimeout(() => setMsgs((m) => [...m, reply]), 320);
   };
 
-  const linkCls = "rounded-full bg-accent px-3.5 py-1.5 text-center text-xs font-semibold text-ink transition hover:bg-accent-600";
+  const linkCls = "rounded-full bg-accent px-3.5 py-1.5 text-center text-xs font-semibold text-white transition hover:bg-accent-600";
 
   return (
     <>
@@ -262,7 +275,7 @@ export default function ChatBot({ settings }: { settings: ChatSettings }) {
             <label htmlFor="chat-input" className="sr-only">Type your question</label>
             <input id="chat-input" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask about height, batches, fees"
               className="field min-h-0 py-2.5 text-sm" />
-            <button type="submit" aria-label="Send" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-ink transition hover:bg-accent-600">
+            <button type="submit" aria-label="Send" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-white transition hover:bg-accent-600">
               <PaperPlaneRightIcon size={18} weight="bold" />
             </button>
           </form>

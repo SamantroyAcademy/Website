@@ -18,11 +18,12 @@ export default async function ContactPage() {
   const form = resolveContactForm(formDoc);
 
   const lines = [
-    { Icon: PhoneIcon, label: "Call", value: [s.phone1, s.phone2].filter(Boolean).join(", "), href: telHref(s.phone1) },
-    { Icon: WhatsappLogoIcon, label: "WhatsApp", value: "Message a trainer", href: s.whatsapp, external: true },
-    { Icon: EnvelopeSimpleIcon, label: "Email", value: s.email, href: `mailto:${s.email}` },
+    { Icon: PhoneIcon, label: s.contactName ? `Call ${s.contactName}` : "Call", value: [s.phone1, s.phone2].filter(Boolean).join(", "), href: telHref(s.phone1) },
+    { Icon: WhatsappLogoIcon, label: "WhatsApp", value: "Message the academy", href: s.whatsapp, external: true },
+    ...(s.email ? [{ Icon: EnvelopeSimpleIcon, label: "Email", value: s.email, href: `mailto:${s.email}` }] : []),
     { Icon: MapPinIcon, label: "Visit", value: s.address, href: mapHref(s), external: true },
   ];
+  const helplines = (s.helplines ?? "").split(",").map((n) => n.trim()).filter(Boolean);
 
   return (
     <main>
@@ -52,6 +53,16 @@ export default async function ContactPage() {
                   </a>
                 </li>
               ))}
+              {helplines.length > 0 && (
+                <li className="rounded-[var(--radius-card)] bg-surface p-5 shadow-[inset_0_0_0_1px_var(--color-line)]">
+                  <span className="block text-sm text-muted">More helpline numbers</span>
+                  <span className="mt-2 flex flex-wrap gap-2">
+                    {helplines.map((n) => (
+                      <a key={n} href={telHref(`+91${n}`)} className="rounded-full bg-tint px-3 py-1.5 text-sm font-semibold tabular-nums text-ink transition-colors hover:bg-tint-2">{n}</a>
+                    ))}
+                  </span>
+                </li>
+              )}
               {s.officeHours && (
                 <li className="flex items-start gap-4 rounded-[var(--radius-card)] bg-brand-50 p-5">
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface text-brand-700"><ClockIcon size={20} weight="fill" /></span>

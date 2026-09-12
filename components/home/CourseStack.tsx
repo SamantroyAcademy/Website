@@ -20,7 +20,7 @@ function CourseCard({ c, showPrices }: { c: CourseItem; showPrices: boolean }) {
       <span aria-hidden className={`absolute inset-x-0 top-0 h-1.5 ${TONE_BG[c.service] ?? "bg-accent"}`} />
       <div className="flex flex-col p-7 sm:p-9 md:col-span-7">
         {c.tag && (
-          <p className={`self-start rounded-full px-3 py-1 text-xs font-semibold ${c.highlight ? "bg-accent text-ink" : "bg-tint text-ink-2"}`}>{c.tag}</p>
+          <p className={`self-start rounded-full px-3 py-1 text-xs font-semibold ${c.highlight ? "bg-accent text-white" : "bg-tint text-ink-2"}`}>{c.tag}</p>
         )}
         <h3 className="mt-5 font-display text-[clamp(1.8rem,3vw,2.6rem)] font-extrabold leading-[1.02] tracking-tight text-ink">{c.title}</h3>
         {c.where && <p className="mt-2 font-medium text-brand-600">{c.where}</p>}

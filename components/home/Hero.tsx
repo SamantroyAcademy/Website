@@ -83,7 +83,7 @@ export default function Hero({ doc, slides }: { doc: Doc; slides: (HeroSlide & {
   // Slide rotation.
   useEffect(() => {
     if (slides.length < 2) return;
-    const id = window.setInterval(() => setActive((a) => (a + 1) % slides.length), 5200);
+    const id = window.setInterval(() => setActive((a) => (a + 1) % slides.length), 6500);
     return () => window.clearInterval(id);
   }, [slides.length]);
 
@@ -126,7 +126,7 @@ export default function Hero({ doc, slides }: { doc: Doc; slides: (HeroSlide & {
         </div>
 
         <figure className="lg:col-span-5">
-          <div data-hero-media className="relative mx-auto aspect-[4/5] max-h-[72dvh] w-full overflow-hidden rounded-[var(--radius-card)] bg-tint lg:max-h-[78dvh]">
+          <div data-hero-media className="relative mx-auto aspect-square max-h-[72dvh] w-full overflow-hidden rounded-[var(--radius-card)] bg-brand-950 lg:max-h-[78dvh]">
             {slides.map((s, i) => (
               <div
                 key={s.image + i}
@@ -134,14 +134,18 @@ export default function Hero({ doc, slides }: { doc: Doc; slides: (HeroSlide & {
                 style={{ opacity: i === active ? 1 : 0 }}
                 aria-hidden={i !== active}
               >
+                {/* Posters come in every shape: show each one whole, on a
+                    blurred, darkened copy of itself. */}
+                <Image aria-hidden src={s.image} alt="" fill sizes="(min-width: 1024px) 40vw, 100vw"
+                  className="scale-125 object-cover opacity-45 blur-2xl" />
                 <Image
                   data-hero-img={i === 0 ? "" : undefined}
                   src={s.image}
-                  alt={[s.name, s.academy, s.term].filter(Boolean).join(", ") || "Training and parade photograph"}
+                  alt={[s.name, s.academy, s.term].filter(Boolean).join(", ") || "Samantroy Academy results poster"}
                   fill
                   priority={i === 0}
                   sizes="(min-width: 1024px) 40vw, 100vw"
-                  className={`object-cover transition-transform duration-[6000ms] ease-out ${i === active ? "scale-105" : "scale-100"}`}
+                  className="object-contain drop-shadow-[0_18px_30px_rgb(0_0_0/0.35)]"
                 />
               </div>
             ))}
@@ -149,7 +153,7 @@ export default function Hero({ doc, slides }: { doc: Doc; slides: (HeroSlide & {
           {current && (current.academy || current.term || current.name) && (
             <figcaption data-hero-fade className="mt-4 flex items-baseline justify-between gap-4 text-sm">
               <span className="font-semibold text-ink">{current.name || current.academy}</span>
-              <span className="text-right text-muted">{current.name ? [current.academy, current.term].filter(Boolean).join(", ") : current.term}</span>
+              <span className="shrink-0 whitespace-nowrap text-right text-muted">{current.name ? [current.academy, current.term].filter(Boolean).join(", ") : current.term}</span>
             </figcaption>
           )}
           {slides.length > 1 && (

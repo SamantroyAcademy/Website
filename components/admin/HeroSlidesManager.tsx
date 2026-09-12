@@ -8,7 +8,7 @@ import { mediaUrl } from "@/lib/supabase/media";
 import { compressImage } from "@/lib/image-client";
 import { asArray } from "@/lib/shape";
 import type { HeroSlide } from "@/lib/hero-slides";
-import { useImageCropper, FRAMES } from "./useImageCropper";
+import { useImageCropper } from "./useImageCropper";
 import { uploadMedia } from "@/lib/upload-client";
 
 export default function HeroSlidesManager({ initial }: { initial: HeroSlide[] }) {
@@ -33,7 +33,8 @@ export default function HeroSlidesManager({ initial }: { initial: HeroSlide[] })
     try {
       const added: HeroSlide[] = [];
       for (const raw of files) {
-        const picked = await crop(raw, { aspect: FRAMES.heroSlide, label: "the hero showcase frame" });
+        // Posters are shown whole, so keep their shape (the dialog still offers crop and rotate).
+        const picked = await crop(raw);
         if (!picked) continue;
         const f = await compressImage(picked);
         const path = `hero/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.webp`;
@@ -65,7 +66,7 @@ export default function HeroSlidesManager({ initial }: { initial: HeroSlide[] })
       {cropperUi}
       <div className="rounded-xl border border-slate-200 bg-white p-5">
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
-          {busy ? "Working…" : "⬆ Upload officer photos"}
+          {busy ? "Working…" : "⬆ Upload posters or photos"}
           <input type="file" accept="image/*" multiple onChange={onUpload} className="hidden" disabled={busy} />
         </label>
         <p className="mt-2 text-xs text-slate-400">

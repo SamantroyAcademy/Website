@@ -7,10 +7,12 @@ import FloatingActions from "@/components/site/FloatingActions";
 import ChatBot from "@/components/site/ChatBot";
 import PreviewBar from "@/components/site/PreviewBar";
 import PageViewTracker from "@/components/site/PageViewTracker";
+import { LogoDefs } from "@/components/Logo";
 import { CONTACT_FORM, resolveContactForm } from "@/lib/form-defaults";
 import { getPublished, getSettings, telHref, brochureHref, brochureOn, mapHref } from "@/lib/content";
 import { ENQUIRY_POPUP, type EnquiryPopupDoc } from "@/lib/homepage-defaults";
 import { BATCH_INFO } from "@/lib/data";
+import { ldJson, siteJsonLd } from "@/lib/structured-data";
 
 export default async function SiteLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const [popup, formDoc, settings, preloader] = await Promise.all([
@@ -22,31 +24,12 @@ export default async function SiteLayout({ children }: Readonly<{ children: Reac
   const form = resolveContactForm(formDoc);
   const phoneHref = telHref(settings.phone1);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": ["EducationalOrganization", "LocalBusiness"],
-        "@id": `${settings.url}/#organization`,
-        name: settings.name,
-        url: settings.url,
-        logo: `${settings.url}/icon.svg`,
-        slogan: settings.tagline,
-        description:
-          "Coaching in Odisha for Army Agniveer, Navy SSR and MR, Air Force X and Y, SSC GD, Odisha Police, Railways and SSC exams: written exam, physical test and medical, trained together.",
-        telephone: settings.phone1,
-        email: settings.email,
-        address: { "@type": "PostalAddress", streetAddress: settings.address, addressRegion: "Odisha", addressCountry: "IN" },
-        hasMap: mapHref(settings),
-        areaServed: "Odisha",
-        sameAs: [settings.instagram, settings.youtube, settings.telegram, settings.facebook].filter((u) => /^https?:\/\/[^/]+\/.+/.test(u ?? "")),
-      },
-    ],
-  };
+  const jsonLd = siteJsonLd(settings, mapHref(settings));
 
   return (
     <MotionProvider>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(jsonLd) }} />
+      <LogoDefs />
       <PageViewTracker />
       <Preloader enabled={preloader.lottie !== "off"} />
       <ModalProvider popup={popup} form={form} phone={settings.phone1}>
@@ -63,6 +46,7 @@ export default async function SiteLayout({ children }: Readonly<{ children: Reac
           settings={{
             whatsapp: settings.whatsapp,
             phone: settings.phone1,
+            contactName: settings.contactName,
             address: settings.address,
             email: settings.email,
             brochure: brochureHref(settings),

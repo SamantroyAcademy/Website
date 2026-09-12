@@ -22,7 +22,9 @@ touching code.
 | --- | --- |
 | Homepage section order, or hide a section | Homepage, Section Order |
 | Hero headline, rotating words, buttons | Pages and Sections, Hero |
-| Hero photos | Homepage, Hero Showcase |
+| Hero posters (rotating beside the headline) | Homepage, Hero Posters |
+| Student stories (YouTube Shorts) | Homepage, Student Shorts: paste a link or Fetch latest from a channel |
+| Result posters strip | Homepage, Result Posters |
 | Batches, fees, course buttons | Exams and learning, Courses and Batches |
 | Hide all prices | Pages and Sections, Course Prices |
 | An exam's eligibility, pattern, syllabus | Exams Catalogue (each exam has its own page at /exams/slug) |

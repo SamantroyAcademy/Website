@@ -12,9 +12,10 @@ export const HEADING_DEFAULTS: Record<string, HeadingDoc> = {
   wall: {
     kicker: "Wall of Selection",
     title: `They trained here. ${em("Now they serve.")}`,
-    subtitle: "Aspirants who cleared the written exam, the ground and the medical.",
+    subtitle: "Recent selections from Brahmapur, Ganjam and across Odisha: Army, Navy, Air Force, CAPF, Bank and OSSC.",
   },
-  toppers: { kicker: "", title: "Top ranks", subtitle: "" },
+  shorts: { kicker: "", title: `Straight from ${em("result day")}`, subtitle: "Selected aspirants and class clips from the academy YouTube channel." },
+  toppers: { kicker: "", title: `Results, ${em("poster by poster")}`, subtitle: "Every selection list we have published, newest first. Tap a poster to see it full size." },
   courses: {
     kicker: "",
     title: `Pick the batch that fits ${em("your exam")}`,
@@ -27,11 +28,11 @@ export const HEADING_DEFAULTS: Record<string, HeadingDoc> = {
     title: `The people who ${em("time your runs")}`,
     subtitle: "Ground instructors and subject faculty who train every batch themselves.",
   },
-  stats: { kicker: "", title: `The numbers so far`, subtitle: "" },
+  stats: { kicker: "", title: `Since 2001, ${em("4000+ recruitments")}`, subtitle: "" },
   testimonials: { kicker: "", title: `In their ${em("own words")}`, subtitle: "" },
-  videos: { kicker: "", title: "Watch and learn", subtitle: "Lessons, strategy and results on our channel." },
+  videos: { kicker: "", title: "Watch and learn", subtitle: "Results, career guidance and weekly current affairs on the Samantroy Academy YouTube channel." },
   google_reviews: { kicker: "", title: "What students say on Google", subtitle: "" },
-  instagram: { kicker: "", title: `Follow the ${em("daily ground")}`, subtitle: "Training clips, notifications and results, every week." },
+  instagram: { kicker: "", title: `Follow ${em("@samantroyacademy07")}`, subtitle: "Results, new batches and notifications from Brahmapur." },
   officer_banners: { kicker: "Now serving", title: "Alumni in uniform", subtitle: "" },
   faq: { kicker: "", title: "Questions we hear every day", subtitle: "" },
 };

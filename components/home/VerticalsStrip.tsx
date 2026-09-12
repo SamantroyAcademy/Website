@@ -41,7 +41,7 @@ export default async function VerticalsStrip() {
 
               <Link href={c.link || "/exams"} className="absolute inset-0 flex flex-col justify-end p-5 text-surface outline-offset-[-4px] xl:p-6">
                 <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/12 backdrop-blur">
-                  <Icon name={c.icon} size={22} className="text-accent" />
+                  <Icon name={c.icon} size={22} className="text-accent-bright" />
                 </span>
                 <span className="mt-4 block font-display text-xl font-extrabold leading-tight tracking-tight xl:text-2xl">{c.name}</span>
                 <span className="mt-1 block text-sm leading-snug text-brand-100">{c.motto}</span>
@@ -59,7 +59,7 @@ export default async function VerticalsStrip() {
                         <span key={e} className="rounded-full bg-white/12 px-2.5 py-1 text-xs font-medium backdrop-blur">{e}</span>
                       ))}
                     </span>
-                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent">
+                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-bright">
                       See the exams <ArrowUpRightIcon size={16} weight="bold" />
                     </span>
                   </span>
@@ -79,11 +79,11 @@ export default async function VerticalsStrip() {
               <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-brand-950/95 via-brand-950/45 to-transparent" />
               <span aria-hidden className={`absolute inset-x-0 top-0 h-1 ${TONE_BG[c.tone] ?? "bg-accent"}`} />
               <Link href={c.link || "/exams"} className="absolute inset-0 flex flex-col justify-end p-5 text-surface">
-                <Icon name={c.icon} size={24} className="text-accent" />
+                <Icon name={c.icon} size={24} className="text-accent-bright" />
                 <span className="mt-3 font-display text-2xl font-extrabold tracking-tight">{c.name}</span>
                 <span className="text-sm text-brand-100">{c.motto}</span>
                 <span className="mt-3 text-[0.92rem] leading-relaxed text-brand-50">{c.desc}</span>
-                <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-accent">
+                <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-bright">
                   See the exams <ArrowUpRightIcon size={16} weight="bold" />
                 </span>
               </Link>

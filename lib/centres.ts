@@ -1,6 +1,5 @@
 /** Training centres and recruiting bodies (CMS key: centres).
- *  Replaces SSB Wings' academies.ts. Same shape, so the section editor and
- *  the page component work unchanged. */
+ *  Plain data shared by the section editor and the page component. */
 
 export type CentreCourse = { name: string; duration: string; who: string };
 export type Centre = {

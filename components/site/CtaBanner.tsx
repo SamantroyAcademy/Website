@@ -17,7 +17,7 @@ export default async function CtaBanner() {
       </div>
       <div className="container-x grid gap-10 pb-16 pt-20 md:grid-cols-12 md:items-end md:pb-20 md:pt-28">
         <div className="md:col-span-8">
-          {doc.eyebrow && <p className="text-sm font-semibold text-accent" data-reveal="fade">{doc.eyebrow}</p>}
+          {doc.eyebrow && <p className="text-sm font-semibold text-accent-bright" data-reveal="fade">{doc.eyebrow}</p>}
           <h2 id="cta-title" data-split className="display-lg mt-4 max-w-3xl text-surface"
             dangerouslySetInnerHTML={{ __html: doc.title }} />
           <div className="rich-html mt-5 max-w-xl text-lg text-brand-100" data-reveal dangerouslySetInnerHTML={{ __html: doc.paragraph }} />

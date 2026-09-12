@@ -81,7 +81,7 @@ export default function ResourceBrowser({ folders, resources }: { folders: Resou
                     <FileTextIcon size={44} weight="duotone" className="text-brand-600" />
                   )}
                   {r.kind === "youtube" && (
-                    <span className="absolute flex h-11 w-11 items-center justify-center rounded-full bg-accent text-ink"><PlayIcon size={18} weight="fill" /></span>
+                    <span className="absolute flex h-11 w-11 items-center justify-center rounded-full bg-accent text-white"><PlayIcon size={18} weight="fill" /></span>
                   )}
                 </span>
                 <span className="line-clamp-2 p-4 text-sm font-semibold text-ink" title={r.title}>{r.title}</span>

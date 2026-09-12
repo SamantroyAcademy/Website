@@ -8,7 +8,7 @@ export const PAGE_HEROES: Record<string, PageHeroDoc> = {
   about: {
     kicker: "", crumb: "About",
     title: `Trained on the ground. ${em("Selected on merit.")}`,
-    subtitle: "A coaching academy in Odisha built around one idea: train every aspirant against the real cut-off, every day.",
+    subtitle: "Samantroy Academy for Defence Career Studies, Brahmapur (Ganjam), Odisha. Coaching for defence, police and government jobs since 2001.",
     image: "/images/scenes/army-parade.jpg",
   },
   "recruitment-process": {
@@ -20,7 +20,7 @@ export const PAGE_HEROES: Record<string, PageHeroDoc> = {
   exams: {
     kicker: "", crumb: "Exams",
     title: `Every exam we ${em("prepare")} you for`,
-    subtitle: "Armed forces, CAPF, Odisha State, Railways and SSC. Filter by what you are aiming for.",
+    subtitle: "Army, Navy, Air Force, CAPF, Odisha Police, OSSC and OPSC, Bank, Railway and SSC, and officer entries. Filter by what you are aiming for.",
     image: "/images/forces/bsf-contingent.jpg",
   },
   standards: {
@@ -37,8 +37,8 @@ export const PAGE_HEROES: Record<string, PageHeroDoc> = {
   },
   courses: {
     kicker: "", crumb: "Courses",
-    title: `Batches built around the ${em("cut-off")}`,
-    subtitle: "Written, physical or both. Every batch is measured against the exam you are taking.",
+    title: `Batches built around ${em("your exam")}`,
+    subtitle: "Defence careers, police and CAPF, and bank, railway and SSC batches at our Brahmapur centre. Admissions are on.",
     image: "/images/scenes/field-training.jpg",
   },
   eligibility: {
@@ -61,14 +61,14 @@ export const PAGE_HEROES: Record<string, PageHeroDoc> = {
   },
   gallery: {
     kicker: "", crumb: "Gallery",
-    title: `On the ground and ${em("in uniform")}`,
-    subtitle: "Training, results and the aspirants who made it.",
+    title: `Results, ${em("year after year")}`,
+    subtitle: "Result posters, selections and the aspirants who made it into uniform.",
     image: "/images/forces/assam-rifles-contingent.jpg",
   },
   selected: {
     kicker: "", crumb: "Wall of Selection",
     title: `Every aspirant who ${em("made it")}`,
-    subtitle: "The complete wall of our selected candidates across forces and exams.",
+    subtitle: "Selected candidates from Samantroy Academy, Brahmapur, across the Army, Navy, Air Force, CAPF, Odisha Police, Bank and OSSC.",
     image: "/images/forces/itbp-contingent.jpg",
   },
   blog: {
@@ -85,8 +85,8 @@ export const PAGE_HEROES: Record<string, PageHeroDoc> = {
   },
   contact: {
     kicker: "", crumb: "Contact",
-    title: `Talk to a ${em("trainer")}`,
-    subtitle: "Share your details. We call back with the exams you qualify for and a plan to clear them.",
+    title: `Visit us in ${em("Brahmapur")}`,
+    subtitle: "300 m from the railway station, on Sishu Mandir Road, Gosaninuagaon. Call, WhatsApp or leave your details and we will call back.",
     image: "/images/scenes/field-training.jpg",
   },
 };

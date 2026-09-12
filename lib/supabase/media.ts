@@ -3,7 +3,9 @@ import { SUPABASE_MEDIA_BUCKET, SUPABASE_URL } from "./env";
 /** Public base URL of the Cloudflare R2 bucket (r2.dev or a custom domain).
  *  Every image and file on the site is fetched straight from here by the
  *  visitor's browser, so none of those bytes pass through Vercel. */
-export const R2_PUBLIC_URL = (process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? "").replace(/\/+$/, "");
+// The public bucket URL is not a secret, so it has a default: a deploy that
+// forgets the env var still shows every image.
+export const R2_PUBLIC_URL = (process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "https://pub-9a00cb9b6e284249a3a4c2795c99118c.r2.dev").replace(/\/+$/, "");
 
 /** Build a public URL for a media path.
  *  - Full URLs (YouTube thumbnails, Google avatars) are returned unchanged.

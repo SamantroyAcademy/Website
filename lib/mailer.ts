@@ -1,9 +1,11 @@
 import "server-only";
 import { Resend } from "resend";
+import { R2_PUBLIC_URL } from "@/lib/supabase/media";
 
 /** Where every lead notification is delivered. */
-export const ADMIN_EMAIL = process.env.CONTACT_ADMIN_EMAIL || "info@samantroyacademy.com";
-const FROM = process.env.CONTACT_FROM_EMAIL || "Samantroy Academy Website <onboarding@resend.dev>";
+export const ADMIN_EMAIL = process.env.CONTACT_ADMIN_EMAIL || "samantroyacademy.dev@gmail.com";
+// samantroyacademy.com is verified in Resend, so mail can come from the domain.
+const FROM = process.env.CONTACT_FROM_EMAIL || "Samantroy Academy <noreply@samantroyacademy.com>";
 
 export const escapeHtml = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -14,7 +16,7 @@ export function detailRows(rows: [string, string][]): string {
     .map(
       ([k, v]) => `
         <tr>
-          <td style="padding:10px 16px;font-weight:700;color:#141a17;background:#f3f4f0;border-bottom:1px solid #eee;white-space:nowrap;">${escapeHtml(k)}</td>
+          <td style="padding:10px 16px;font-weight:700;color:#12151f;background:#f4f4f1;border-bottom:1px solid #eee;white-space:nowrap;">${escapeHtml(k)}</td>
           <td style="padding:10px 16px;color:#333;border-bottom:1px solid #eee;">${escapeHtml(v || "-")}</td>
         </tr>`,
     )
@@ -24,9 +26,9 @@ export function detailRows(rows: [string, string][]): string {
 export function emailShell(subtitle: string, inner: string): string {
   return `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;border:1px solid #e5e5e5;border-radius:12px;overflow:hidden;">
-      <div style="background:#1a3625;padding:20px 24px;">
-        <h1 style="margin:0;color:#ee7d1e;font-size:20px;letter-spacing:1px;">SAMANTROY ACADEMY</h1>
-        <p style="margin:4px 0 0;color:#d9e4db;font-size:12px;">${escapeHtml(subtitle)}</p>
+      <div style="background:#ce0608;padding:20px 24px;">
+        <img src="${R2_PUBLIC_URL}/images/brand/logo-1200.png" alt="Samantroy Academy: Shaping Nation's Warriors" width="220" style="display:block;width:220px;max-width:100%;height:auto;border:0;" />
+        <p style="margin:10px 0 0;color:#ffe3e2;font-size:12px;">${escapeHtml(subtitle)}</p>
       </div>
       ${inner}
     </div>`;
@@ -63,7 +65,7 @@ export async function notifyAdmin(opts: {
       html: emailShell(
         opts.subtitle,
         `<table style="width:100%;border-collapse:collapse;font-size:14px;">${detailRows(opts.rows)}</table>
-         <div style="padding:14px 24px;background:#f3f4f0;font-size:12px;color:#666;">
+         <div style="padding:14px 24px;background:#f4f4f1;font-size:12px;color:#666;">
            ${escapeHtml(opts.footer ?? "Reply directly to this email to reach the aspirant.")}
          </div>`,
       ),

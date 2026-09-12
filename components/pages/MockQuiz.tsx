@@ -182,7 +182,7 @@ export default function MockQuiz({ questions }: { questions: PublicQuestion[] })
               return (
                 <button key={k} type="button" role="radio" aria-checked={on} onClick={() => setAnswers((a) => ({ ...a, [q.id]: k }))}
                   className={`flex items-center gap-4 rounded-[14px] px-4 py-3.5 text-left transition-colors ${on ? "bg-brand-800 text-surface" : "bg-paper text-ink hover:bg-tint"}`}>
-                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-semibold ${on ? "bg-accent text-ink" : "bg-surface text-ink-2 shadow-[inset_0_0_0_1px_var(--color-line)]"}`}>{String.fromCharCode(65 + k)}</span>
+                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-semibold ${on ? "bg-accent text-white" : "bg-surface text-ink-2 shadow-[inset_0_0_0_1px_var(--color-line)]"}`}>{String.fromCharCode(65 + k)}</span>
                   {o}
                 </button>
               );
