@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { mediaUrl } from "@/lib/supabase/media";
 import { getPublished } from "@/lib/content";
 import { WHYUS, WHYUS_ITEMS } from "@/lib/section-defaults";
 import { asArray } from "@/lib/shape";
@@ -24,7 +25,7 @@ export default async function WhyUs() {
             <SectionHeading kicker={head.kicker} kickerSize={(head as { kickerSize?: string }).kickerSize} title={head.title} subtitle={head.subtitle.replace(/<[^>]+>/g, "")} />
             <div data-reveal="clip" className="relative mt-10 hidden aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] bg-tint lg:block">
               <div data-parallax="8" className="absolute -inset-y-[10%] inset-x-0">
-                <Image src="/images/scenes/field-training.jpg" alt="Recruits training outdoors in field conditions" fill sizes="40vw" className="object-cover" />
+                <Image src={mediaUrl("/images/scenes/field-training.jpg")} alt="Recruits training outdoors in field conditions" fill sizes="40vw" className="object-cover" />
               </div>
             </div>
           </div>

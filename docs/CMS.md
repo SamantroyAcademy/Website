@@ -48,7 +48,8 @@ and update the accuracy note under Pages and Sections, Standards Page Content.
 
 ## Images
 
-Uploads are cropped to the frame they appear in and compressed automatically. Use real
+Uploads are cropped to the frame they appear in, compressed automatically and stored in
+Cloudflare R2. Images can be up to 10 MB before compression and PDFs up to 25 MB. Use real
 photographs of the academy's ground, classroom and selected candidates.
 
 ## People and access

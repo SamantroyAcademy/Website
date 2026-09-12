@@ -33,3 +33,6 @@ next-env.d.ts
 
 # vercel
 .vercel
+
+# compressed copies staged for R2
+/.r2-upload

@@ -4,10 +4,11 @@ import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
-import { mediaUrl, MEDIA_CACHE_CONTROL } from "@/lib/supabase/media";
+import { mediaUrl } from "@/lib/supabase/media";
 import CropFileInput from "./CropFileInput";
 import { FRAMES } from "./useImageCropper";
 import { EXAM_OPTIONS } from "@/lib/data";
+import { uploadMedia } from "@/lib/upload-client";
 
 const FORCES = ["Army", "Navy", "Air Force", "Coast Guard", "CAPF", "Odisha Police", "Odisha State", "Railways", "Central Govt", "Officer"];
 
@@ -51,7 +52,7 @@ export default function CandidatesManager({ initial }: { initial: Candidate[] })
   async function uploadImage(f: File): Promise<string> {
     const ext = f.name.split(".").pop()?.toLowerCase() || "jpg";
     const path = `candidates/${Date.now()}-${slug(name) || "candidate"}.${ext}`;
-    const { error } = await supabase.storage.from("media").upload(path, f, { cacheControl: MEDIA_CACHE_CONTROL, upsert: true, contentType: f.type });
+    const { error } = await uploadMedia(path, f);
     if (error) throw new Error(error.message);
     return path;
   }

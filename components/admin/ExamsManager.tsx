@@ -5,11 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
-import { mediaUrl, MEDIA_CACHE_CONTROL } from "@/lib/supabase/media";
+import { mediaUrl } from "@/lib/supabase/media";
 import { compressImage } from "@/lib/image-client";
 import { EXAMS, VERTICALS, STAGE_LABELS, type Exam, type Vertical } from "@/lib/exams";
 import RichText from "./RichText";
 import { useImageCropper, FRAMES } from "./useImageCropper";
+import { uploadMedia } from "@/lib/upload-client";
 
 export type ExamRow = Exam & { id: string; published: boolean };
 
@@ -62,7 +63,7 @@ export default function ExamsManager({ initial }: { initial: ExamRow[] }) {
     try {
       const f = await compressImage(picked);
       const path = `exams/${Date.now()}-${slugify(form.name) || "exam"}.webp`;
-      const { error } = await supabase.storage.from("media").upload(path, f, { cacheControl: MEDIA_CACHE_CONTROL, upsert: true, contentType: f.type });
+      const { error } = await uploadMedia(path, f);
       if (error) throw new Error(error.message);
       set({ banner_path: path });
     } catch (err) {

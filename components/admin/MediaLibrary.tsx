@@ -2,15 +2,15 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/client";
-import { mediaUrl, MEDIA_CACHE_CONTROL } from "@/lib/supabase/media";
+import { mediaUrl } from "@/lib/supabase/media";
 import { compressImage } from "@/lib/image-client";
 import { useImageCropper } from "./useImageCropper";
+import { listMedia, uploadMedia } from "@/lib/upload-client";
 
-const FOLDERS = ["library", "candidates", "testimonials", "mentors", "students", "services", "campus"];
+/** R2 folders the admin uploaders write to. */
+const FOLDERS = ["library", "candidates", "mentors", "testimonials", "hero", "sections", "campus-gallery", "toppers", "officers", "verticals", "exams", "blog", "reviews", "resources"];
 
 export default function MediaLibrary() {
-  const supabase = createClient();
   const [folder, setFolder] = useState("library");
   const { crop, cropperUi } = useImageCropper();
   const [files, setFiles] = useState<string[]>([]);
@@ -18,9 +18,8 @@ export default function MediaLibrary() {
   const [copied, setCopied] = useState<string | null>(null);
 
   const load = useCallback(async (f: string) => {
-    const { data } = await supabase.storage.from("media").list(f, { limit: 200, sortBy: { column: "created_at", order: "desc" } });
-    setFiles((data ?? []).filter((x) => x.name && !x.name.startsWith(".")).map((x) => `${f}/${x.name}`));
-  }, [supabase]);
+    setFiles(await listMedia(f));
+  }, []);
 
   useEffect(() => { load(folder); }, [folder, load]);
 
@@ -35,7 +34,7 @@ export default function MediaLibrary() {
     setBusy(true);
     const f = await compressImage(picked);
     const path = `library/${Date.now()}-${f.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
-    const { error } = await supabase.storage.from("media").upload(path, f, { cacheControl: MEDIA_CACHE_CONTROL, upsert: true, contentType: f.type });
+    const { error } = await uploadMedia(path, f);
     setBusy(false);
     if (error) return alert(error.message);
     setFolder("library");

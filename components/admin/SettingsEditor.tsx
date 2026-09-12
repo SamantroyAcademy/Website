@@ -3,7 +3,8 @@
 import { useState, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
-import { mediaUrl, MEDIA_CACHE_CONTROL } from "@/lib/supabase/media";
+import { mediaUrl } from "@/lib/supabase/media";
+import { uploadMedia } from "@/lib/upload-client";
 
 const FIELDS: { key: string; label: string; hint?: string }[] = [
   { key: "name", label: "Brand name" },
@@ -43,9 +44,7 @@ export default function SettingsEditor({ initial }: { initial: Record<string, st
     setBusy(true); setMsg(null);
     // Timestamped name so browsers and the CDN never serve the previous file.
     const path = `brochure/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
-    const { error } = await supabase.storage.from("media").upload(path, file, {
-      cacheControl: MEDIA_CACHE_CONTROL, upsert: true, contentType: "application/pdf",
-    });
+    const { error } = await uploadMedia(path, file);
     setBusy(false);
     if (error) return setMsg({ ok: false, text: error.message });
     setForm((s2) => ({ ...s2, brochure: path }));

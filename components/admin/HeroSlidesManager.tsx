@@ -4,11 +4,12 @@ import { useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
-import { mediaUrl, MEDIA_CACHE_CONTROL } from "@/lib/supabase/media";
+import { mediaUrl } from "@/lib/supabase/media";
 import { compressImage } from "@/lib/image-client";
 import { asArray } from "@/lib/shape";
 import type { HeroSlide } from "@/lib/hero-slides";
 import { useImageCropper, FRAMES } from "./useImageCropper";
+import { uploadMedia } from "@/lib/upload-client";
 
 export default function HeroSlidesManager({ initial }: { initial: HeroSlide[] }) {
   const supabase = createClient();
@@ -36,9 +37,7 @@ export default function HeroSlidesManager({ initial }: { initial: HeroSlide[] })
         if (!picked) continue;
         const f = await compressImage(picked);
         const path = `hero/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.webp`;
-        const { error } = await supabase.storage.from("media").upload(path, f, {
-          cacheControl: MEDIA_CACHE_CONTROL, upsert: true, contentType: f.type,
-        });
+        const { error } = await uploadMedia(path, f);
         if (error) throw new Error(error.message);
         added.push({ image: path, name: "", academy: "", term: "" });
       }

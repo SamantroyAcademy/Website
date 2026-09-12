@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import credits from "@/public/images/credits.json";
+import credits from "@/lib/image-credits.json";
+import { mediaUrl } from "@/lib/supabase/media";
 import Reveals from "@/components/motion/Reveals";
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export default function CreditsPage() {
           {(credits as Credit[]).map((c) => (
             <li key={c.file} className="card overflow-hidden">
               <div className="relative aspect-[16/10] bg-tint">
-                <Image src={c.file} alt="" fill sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover" />
+                <Image src={mediaUrl(c.file)} alt="" fill sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover" />
               </div>
               <div className="p-5 text-sm">
                 <p className="line-clamp-2 font-semibold text-ink">{c.title?.replace(/^File:/, "").replace(/\.\w+$/, "") || c.file.split("/").pop()}</p>

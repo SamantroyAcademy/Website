@@ -4,11 +4,12 @@ import { useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
-import { mediaUrl, MEDIA_CACHE_CONTROL } from "@/lib/supabase/media";
+import { mediaUrl } from "@/lib/supabase/media";
 import { compressImage } from "@/lib/image-client";
 import { asArray } from "@/lib/shape";
 import type { GoogleReview } from "@/lib/homepage-defaults";
 import { useImageCropper, FRAMES } from "./useImageCropper";
+import { uploadMedia } from "@/lib/upload-client";
 
 export default function GoogleReviewsManager({
   initial,
@@ -76,9 +77,7 @@ export default function GoogleReviewsManager({
     try {
       const f = await compressImage(picked);
       const path = `reviews/${Date.now()}-${Math.random().toString(36).slice(2, 6)}.webp`;
-      const { error } = await supabase.storage.from("media").upload(path, f, {
-        cacheControl: MEDIA_CACHE_CONTROL, upsert: true, contentType: f.type,
-      });
+      const { error } = await uploadMedia(path, f);
       if (error) throw new Error(error.message);
       set(i, { avatar: path });
     } catch (err) {

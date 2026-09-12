@@ -4,11 +4,12 @@ import { useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
-import { mediaUrl, MEDIA_CACHE_CONTROL } from "@/lib/supabase/media";
+import { mediaUrl } from "@/lib/supabase/media";
 import { compressImage } from "@/lib/image-client";
 import CropFileInput from "./CropFileInput";
 import { FRAMES } from "./useImageCropper";
 import RichText from "./RichText";
+import { uploadMedia } from "@/lib/upload-client";
 
 export type Post = {
   id: string; slug: string; title: string; excerpt: string | null;
@@ -43,7 +44,7 @@ export default function BlogManager({ initial }: { initial: Post[] }) {
   async function uploadCover(f: File): Promise<string> {
     const c = await compressImage(f);
     const path = `blog/${Date.now()}-${slugify(form.title || "post")}.webp`;
-    const { error } = await supabase.storage.from("media").upload(path, c, { cacheControl: MEDIA_CACHE_CONTROL, upsert: true, contentType: c.type });
+    const { error } = await uploadMedia(path, c);
     if (error) throw new Error(error.message);
     return path;
   }

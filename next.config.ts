@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
+// Public origin of the R2 bucket, allowed to be framed for PDF previews.
+const R2_ORIGIN = (() => {
+  try { return new URL(process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? "").origin; } catch { return ""; }
+})();
+
 const securityHeaders = [
   // Clickjacking protection. SAMEORIGIN (not DENY) so the admin CMS can frame
   // the site's own pages in its live-preview iframe; external sites still can't.
@@ -28,7 +33,7 @@ const securityHeaders = [
       `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
       "script-src-attr 'none'",
       "connect-src 'self' https:",
-      "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com https://maps.google.com https://*.supabase.co https://www.instagram.com https://instagram.com",
+      `frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com https://maps.google.com https://*.supabase.co https://www.instagram.com https://instagram.com${R2_ORIGIN ? ` ${R2_ORIGIN}` : ""}`,
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -44,21 +49,12 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "i.ytimg.com" },
-      { protocol: "https", hostname: "**.supabase.co" },
-      // Google reviewer profile photos (Places API)
-      { protocol: "https", hostname: "lh3.googleusercontent.com" },
-      { protocol: "https", hostname: "maps.googleapis.com" },
-    ],
-    // Supabase Storage serves objects with `Cache-Control: no-cache`, so without
-    // a floor Vercel would re-fetch the original from Supabase constantly and
-    // burn egress. Hold optimised images for 31 days instead.
-    minimumCacheTTL: 2_678_400,
-    formats: ["image/avif", "image/webp"],
-    // Trim the generated variants — fewer sizes = fewer origin fetches.
-    deviceSizes: [640, 828, 1080, 1200, 1920],
-    imageSizes: [96, 200, 384],
+    // Images load straight from Cloudflare R2 (and YouTube / Google for
+    // thumbnails and avatars). Vercel's optimiser would proxy every image
+    // through Vercel and spend its bandwidth, so it is switched off. Uploads
+    // are already cropped and compressed to WebP in the admin, and the bundled
+    // photos are pre-compressed (scripts/prepare-bundled-images.mjs).
+    unoptimized: true,
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

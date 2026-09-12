@@ -1,15 +1,21 @@
 import { SUPABASE_MEDIA_BUCKET, SUPABASE_URL } from "./env";
 
-/** Cache-Control for uploaded media (seconds). Storage objects are immutable —
- *  each upload gets a unique, timestamped key — so they can be cached for a year.
- *  Without this Supabase serves `no-cache` and every view re-fetches, burning egress. */
-export const MEDIA_CACHE_CONTROL = "31536000";
+/** Public base URL of the Cloudflare R2 bucket (r2.dev or a custom domain).
+ *  Every image and file on the site is fetched straight from here by the
+ *  visitor's browser, so none of those bytes pass through Vercel. */
+export const R2_PUBLIC_URL = (process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? "").replace(/\/+$/, "");
 
 /** Build a public URL for a media path.
- *  - Full URLs and local "/images/…" fallback paths are returned unchanged.
- *  - Storage-relative paths (e.g. "students/tanishq.png") become public bucket URLs. */
+ *  - Full URLs (YouTube thumbnails, Google avatars) are returned unchanged.
+ *  - "/images/..." (the bundled photographs) and storage-relative paths
+ *    ("candidates/1718-name.webp") resolve to the R2 bucket.
+ *  - Without R2 configured, relative paths fall back to Supabase Storage. */
 export function mediaUrl(pathOrUrl: string): string {
   if (!pathOrUrl) return "";
-  if (pathOrUrl.startsWith("http") || pathOrUrl.startsWith("/")) return pathOrUrl;
+  if (/^(https?:|data:|blob:)/.test(pathOrUrl)) return pathOrUrl;
+  if (pathOrUrl.startsWith("/")) {
+    return R2_PUBLIC_URL && pathOrUrl.startsWith("/images/") ? `${R2_PUBLIC_URL}${pathOrUrl}` : pathOrUrl;
+  }
+  if (R2_PUBLIC_URL) return `${R2_PUBLIC_URL}/${pathOrUrl}`;
   return `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_MEDIA_BUCKET}/${pathOrUrl}`;
 }

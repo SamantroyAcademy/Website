@@ -5,7 +5,8 @@ coaching institute in Odisha (Army Agniveer, Navy SSR and MR, Air Force X and Y,
 for the CAPFs, Odisha Police, Railways and SSC, with officer entries alongside).
 
 Built with **Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Supabase
-(Postgres, Auth, Storage), GSAP + ScrollTrigger + Lenis and Resend.**
+(Postgres, Auth), Cloudflare R2 (images and files), GSAP + ScrollTrigger + Lenis and Resend.**
+Hosting is Vercel.
 
 It carries over every feature of the SSB Wings reference build (same CMS, same admin,
 same security model) with a new design system and a content model rebuilt for
@@ -29,7 +30,30 @@ defaults in `lib/`, so a missing env var never breaks a page.
 ## Environment
 
 See [`.env.example`](.env.example). `SUPABASE_SERVICE_ROLE_KEY` is server-only: it creates
-admins, stores leads and scores mock tests. Never expose it or commit `.env.local`.
+admins, stores leads and scores mock tests. `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`
+are server-only too: they sign uploads. Never expose them or commit `.env.local`. Add every
+variable to Vercel (Production and Preview) as well.
+
+## Images and files (Cloudflare R2)
+
+Vercel hosts the app and Supabase holds the data, but **no image or file is stored in or
+served through either**. Everything lives in the R2 bucket and the visitor's browser loads
+it straight from `NEXT_PUBLIC_R2_PUBLIC_URL`, so Vercel's bandwidth is never spent on media.
+
+- **Uploads**: the admin asks `POST /api/admin/upload` (admins only) for a five-minute signed
+  URL, then PUTs the file directly to R2. Type, size (images 10 MB, PDFs 25 MB) and cache
+  headers are part of the signature. Rules live in `lib/r2-keys.ts`, signing in `lib/r2.ts`.
+- **Reading**: `mediaUrl()` (`lib/supabase/media.ts`) turns a stored key such as
+  `candidates/1718-name.webp`, or a bundled `/images/...` path, into the R2 URL.
+  `next/image` runs with `unoptimized: true`, so Vercel never proxies images; uploads
+  are already cropped and compressed to WebP in the browser.
+- **Bundled photos** sit in `assets/images` (not served). To load them into a new bucket:
+  `node scripts/prepare-bundled-images.mjs && node scripts/upload-bundled-images.mjs`.
+- **Bucket settings**: public access (r2.dev URL now; connect a custom domain such as
+  `media.samantroyacademy.com` once the domain is on Cloudflare, then change
+  `NEXT_PUBLIC_R2_PUBLIC_URL`), and a CORS rule allowing `GET, PUT, HEAD` from the site's
+  origins. **Add the production domain to the CORS rule before launch**, or admin
+  uploads on the live site will fail.
 
 ## Database
 
@@ -37,7 +61,7 @@ Run the files in `supabase/migrations/` in order (Supabase, SQL Editor), then th
 
 | File | Creates |
 | --- | --- |
-| `0001_cms_init.sql` | Roles, `site_content` (draft/published), versions, candidates, testimonials, faculty, FAQs, media, audit log, storage bucket |
+| `0001_cms_init.sql` | Roles, `site_content` (draft/published), versions, candidates, testimonials, faculty, FAQs, media, audit log, legacy storage bucket (unused while R2 is configured) |
 | `0002_features.sql` | Enquiries CRM, blog, selection tracker, mock questions, analytics RPC |
 | `0003_resources.sql` | Resource folders and files |
 | `0004_exams_standards.sql` | Exam catalogue and physical standards |
@@ -88,8 +112,10 @@ Regenerate the seed after editing `lib/exams.ts` or `lib/standards.ts`:
 - **Verify every physical and medical standard and exam age band against the current
   official notifications.** They are indicative and change each cycle.
 - Add a Resend API key and verified sending domain so enquiries are emailed.
+- R2: add the production domain to the bucket's CORS rule, and move from the r2.dev URL
+  (rate-limited, meant for development) to a custom domain on Cloudflare.
 - Replace the placeholder photography with the academy's own ground and campus photos.
-- See `public/images/credits.json` for the licences of the bundled photographs.
+- See `lib/image-credits.json` for the licences of the bundled photographs.
 
 ## Deploy (Vercel)
 

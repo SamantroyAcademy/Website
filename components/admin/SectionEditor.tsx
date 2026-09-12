@@ -4,18 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
-import { mediaUrl, MEDIA_CACHE_CONTROL } from "@/lib/supabase/media";
+import { mediaUrl } from "@/lib/supabase/media";
 import { compressImage } from "@/lib/image-client";
 import { useImageCropper, FRAMES } from "./useImageCropper";
 import type { SectionDef, SectionField } from "@/lib/sections";
 import RichText from "./RichText";
+import { uploadMedia } from "@/lib/upload-client";
 
 const supabase = createClient();
 
 async function uploadImage(file: File): Promise<string> {
   const f = await compressImage(file);
   const path = `sections/${Date.now()}-${Math.random().toString(36).slice(2, 6)}.webp`;
-  const { error } = await supabase.storage.from("media").upload(path, f, { cacheControl: MEDIA_CACHE_CONTROL, upsert: true, contentType: f.type });
+  const { error } = await uploadMedia(path, f);
   if (error) throw new Error(error.message);
   return path;
 }

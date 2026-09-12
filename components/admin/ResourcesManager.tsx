@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
 import { compressImage } from "@/lib/image-client";
-import { MEDIA_CACHE_CONTROL } from "@/lib/supabase/media";
+import { uploadMedia } from "@/lib/upload-client";
 
 export type Folder = { id: string; name: string; parent_id: string | null; sort_order: number };
 export type Resource = {
@@ -61,7 +61,7 @@ export default function ResourcesManager({ initialFolders, initialResources }: {
         const file = isImg ? await compressImage(raw) : raw;
         const safe = raw.name.replace(/[^a-zA-Z0-9._-]/g, "-");
         const path = `resources/${Date.now()}-${safe}`;
-        const { error } = await supabase.storage.from("media").upload(path, file, { cacheControl: MEDIA_CACHE_CONTROL, upsert: true, contentType: file.type });
+        const { error } = await uploadMedia(path, file);
         if (error) throw new Error(error.message);
         const { data, error: e2 } = await supabase.from("resources")
           .insert({ folder_id: current, kind: "file", title: raw.name.replace(/\.[^.]+$/, ""), path, mime: file.type })

@@ -4,13 +4,14 @@ import { useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
-import { mediaUrl, MEDIA_CACHE_CONTROL } from "@/lib/supabase/media";
+import { mediaUrl } from "@/lib/supabase/media";
 import { compressImage } from "@/lib/image-client";
 import { useImageCropper, FRAMES } from "./useImageCropper";
 import type { VerticalsDoc, VerticalCard } from "@/lib/verticals";
 import { TONE_OPTIONS, type Tone } from "@/lib/data";
 import { ICON_OPTIONS } from "@/lib/icons";
 import { asArray } from "@/lib/shape";
+import { uploadMedia } from "@/lib/upload-client";
 
 const BLANK: VerticalCard = {
   name: "", motto: "", desc: "", image: "", alt: "", tone: "army", icon: "star", entries: [], link: "/exams",
@@ -44,7 +45,7 @@ export default function VerticalsManager({ initial }: { initial: VerticalsDoc })
     try {
       const f = await compressImage(picked);
       const path = `verticals/${Date.now()}-${Math.random().toString(36).slice(2, 6)}.webp`;
-      const { error } = await supabase.storage.from("media").upload(path, f, { cacheControl: MEDIA_CACHE_CONTROL, upsert: true, contentType: f.type });
+      const { error } = await uploadMedia(path, f);
       if (error) throw new Error(error.message);
       setCard(i, { image: path });
     } catch (err) {
