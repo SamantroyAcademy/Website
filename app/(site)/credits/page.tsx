@@ -3,10 +3,12 @@ import Image from "next/image";
 import credits from "@/lib/image-credits.json";
 import { mediaUrl } from "@/lib/supabase/media";
 import Reveals from "@/components/motion/Reveals";
+import { shareMeta } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Image credits",
   description: "Sources and licences for the photographs used on this website.",
+  ...shareMeta("Image credits", "Sources and licences for the photographs used on this website.", "/credits"),
 };
 
 type Credit = { file: string; title?: string; license?: string; artist?: string; source?: string };

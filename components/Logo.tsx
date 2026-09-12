@@ -66,7 +66,7 @@ export default function Logo({
   className?: string;
 }) {
   const inner = (
-    <span translate="no" className={`inline-flex items-center gap-2 sm:gap-2.5 ${className}`}>
+    <span translate="no" className={`inline-flex shrink-0 items-center gap-2 whitespace-nowrap sm:gap-2.5 ${className}`}>
       <LogoMark className="h-9 w-9 shrink-0 sm:h-10 sm:w-10" />
       <span className="flex flex-col leading-none">
         <span className={`font-display text-[0.98rem] font-extrabold tracking-[-0.02em] min-[400px]:text-[1.1rem] sm:text-[1.22rem] ${invert ? "text-paper" : "text-ink"}`}>
@@ -80,7 +80,7 @@ export default function Logo({
   );
   if (!href) return inner;
   return (
-    <Link href={href} aria-label="Samantroy Academy, home" className="rounded-lg">
+    <Link href={href} aria-label="Samantroy Academy, home" className="shrink-0 rounded-lg">
       {inner}
     </Link>
   );

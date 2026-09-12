@@ -64,7 +64,7 @@ export default async function RecruitmentProcessPage() {
                         {s.subtitle && <p className="mt-2 text-lg font-medium text-brand-600">{s.subtitle}</p>}
                         <div className="rich-html mt-5 leading-relaxed text-ink-2" data-i18n="html" dangerouslySetInnerHTML={{ __html: s.brief }} />
                         {deeper && (
-                          <Link href={deeper.href} className="group mt-6 inline-flex items-center gap-1.5 font-semibold text-accent-ink">
+                          <Link href={deeper.href} className="group mt-5 inline-flex items-center gap-1.5 py-1 font-semibold text-accent-ink">
                             {deeper.label} <ArrowRightIcon size={16} weight="bold" className="arrow" />
                           </Link>
                         )}

@@ -1,7 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react";
+
+/** Vertical wheel over a rail scrolls the page (smooth scroll handles it);
+ *  a sideways trackpad swipe scrolls the rail. Keeping the page's smooth
+ *  scroll away from sideways swipes is all this does. */
+export function useSideWheel(ref: RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation(); };
+    el.addEventListener("wheel", onWheel, { passive: true });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [ref]);
+}
 
 /** Horizontal snap rail with visible controls. Touch users swipe; mouse users
  *  get previous / next buttons and edge fades that show there is more, so a
@@ -10,6 +23,7 @@ export default function Rail({ children, className = "", label }: { children: Re
   const ref = useRef<HTMLUListElement>(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
+  useSideWheel(ref);
 
   useEffect(() => {
     const el = ref.current;
@@ -34,7 +48,7 @@ export default function Rail({ children, className = "", label }: { children: Re
 
   return (
     <div className="relative">
-      <ul ref={ref} className={className} aria-label={label} data-lenis-prevent>
+      <ul ref={ref} className={className} aria-label={label}>
         {children}
       </ul>
       <span aria-hidden className={`pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-paper to-transparent transition-opacity ${canPrev ? "opacity-100" : "opacity-0"}`} />

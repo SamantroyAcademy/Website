@@ -37,7 +37,7 @@ export default function ExamsBrowser({ items }: { items: Item[] }) {
   return (
     <div>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="rail -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" role="tablist" aria-label="Filter exams" data-lenis-prevent>
+        <div className="rail -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" role="tablist" aria-label="Filter exams">
           {[{ key: "all" as const, short: "All exams" }, ...VERTICALS].map((v) => {
             const on = vertical === v.key;
             const n = v.key === "all" ? items.length : counts[v.key] ?? 0;

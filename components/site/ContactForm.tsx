@@ -156,6 +156,7 @@ export default function ContactForm({
                 value={phoneVal}
                 onChange={(e) => setPhoneVal(phoneDigits(e.target.value))}
                 onBlur={() => setPhoneTouched(true)}
+                onInvalid={() => setPhoneTouched(true)}
                 pattern="[6-9][0-9]{9}"
                 title="Enter a 10-digit Indian mobile number starting with 6, 7, 8 or 9"
                 placeholder={phoneF.placeholder}
@@ -193,7 +194,8 @@ export default function ContactForm({
       <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
       <Turnstile resetKey={tries} />
 
-      <button type="submit" disabled={status === "sending" || (phoneVal !== "" && !isValidPhone(phoneVal))} className="btn btn-primary group w-full">
+      {/* Never disabled for a bad number: tapping it shows what to fix. */}
+      <button type="submit" disabled={status === "sending"} className="btn btn-primary group w-full">
         {status === "sending" ? (
           <>
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-ink border-t-transparent" aria-hidden />

@@ -37,7 +37,7 @@ export default function PageHero({
       <div className="container-x">
         {crumb && (
           <nav aria-label="Breadcrumb" data-reveal="fade" className="flex items-center gap-1.5 text-sm text-muted">
-            <Link href="/" className="transition-colors hover:text-ink">Home</Link>
+            <Link href="/" className="-my-1 inline-block py-1 transition-colors hover:text-ink">Home</Link>
             <CaretRightIcon size={12} weight="bold" aria-hidden />
             <span aria-current="page" className="font-medium text-ink-2">{crumb}</span>
           </nav>

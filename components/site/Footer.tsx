@@ -30,10 +30,10 @@ export default async function Footer() {
 
         <nav className="md:col-span-3" aria-label="Footer">
           <p className="text-sm font-semibold text-surface">Explore</p>
-          <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2.5 text-[0.95rem]">
+          <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-1 text-[0.95rem]">
             {FOOTER_LINKS.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="text-brand-200 transition-colors hover:text-surface">{l.label}</Link>
+                <Link href={l.href} className="inline-block py-1 text-brand-200 transition-colors hover:text-surface">{l.label}</Link>
               </li>
             ))}
           </ul>
@@ -41,10 +41,10 @@ export default async function Footer() {
 
         <nav className="md:col-span-2" aria-label="Exams">
           <p className="text-sm font-semibold text-surface">Exams</p>
-          <ul className="mt-4 space-y-2.5 text-[0.95rem]">
+          <ul className="mt-4 space-y-1 text-[0.95rem]">
             {featured.map((e) => (
               <li key={e.slug}>
-                <Link href={`/exams/${e.slug}`} className="text-brand-200 transition-colors hover:text-surface">{e.short_name || e.name}</Link>
+                <Link href={`/exams/${e.slug}`} className="inline-block py-1 text-brand-200 transition-colors hover:text-surface">{e.short_name || e.name}</Link>
               </li>
             ))}
           </ul>
@@ -64,8 +64,8 @@ export default async function Footer() {
                 <PhoneIcon size={20} weight="duotone" className="mt-0.5 shrink-0 text-accent-bright" />
                 <span>
                   {s.contactName && <span className="block text-sm text-brand-300">{s.contactName}</span>}
-                  <a href={telHref(s.phone1)} className="transition-colors hover:text-surface">{s.phone1}</a>
-                  {s.phone2 && <><br /><a href={telHref(s.phone2)} className="transition-colors hover:text-surface">{s.phone2}</a></>}
+                  <a href={telHref(s.phone1)} className="inline-block py-0.5 transition-colors hover:text-surface">{s.phone1}</a>
+                  {s.phone2 && <><br /><a href={telHref(s.phone2)} className="inline-block py-0.5 transition-colors hover:text-surface">{s.phone2}</a></>}
                 </span>
               </span>
             </li>
@@ -91,8 +91,8 @@ export default async function Footer() {
         <div className="container-x flex flex-col gap-3 py-6 text-sm text-brand-300 sm:flex-row sm:items-center sm:justify-between">
           <p>&copy; {year} {s.name}. All rights reserved.</p>
           <div className="flex gap-5">
-            <Link href="/credits" className="transition-colors hover:text-surface">Image credits</Link>
-            <Link href="/contact" className="transition-colors hover:text-surface">Contact</Link>
+            <Link href="/credits" className="inline-block py-1 transition-colors hover:text-surface">Image credits</Link>
+            <Link href="/contact" className="inline-block py-1 transition-colors hover:text-surface">Contact</Link>
           </div>
         </div>
       </div>

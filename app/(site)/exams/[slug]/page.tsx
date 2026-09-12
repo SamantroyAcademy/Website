@@ -114,7 +114,7 @@ export default async function ExamPage({ params }: { params: Promise<{ slug: str
                     </li>
                   ))}
                 </ol>
-                <Link href="/recruitment-process" className="mt-4 inline-block text-sm font-semibold text-accent-ink underline underline-offset-4">What happens at each stage</Link>
+                <Link href="/recruitment-process" className="mt-3 inline-block py-1 text-sm font-semibold text-accent-ink underline underline-offset-4">What happens at each stage</Link>
               </div>
             )}
 

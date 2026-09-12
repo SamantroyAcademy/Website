@@ -11,29 +11,29 @@ gsap.registerPlugin(ScrollTrigger);
 
 function StageCard({ s }: { s: JourneyStage }) {
   return (
-    <article className="card relative flex h-full flex-col overflow-hidden p-6 sm:p-7">
+    <article className="card relative flex h-full flex-col overflow-hidden p-6 sm:p-7 pan-short:p-5">
       <span aria-hidden className={`absolute inset-x-0 top-0 h-1 ${TONE_BG[s.service] ?? "bg-accent"}`} />
       <div className="flex items-baseline justify-between gap-4">
-        <p className={`numeral text-[2.6rem] sm:text-5xl ${TONE_TEXT[s.service] ?? "text-brand-700"}`}>{s.code}</p>
+        <p className={`numeral text-[2.6rem] sm:text-5xl pan-short:text-[2.4rem] ${TONE_TEXT[s.service] ?? "text-brand-700"}`}>{s.code}</p>
         {s.day && s.day.toLowerCase() !== s.code.toLowerCase() && <p className="text-sm font-semibold text-muted">{s.day}</p>}
       </div>
-      <h3 className="mt-4 font-display text-[1.6rem] font-extrabold leading-tight tracking-tight text-ink">{s.title}</h3>
-      {s.subtitle && <p className="mt-1.5 font-medium text-brand-600">{s.subtitle}</p>}
-      <div className="rich-html mt-3 text-[0.95rem] leading-relaxed text-ink-2" data-i18n="html" dangerouslySetInnerHTML={{ __html: s.brief }} />
+      <h3 className="mt-4 font-display text-[1.6rem] font-extrabold leading-tight tracking-tight text-ink pan-short:mt-2 pan-short:text-[1.35rem]">{s.title}</h3>
+      {s.subtitle && <p className="mt-1.5 font-medium text-brand-600 pan-short:mt-1 pan-short:text-sm">{s.subtitle}</p>}
+      <div className="rich-html mt-3 text-[0.95rem] leading-relaxed text-ink-2 pan-short:mt-2 pan-short:text-sm pan-short:leading-snug" data-i18n="html" dangerouslySetInnerHTML={{ __html: s.brief }} />
       {s.tests?.length > 0 && (
-        <ul className="mt-5 space-y-2 border-t border-line pt-4">
+        <ul className="mt-5 space-y-2 border-t border-line pt-4 pan-short:mt-3 pan-short:space-y-1 pan-short:pt-3">
           {s.tests.map((t) => (
-            <li key={t.name} className="text-sm leading-snug">
+            <li key={t.name} className="text-sm leading-snug pan-short:text-[0.8rem]">
               <span className="font-semibold text-ink">{t.name}.</span> <span className="text-muted">{t.detail}</span>
             </li>
           ))}
         </ul>
       )}
       {s.drill && (
-        <div className="mt-auto pt-6">
-          <div className="rounded-[14px] bg-brand-50 px-4 py-3.5">
+        <div className="mt-auto pt-6 pan-short:pt-3">
+          <div className="rounded-[14px] bg-brand-50 px-4 py-3.5 pan-short:py-2.5">
             <p className="text-xs font-semibold text-brand-700">How we prepare you</p>
-            <div className="rich-html mt-1 text-sm leading-relaxed text-brand-900" data-i18n="html" dangerouslySetInnerHTML={{ __html: s.drill }} />
+            <div className="rich-html mt-1 text-sm leading-relaxed text-brand-900 pan-short:text-[0.8rem] pan-short:leading-snug" data-i18n="html" dangerouslySetInnerHTML={{ __html: s.drill }} />
           </div>
         </div>
       )}
@@ -42,7 +42,7 @@ function StageCard({ s }: { s: JourneyStage }) {
 }
 
 /** Must match the `pan` variant in globals.css. */
-const PAN_QUERY = "(min-width: 1024px) and (min-height: 760px)";
+const PAN_QUERY = "(min-width: 1024px)";
 
 export default function JourneyPan({ stages, intro }: { stages: JourneyStage[]; intro: ReactNode }) {
   const wrap = useRef<HTMLElement>(null);
@@ -52,13 +52,20 @@ export default function JourneyPan({ stages, intro }: { stages: JourneyStage[]; 
   useEffect(() => {
     if (prefersReducedMotion()) return;
     const mm = gsap.matchMedia();
-    // Wide AND tall screens: vertical scroll pans the stages horizontally
-    // while pinned. Shorter laptops get the vertical timeline instead, so a
-    // card is never taller than the pinned screen (and never cut off).
+    // Desktop: vertical scroll pans the stages sideways while pinned.
     mm.add(PAN_QUERY, () => {
       const el = track.current!;
-      const distance = () => el.scrollWidth - window.innerWidth + 64;
-      gsap.to(el, {
+      // Safety net for very short windows: shrink the track until the tallest
+      // card fits the pinned screen, so nothing is ever cut off.
+      const fit = () => {
+        gsap.set(el, { scale: 1 });
+        const room = window.innerHeight - 48;
+        const h = el.offsetHeight;
+        gsap.set(el, { scale: h > room ? room / h : 1, transformOrigin: "left center" });
+      };
+      fit();
+      const distance = () => el.scrollWidth * Number(gsap.getProperty(el, "scale")) - window.innerWidth + 64;
+      const tween = gsap.to(el, {
         x: () => -distance(),
         ease: "none",
         scrollTrigger: {
@@ -69,10 +76,12 @@ export default function JourneyPan({ stages, intro }: { stages: JourneyStage[]; 
           scrub: 1,
           invalidateOnRefresh: true,
           anticipatePin: 1,
+          onRefreshInit: fit,
         },
       });
+      return () => tween.kill();
     });
-    // Timeline layout: the line draws as you read down.
+    // Phones and tablets: a vertical timeline; the line draws as you read down.
     mm.add(`not all and ${PAN_QUERY}`, () => {
       if (!line.current) return;
       gsap.fromTo(line.current, { scaleY: 0 }, {
@@ -89,13 +98,13 @@ export default function JourneyPan({ stages, intro }: { stages: JourneyStage[]; 
       <div ref={track} className="journey-track hidden gap-5 pl-[max(2rem,calc((100vw-1320px)/2+2rem))] pr-16 pan:flex pan:items-stretch">
         {intro && <div className="w-[26rem] shrink-0 py-2 pr-6">{intro}</div>}
         {stages.map((s, i) => (
-          <div key={s.code + i} className="w-[26rem] shrink-0">
+          <div key={s.code + i} className="w-[26rem] shrink-0 pan-short:w-[30rem]">
             <StageCard s={s} />
           </div>
         ))}
       </div>
 
-      {/* Timeline (phones, tablets and short laptops) */}
+      {/* Timeline (phones and tablets) */}
       <div className="container-x pan:hidden">
         {intro && <div className="mb-10">{intro}</div>}
         <div className="relative">

@@ -7,25 +7,28 @@ import { asArray } from "@/lib/shape";
 import { mediaUrl } from "@/lib/supabase/media";
 import CmsSectionHeading from "@/components/ui/CmsSectionHeading";
 import Rail from "@/components/ui/Rail";
+import PosterViewer from "@/components/ui/PosterViewer";
 
 /** Result posters (CMS: air1_images). A swipeable snap rail, not a marquee
  *  (the page keeps a single marquee). Posters come in every shape, so each
- *  card shows the whole poster and opens it full size. Hidden when empty. */
+ *  card shows the whole poster and opens it in the full-screen viewer. Hidden when empty. */
 export default async function ToppersRail() {
   const doc = await getPublished<{ images: string[] }>("air1_images", { images: AIR1_IMAGES });
   const images = asArray<string>(doc.images).filter(Boolean);
   if (!images.length) return null;
+  const posters = images.map((src, i) => ({ src: mediaUrl(src), alt: posterAlt(src, i) }));
 
   return (
     <section className="section-y overflow-hidden" aria-label="Result posters">
       <div className="container-x">
         <CmsSectionHeading sectionKey="toppers" />
       </div>
+      <PosterViewer posters={posters}>
       <div className="mt-10">
       <Rail label="Result posters" className="rail flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-3 sm:px-8 lg:px-[max(2rem,calc((100vw-1320px)/2+2rem))]">
         {images.map((src, i) => (
           <li key={src + i} className="w-[84vw] max-w-[30rem] shrink-0 snap-start">
-            <a href={mediaUrl(src)} target="_blank" rel="noopener noreferrer"
+            <a href={mediaUrl(src)} target="_blank" rel="noopener noreferrer" data-poster={i}
               className="group relative block aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] bg-brand-950">
               <Image aria-hidden src={mediaUrl(src)} alt="" fill sizes="30rem" className="scale-125 object-cover opacity-40 blur-2xl" />
               <Image src={mediaUrl(src)} alt={posterAlt(src, i)} fill sizes="(min-width: 640px) 30rem, 84vw"
@@ -39,6 +42,7 @@ export default async function ToppersRail() {
         ))}
       </Rail>
       </div>
+      </PosterViewer>
     </section>
   );
 }

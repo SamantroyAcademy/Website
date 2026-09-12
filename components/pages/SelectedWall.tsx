@@ -40,7 +40,7 @@ export default function SelectedWall({ initial, sample }: { initial: Candidate[]
   return (
     <div>
       {forces.length > 2 && (
-        <div className="rail -mx-5 mb-8 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:px-0" data-lenis-prevent>
+        <div className="rail -mx-5 mb-8 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:px-0">
           {forces.map((f) => (
             <button key={f} type="button" onClick={() => setForce(f)} aria-pressed={force === f}
               className={`shrink-0 rounded-full px-4 py-2.5 text-sm font-semibold ${force === f ? "bg-ink text-surface" : "bg-surface text-ink-2 shadow-[inset_0_0_0_1.5px_var(--color-line)]"}`}>

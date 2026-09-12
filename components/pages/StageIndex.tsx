@@ -26,7 +26,7 @@ export default function StageIndex({ stages }: { stages: { id: string; code: str
 
   return (
     <nav aria-label="Stages" className="lg:sticky lg:top-28">
-      <ol className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:gap-1 lg:overflow-visible lg:pb-0 rail" data-lenis-prevent>
+      <ol className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:gap-1 lg:overflow-visible lg:pb-0 rail">
         {stages.map((s) => {
           const on = s.id === active;
           return (

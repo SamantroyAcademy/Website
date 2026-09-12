@@ -72,7 +72,7 @@ export default async function VerticalsStrip() {
 
       {/* Mobile / tablet rail */}
       <div className="mt-10 lg:hidden">
-        <ul className="rail flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 sm:px-8" data-lenis-prevent>
+        <ul className="rail flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 sm:px-8">
           {cards.map((c, i) => (
             <li key={c.name + i} className="relative aspect-[4/5] w-[78vw] max-w-[22rem] shrink-0 snap-start overflow-hidden rounded-[var(--radius-card)] bg-brand-900">
               <Image src={mediaUrl(c.image)} alt={c.alt || c.name} fill sizes="80vw" className="object-cover opacity-90" />

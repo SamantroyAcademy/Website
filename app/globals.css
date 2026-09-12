@@ -41,8 +41,15 @@
   unicode-range: U+0B00-0B7F, U+200C-200D, U+25CC;
 }
 
-/* Wide and tall enough for the pinned horizontal journey (see JourneyPan). */
-@custom-variant pan (@media (min-width: 1024px) and (min-height: 760px));
+/* Desktop: the pinned horizontal journey (see JourneyPan). Short laptop
+   screens get wider, more compact cards so a card always fits the screen. */
+@custom-variant pan (@media (min-width: 1024px));
+@custom-variant pan-short (@media (min-width: 1024px) and (max-height: 820px));
+
+/* Navbar: the full link row needs about 1150px (Odia labels are the widest);
+   below it the menu button takes over. The phone number joins from 1360px. */
+@custom-variant navwide (@media (min-width: 72rem));
+@custom-variant navphone (@media (min-width: 85rem));
 
 @theme {
   --font-display: var(--font-cabinet), "Noto Sans Oriya", ui-sans-serif, system-ui, sans-serif;
@@ -354,7 +361,9 @@ html.lenis, html.lenis body { height: auto; }
 }
 
 /* Hide scrollbar on horizontal snap rails, keep them scrollable */
-.rail { scrollbar-width: none; }
+/* Rails scroll sideways only: any vertical overflow would catch the page's
+   wheel scroll for a few turns before letting go. */
+.rail { scrollbar-width: none; overflow-y: hidden; overscroll-behavior-x: contain; }
 /* Snap rails keep their side padding visible: mandatory snapping would
    otherwise scroll the first card flush to the edge. Matches the px-5 /
    sm:px-8 / lg container-aligned padding the rails use. */

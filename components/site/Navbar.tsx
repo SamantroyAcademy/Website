@@ -146,14 +146,14 @@ export default function Navbar({ phone, phoneHref, whatsapp }: { phone: string; 
         <nav
           className={`mx-auto flex items-center justify-between gap-3 transition-[max-width,height,padding,border-radius,background-color,box-shadow] duration-500 ease-[var(--ease-out-expo)] ${
             pill
-              ? "h-14 max-w-[76rem] rounded-full bg-paper/70 px-2.5 pl-3 shadow-[0_10px_34px_-14px_rgb(12_18_38/0.45),inset_0_0_0_1px_rgb(255_255_255/0.7),0_0_0_1px_rgb(12_18_38/0.06)] backdrop-blur-xl backdrop-saturate-150 sm:px-3 sm:pl-4"
+              ? "h-14 max-w-[1320px] rounded-full bg-paper/70 px-2.5 pl-3 shadow-[0_10px_34px_-14px_rgb(12_18_38/0.45),inset_0_0_0_1px_rgb(255_255_255/0.7),0_0_0_1px_rgb(12_18_38/0.06)] backdrop-blur-xl backdrop-saturate-150 sm:px-3 sm:pl-4"
               : "h-16 max-w-[1320px] px-5 sm:px-8 lg:h-[68px]"
           }`}
           aria-label="Primary"
         >
           <Logo />
 
-          <div className="hidden items-center gap-0.5 lg:flex">
+          <div className="hidden items-center gap-0.5 whitespace-nowrap navwide:flex">
             {NAV.map((entry) =>
               isNavGroup(entry) ? (
                 <Dropdown key={entry.label} group={entry} pathname={pathname} />
@@ -173,9 +173,9 @@ export default function Navbar({ phone, phoneHref, whatsapp }: { phone: string; 
             )}
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 whitespace-nowrap sm:gap-2">
             <LanguageToggle />
-            <a href={phoneHref} translate="no" className="hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-ink-2 hover:text-ink xl:flex">
+            <a href={phoneHref} translate="no" className="hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-ink-2 hover:text-ink navphone:flex">
               <PhoneIcon size={17} weight="duotone" className="text-brand-600" />
               {phone}
             </a>
@@ -188,7 +188,7 @@ export default function Navbar({ phone, phoneHref, whatsapp }: { phone: string; 
               aria-expanded={menu}
               aria-controls="mobile-menu"
               aria-label={menu ? "Close menu" : "Open menu"}
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-surface text-ink shadow-[inset_0_0_0_1.5px_var(--color-line)] lg:hidden"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-surface text-ink shadow-[inset_0_0_0_1.5px_var(--color-line)] navwide:hidden"
             >
               {menu ? <XIcon size={20} weight="bold" /> : <ListIcon size={20} weight="bold" />}
             </button>
@@ -201,7 +201,7 @@ export default function Navbar({ phone, phoneHref, whatsapp }: { phone: string; 
           id="mobile-menu"
           ref={sheet}
           data-lenis-prevent
-          className="fixed inset-0 z-40 overflow-y-auto bg-paper pt-20 lg:hidden"
+          className="fixed inset-0 z-40 overflow-y-auto bg-paper pt-20 navwide:hidden"
           role="dialog"
           aria-modal="true"
           aria-label="Menu"
