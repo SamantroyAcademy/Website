@@ -17,7 +17,7 @@ export function FaqList({ items }: { items: Faq[] }) {
               <PlusIcon size={16} weight="bold" />
             </span>
           </summary>
-          <div className="rich-html max-w-[65ch] pb-6 pr-12 leading-relaxed text-ink-2" dangerouslySetInnerHTML={{ __html: f.answer }} />
+          <div className="rich-html max-w-[65ch] pb-6 pr-12 leading-relaxed text-ink-2" data-i18n="html" dangerouslySetInnerHTML={{ __html: f.answer }} />
         </details>
       ))}
     </div>

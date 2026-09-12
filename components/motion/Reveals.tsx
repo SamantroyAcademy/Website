@@ -64,7 +64,14 @@ function initReveals() {
   });
 
   // Split headings: lines rise out of a mask.
+  // In Odia mode headings are translated in place, so they fade in whole:
+  // splitting into lines would cut the text into untranslatable fragments.
+  const odia = document.documentElement.classList.contains("i18n-or");
   gsap.utils.toArray<HTMLElement>("[data-split]").forEach((el) => {
+    if (odia) {
+      gsap.fromTo(el, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1, ease: EASE, scrollTrigger: { trigger: el, start: "top 88%", once: true } });
+      return;
+    }
     SplitText.create(el, {
       type: "lines",
       mask: "lines",

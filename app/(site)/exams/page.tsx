@@ -54,7 +54,7 @@ export default async function ExamsPage() {
                 <li key={g.title} className="rounded-[var(--radius-card)] bg-brand-50 p-7">
                   <Icon name={g.icon} size={30} className="text-brand-700" />
                   <h3 className="mt-4 font-display text-2xl font-bold tracking-tight text-ink">{g.title}</h3>
-                  <div className="rich-html mt-2 leading-relaxed text-ink-2" dangerouslySetInnerHTML={{ __html: g.body }} />
+                  <div className="rich-html mt-2 leading-relaxed text-ink-2" data-i18n="html" dangerouslySetInnerHTML={{ __html: g.body }} />
                   <ul className="mt-5 flex flex-wrap gap-1.5">
                     {asArray<string>(g.tags).map((t) => (
                       <li key={t} className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-brand-800">{t}</li>

@@ -32,7 +32,7 @@ export default function Portrait({
       {src ? (
         <Image src={mediaUrl(src)} alt={name} fill sizes={sizes} priority={priority} className="object-cover" />
       ) : (
-        <span aria-hidden className={`absolute inset-0 flex items-center justify-center font-stencil font-extrabold ${monoClass}`}>
+        <span aria-hidden translate="no" className={`absolute inset-0 flex items-center justify-center font-stencil font-extrabold ${monoClass}`}>
           {initials(name)}
         </span>
       )}

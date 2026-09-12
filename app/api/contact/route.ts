@@ -25,6 +25,7 @@ type Payload = {
   status?: string;
   message?: string;
   company?: string; // honeypot
+  _form?: string; // "popup" or "full"
   "cf-turnstile-response"?: string;
 };
 
@@ -66,7 +67,9 @@ export async function POST(req: Request) {
   // required" here rejected submissions from a form that never asked for one.
   const form = resolveContactForm(await getPublished<unknown>("contact_form", CONTACT_FORM));
   const cfg = (key: ContactFieldKey) => form.fields.find((f) => f.key === key);
-  const isOn = (key: ContactFieldKey) => cfg(key)?.enabled !== false;
+  // The popup only shows fields marked "In popup"; only those can be required there.
+  const fromPopup = body._form === "popup";
+  const isOn = (key: ContactFieldKey) => cfg(key)?.enabled !== false && (!fromPopup || cfg(key)?.popup !== false);
   const isRequired = (key: ContactFieldKey) => isOn(key) && cfg(key)?.required === true;
   const labelOf = (key: ContactFieldKey) => cfg(key)?.label || key;
 

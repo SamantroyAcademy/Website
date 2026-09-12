@@ -55,6 +55,25 @@ it straight from `NEXT_PUBLIC_R2_PUBLIC_URL`, so Vercel's bandwidth is never spe
   origins. **Add the production domain to the CORS rule before launch**, or admin
   uploads on the live site will fail.
 
+## Odia language switch
+
+The navbar has an **EN / ଓଡ଼ିଆ** switch. Translation is automatic and costs nothing:
+
+- `lib/i18n/sync.ts` crawls every public page, queues each new English string in
+  `public.translations` (migration 0007), translates pending rows in batches through
+  **OpenRouter's free models** (fallback list in `FREE_MODELS`), and publishes all finished
+  rows as one gzipped, versioned dictionary on R2 (`i18n/or-<hash>.json`).
+- It runs **after every admin save** (`/api/admin/revalidate`, in the background), **every
+  night** (Vercel cron, `vercel.json`, calls `/api/cron/i18n`, needs `CRON_SECRET`), and on
+  demand from **Admin, Odia Translations**, where any translation can be corrected by hand.
+- In the browser (`components/i18n/`, `lib/i18n/dom.ts`) the dictionary is fetched from R2 in
+  the background on every visit; in Odia mode the page text is swapped after hydration and
+  kept in sync as React renders. Names, phone numbers and the logo are marked
+  `translate="no"`. Text a visitor sees without a translation is reported
+  (`/api/i18n/missing`, rate-limited) and translated in the next sync.
+- Free models are rate-limited per day and sometimes slow, so a large backlog is translated
+  over a few runs. Odia uses Noto Sans Oriya (served from R2, loaded only for Odia text).
+
 ## Performance and security
 
 - **Few requests per visit** (about 23 on the homepage): links do not prefetch
@@ -87,6 +106,7 @@ Run the files in `supabase/migrations/` in order (Supabase, SQL Editor), then th
 | `0004_exams_standards.sql` | Exam catalogue and physical standards |
 | `0005_candidate_hometown.sql` | Hometown on selected candidates |
 | `0006_rate_limits.sql` | Shared rate-limit counter for the public API |
+| `0007_translations.sql` | Odia translations (source text, Odia, status, model) |
 | `seed/0001_catalogue.sql` | 27 exams, 20 standards rows, sample questions, FAQs (idempotent) |
 
 Regenerate the seed after editing `lib/exams.ts` or `lib/standards.ts`:

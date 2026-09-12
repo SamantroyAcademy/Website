@@ -8,6 +8,8 @@ import ChatBot from "@/components/site/ChatBot";
 import PreviewBar from "@/components/site/PreviewBar";
 import PageViewTracker from "@/components/site/PageViewTracker";
 import { LogoDefs } from "@/components/Logo";
+import LanguageProvider from "@/components/i18n/LanguageProvider";
+import { mediaUrl } from "@/lib/supabase/media";
 import { CONTACT_FORM, resolveContactForm } from "@/lib/form-defaults";
 import { getPublished, getSettings, telHref, brochureHref, brochureOn, mapHref } from "@/lib/content";
 import { ENQUIRY_POPUP, type EnquiryPopupDoc } from "@/lib/homepage-defaults";
@@ -15,11 +17,12 @@ import { BATCH_INFO } from "@/lib/data";
 import { ldJson, siteJsonLd } from "@/lib/structured-data";
 
 export default async function SiteLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [popup, formDoc, settings, preloader] = await Promise.all([
+  const [popup, formDoc, settings, preloader, i18n] = await Promise.all([
     getPublished<EnquiryPopupDoc>("enquiry_popup", ENQUIRY_POPUP),
     getPublished<unknown>("contact_form", CONTACT_FORM),
     getSettings(),
     getPublished<{ lottie: string }>("preloader", { lottie: "on" }),
+    getPublished<{ version: string }>("i18n", { version: "" }),
   ]);
   const form = resolveContactForm(formDoc);
   const phoneHref = telHref(settings.phone1);
@@ -28,6 +31,7 @@ export default async function SiteLayout({ children }: Readonly<{ children: Reac
 
   return (
     <MotionProvider>
+      <LanguageProvider dictUrl={i18n.version ? mediaUrl(`i18n/or-${i18n.version}.json`) : null}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(jsonLd) }} />
       <LogoDefs />
       <PageViewTracker />
@@ -57,6 +61,7 @@ export default async function SiteLayout({ children }: Readonly<{ children: Reac
         />
         <PreviewBar />
       </ModalProvider>
+      </LanguageProvider>
     </MotionProvider>
   );
 }

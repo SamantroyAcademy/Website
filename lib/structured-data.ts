@@ -5,7 +5,7 @@ import { mediaUrl } from "@/lib/supabase/media";
 type Settings = typeof SITE;
 
 /** Share image and logo, served from R2 (see scripts/generate-og-image.mjs). */
-export const OG_IMAGE = "images/brand/og-v1.png";
+export const OG_IMAGE = "images/brand/og-v2.png";
 export const LOGO_IMAGE = "images/brand/logo-1200.png";
 
 /** Districts the academy's selected candidates come from (result posters). */

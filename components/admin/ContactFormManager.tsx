@@ -77,14 +77,16 @@ export default function ContactFormManager({ initial }: { initial: ContactFormDo
         <div className="border-b border-slate-200 px-4 py-3">
           <h2 className="text-sm font-bold text-slate-900">Fields</h2>
           <p className="mt-0.5 text-xs text-slate-500">
-            Rename a field, change its placeholder, mark it mandatory (a red <b className="text-red-600">*</b> appears
-            next to the label and an empty submit is blocked), or hide it entirely.
+            Rename a field or change its placeholder. <b>Show</b> puts the field on the forms; <b>In popup</b> also
+            puts it in the enquiry popup (keep that to 4 or 5 fields so it fits a phone screen);{" "}
+            <b>Mandatory</b> makes a shown field required (a red <b className="text-red-600">*</b> appears and an empty
+            submit is blocked).
           </p>
         </div>
 
         <div className="divide-y divide-slate-100">
           {doc.fields.map((f) => (
-            <div key={f.key} className="grid gap-3 p-4 sm:grid-cols-[1fr_1.3fr_auto_auto]">
+            <div key={f.key} className="grid gap-3 p-4 sm:grid-cols-[1fr_1.3fr_auto_auto_auto]">
               <div>
                 <label className="text-xs text-slate-500">Label</label>
                 <input
@@ -121,6 +123,16 @@ export default function ContactFormManager({ initial }: { initial: ContactFormDo
                   className="h-4 w-4"
                 />
                 Show
+              </label>
+              <label className="flex items-end gap-2 pb-1.5 text-sm text-slate-700" title="The popup must fit one phone screen: keep it to 4 or 5 fields.">
+                <input
+                  type="checkbox"
+                  checked={f.popup !== false}
+                  disabled={!f.enabled}
+                  onChange={(e) => setField(f.key, { popup: e.target.checked })}
+                  className="h-4 w-4"
+                />
+                In popup
               </label>
             </div>
           ))}

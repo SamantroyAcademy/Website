@@ -121,14 +121,14 @@ export default async function ExamPage({ params }: { params: Promise<{ slug: str
             {exam.pattern && (
               <div data-reveal>
                 <h2 className="display-md text-ink">Exam pattern</h2>
-                <div className="rich-html prose-article mt-4" dangerouslySetInnerHTML={{ __html: exam.pattern }} />
+                <div className="rich-html prose-article mt-4" data-i18n="html" dangerouslySetInnerHTML={{ __html: exam.pattern }} />
               </div>
             )}
 
             {exam.syllabus && (
               <div data-reveal>
                 <h2 className="display-md text-ink">Syllabus</h2>
-                <div className="rich-html prose-article mt-4" dangerouslySetInnerHTML={{ __html: exam.syllabus }} />
+                <div className="rich-html prose-article mt-4" data-i18n="html" dangerouslySetInnerHTML={{ __html: exam.syllabus }} />
               </div>
             )}
 
@@ -141,7 +141,7 @@ export default async function ExamPage({ params }: { params: Promise<{ slug: str
             {exam.salary && (
               <div data-reveal>
                 <h2 className="display-md text-ink">Salary and career</h2>
-                <div className="rich-html prose-article mt-4" dangerouslySetInnerHTML={{ __html: exam.salary }} />
+                <div className="rich-html prose-article mt-4" data-i18n="html" dangerouslySetInnerHTML={{ __html: exam.salary }} />
               </div>
             )}
 

@@ -25,7 +25,7 @@ export default async function Courses({ withHeading = true }: { withHeading?: bo
       <CourseStack items={items} showPrices={opts.showPrices !== "off"} />
       {note.text && (
         <div className="container-x">
-          <div className="rich-html mt-8 max-w-2xl text-sm text-muted" data-reveal dangerouslySetInnerHTML={{ __html: note.text }} />
+          <div className="rich-html mt-8 max-w-2xl text-sm text-muted" data-reveal data-i18n="html" dangerouslySetInnerHTML={{ __html: note.text }} />
         </div>
       )}
     </section>

@@ -31,15 +31,15 @@ const securityHeaders = [
       "default-src 'self'",
       "img-src 'self' data: blob: https:",
       "media-src 'self' https:",
-      "font-src 'self' data:",
+      `font-src 'self' data:${R2_ORIGIN ? ` ${R2_ORIGIN}` : ""}`,
       "style-src 'self' 'unsafe-inline'",
       // React dev tooling needs eval; production never gets it.
       // Cloudflare Turnstile (bot check on forms) is the only third-party script.
       `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
       "script-src-attr 'none'",
       // Browser calls go only to this site, Supabase (auth, page views), R2
-      // (signed admin uploads) and Turnstile.
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.r2.cloudflarestorage.com https://challenges.cloudflare.com",
+      // (signed admin uploads, the Odia dictionary) and Turnstile.
+      `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.r2.cloudflarestorage.com https://challenges.cloudflare.com${R2_ORIGIN ? ` ${R2_ORIGIN}` : ""}`,
       `frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com https://maps.google.com https://*.supabase.co https://www.instagram.com https://instagram.com https://challenges.cloudflare.com${R2_ORIGIN ? ` ${R2_ORIGIN}` : ""}`,
       "object-src 'none'",
       "base-uri 'self'",

@@ -26,7 +26,7 @@ export default async function JourneySection({ heading = true }: { heading?: boo
               <h2 className="display-lg text-ink">
                 Seven stages between you and <span className="hl">the uniform.</span>
               </h2>
-              <div className="rich-html lede mt-6" dangerouslySetInnerHTML={{ __html: intro.text }} />
+              <div className="rich-html lede mt-6" data-i18n="html" dangerouslySetInnerHTML={{ __html: intro.text }} />
             </div>
             <Link href="/recruitment-process" className="btn btn-ghost group mt-8 self-start">
               The full process

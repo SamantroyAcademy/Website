@@ -31,10 +31,19 @@ touching code.
 | Height, chest, run timings | Physical Standards |
 | The seven recruitment stages | Pages and Sections, Recruitment Journey |
 | Phone, WhatsApp, email, address, map, socials | Site, Footer and Contact |
-| Enquiry form fields and dropdowns | Site, Enquiry Form |
+| Enquiry form fields and dropdowns (Show, In popup, Mandatory) | Site, Enquiry Form |
+| Odia translations | Site, Odia Translations |
 | The popup that greets visitors | Site, Enquiry Popup |
 | Page titles for Google | Site, SEO |
 | Upcoming batch and exam dates | Homepage, Countdown |
+
+## Odia (ଓଡ଼ିଆ)
+
+Everything you publish is translated into Odia automatically in the background, a minute or
+so after you save. You never need to press a translate button. To check or correct the Odia,
+open **Site, Odia Translations**: edit a line and press **Save and publish**. Your edits are
+kept. Free AI models are limited per day, so after a big change some text may show in English
+for a few hours until the nightly run finishes it.
 
 ## Leads
 

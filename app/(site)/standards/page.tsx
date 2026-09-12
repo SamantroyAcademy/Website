@@ -42,7 +42,7 @@ export default async function StandardsPage() {
                   <span className="font-stencil text-lg text-accent-ink">{s.step}</span>
                 </div>
                 <h3 className="mt-5 font-display text-xl font-bold tracking-tight text-ink">{s.title}</h3>
-                <div className="rich-html mt-2 text-[0.95rem] leading-relaxed text-ink-2" dangerouslySetInnerHTML={{ __html: s.detail }} />
+                <div className="rich-html mt-2 text-[0.95rem] leading-relaxed text-ink-2" data-i18n="html" dangerouslySetInnerHTML={{ __html: s.detail }} />
               </li>
             ))}
           </ol>
@@ -122,7 +122,7 @@ export default async function StandardsPage() {
             {doc.appealBody && (
               <div className="mt-12 rounded-[var(--radius-card)] bg-brand-50 p-7" data-reveal>
                 <h3 className="font-display text-2xl font-bold tracking-tight text-ink">{doc.appealTitle}</h3>
-                <div className="rich-html mt-3 space-y-3 leading-relaxed text-ink-2" dangerouslySetInnerHTML={{ __html: doc.appealBody }} />
+                <div className="rich-html mt-3 space-y-3 leading-relaxed text-ink-2" data-i18n="html" dangerouslySetInnerHTML={{ __html: doc.appealBody }} />
               </div>
             )}
           </div>

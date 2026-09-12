@@ -21,6 +21,8 @@ export type ContactField = {
   required: boolean;
   /** "off" hides the field entirely without deleting its settings. */
   enabled: boolean;
+  /** Also shown in the enquiry popup (which must fit one phone screen). */
+  popup: boolean;
 };
 
 export type ContactFormDoc = {
@@ -42,10 +44,10 @@ export const ENTRY_OPTIONS: string[] = [
   "Army Agniveer Tradesman",
   "Navy Agniveer SSR",
   "Navy Agniveer MR",
-  "Air Force Agniveervayu (X group)",
-  "Air Force Agniveervayu (Y group)",
+  "Air Force X group",
+  "Air Force Y group",
   "Coast Guard Navik / Yantrik",
-  "SSC GD Constable (BSF, CRPF, CISF, ITBP, SSB)",
+  "SSC GD Constable (CAPF)",
   "SSC CPO (SI)",
   "Odisha Police Constable",
   "Odisha Police SI",
@@ -66,29 +68,29 @@ export const ENTRY_OPTIONS: string[] = [
 ];
 
 export const BATCH_OPTIONS: string[] = [
-  "Defence Careers Batch (Army, Navy, Air Force)",
-  "NDA batch (from 21 September)",
-  "CDS batch (from 14 October)",
-  "Police and CAPF Batch",
-  "Bank, Railway and SSC Batch",
+  "Defence: Army, Navy, Air Force",
+  "NDA batch, 21 September",
+  "CDS batch, 14 October",
+  "Police and CAPF",
+  "Bank, Railway and SSC",
   "Not sure yet",
 ];
 export const STATUS_OPTIONS: string[] = [
-  "Preparing, no notification yet",
-  "Applied, written exam coming up",
-  "Cleared written, physical test next",
+  "Just starting",
+  "Applied, written exam next",
+  "Written cleared, physical next",
   "Attempted before",
 ];
 
 export const CONTACT_FORM: ContactFormDoc = {
   fields: [
-    { key: "name", label: "Full name", placeholder: "e.g. Sanjay Behera", required: true, enabled: true },
-    { key: "phone", label: "Phone", placeholder: "98765 43210", required: true, enabled: true },
-    { key: "email", label: "Email", placeholder: "you@example.com", required: false, enabled: true },
-    { key: "entry", label: "Target exam", placeholder: "Select your exam", required: true, enabled: true },
-    { key: "batch", label: "Preferred batch", placeholder: "Select a batch", required: false, enabled: true },
-    { key: "status", label: "Where you are now", placeholder: "Select one", required: false, enabled: true },
-    { key: "message", label: "Message", placeholder: "Your height, category, or any question", required: false, enabled: true },
+    { key: "name", label: "Full name", placeholder: "e.g. Sanjay Behera", required: true, enabled: true, popup: true },
+    { key: "phone", label: "Phone", placeholder: "98765 43210", required: true, enabled: true, popup: true },
+    { key: "email", label: "Email", placeholder: "you@example.com", required: false, enabled: true, popup: false },
+    { key: "entry", label: "Target exam", placeholder: "Select your exam", required: true, enabled: true, popup: true },
+    { key: "batch", label: "Preferred batch", placeholder: "Select a batch", required: false, enabled: true, popup: true },
+    { key: "status", label: "Where you are now", placeholder: "Select one", required: false, enabled: true, popup: false },
+    { key: "message", label: "Message", placeholder: "Your height, category, or any question", required: false, enabled: true, popup: false },
   ],
   entryOptions: ENTRY_OPTIONS,
   batchOptions: BATCH_OPTIONS,
@@ -113,6 +115,7 @@ export function resolveContactForm(saved: unknown): ContactFormDoc {
       placeholder: typeof hit.placeholder === "string" ? hit.placeholder : def.placeholder,
       required: typeof hit.required === "boolean" ? hit.required : def.required,
       enabled: typeof hit.enabled === "boolean" ? hit.enabled : def.enabled,
+      popup: typeof hit.popup === "boolean" ? hit.popup : def.popup,
     };
   });
 

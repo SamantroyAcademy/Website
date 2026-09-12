@@ -11,9 +11,9 @@ export function CandidateTile({ c, priority = false }: { c: Candidate; priority?
     <figure className="group">
       <Portrait src={c.image_path} name={c.name} className="aspect-[4/5]" sizes="(min-width: 1024px) 16vw, (min-width: 640px) 25vw, 50vw" priority={priority} />
       <figcaption className="mt-3">
-        <p className="font-display text-lg font-bold leading-tight tracking-tight text-ink">{c.name}</p>
+        <p translate="no" className="font-display text-lg font-bold leading-tight tracking-tight text-ink">{c.name}</p>
         <p className="mt-0.5 text-sm font-medium text-ink-2">{c.post || c.exam}</p>
-        {c.hometown && <p className="mt-0.5 text-[0.8rem] text-muted">{c.hometown}</p>}
+        {c.hometown && <p translate="no" className="mt-0.5 text-[0.8rem] text-muted">{c.hometown}</p>}
       </figcaption>
     </figure>
   );

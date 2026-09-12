@@ -7,6 +7,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CaretDownIcon, ListIcon, XIcon, PhoneIcon, WhatsappLogoIcon, ArrowRightIcon } from "@phosphor-icons/react";
 import Logo from "@/components/Logo";
+import LanguageToggle from "@/components/i18n/LanguageToggle";
 import { NAV, isNavGroup, type NavGroup } from "@/lib/data";
 import { useContactModal } from "./ModalProvider";
 import { useMotion, prefersReducedMotion } from "@/components/motion/MotionProvider";
@@ -99,19 +100,17 @@ export default function Navbar({ phone, phoneHref, whatsapp }: { phone: string; 
   const sheet = useRef<HTMLDivElement>(null);
   const [menu, setMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pill = scrolled && !menu;
 
-  // Hide on scroll down, show on scroll up; progress hairline; solid once scrolled.
+  // Always visible (sticky); turns into a floating glass pill once the page
+  // scrolls; progress hairline across the top.
   useEffect(() => {
-    const reduce = prefersReducedMotion();
     const st = ScrollTrigger.create({
       start: 0,
       end: "max",
       onUpdate: (self) => {
         if (progress.current) gsap.set(progress.current, { scaleX: self.progress });
-        setScrolled(self.scroll() > 12);
-        if (reduce || !bar.current) return;
-        const hide = self.direction === 1 && self.scroll() > 240;
-        gsap.to(bar.current, { yPercent: hide ? -110 : 0, duration: 0.45, ease: "power3.out", overwrite: true });
+        setScrolled(self.scroll() > 24);
       },
     });
     return () => st.kill();
@@ -139,12 +138,19 @@ export default function Navbar({ phone, phoneHref, whatsapp }: { phone: string; 
     <>
       <header
         ref={bar}
-        className={`fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow] duration-300 ${
-          scrolled || menu ? "bg-paper/85 shadow-[0_1px_0_var(--color-line)] backdrop-blur-xl" : "bg-transparent"
+        className={`fixed inset-x-0 top-0 z-50 transition-[background-color,padding] duration-500 ${
+          menu ? "bg-paper" : pill ? "px-3 pt-2.5 sm:px-5 sm:pt-3" : "bg-transparent"
         }`}
       >
-        <div ref={progress} aria-hidden className="absolute inset-x-0 top-0 h-[2px] origin-left scale-x-0 bg-accent" />
-        <nav className="container-x flex h-16 items-center justify-between gap-4 lg:h-[68px]" aria-label="Primary">
+        <div ref={progress} aria-hidden className="absolute inset-x-0 top-0 z-10 h-[2px] origin-left scale-x-0 bg-accent" />
+        <nav
+          className={`mx-auto flex items-center justify-between gap-3 transition-[max-width,height,padding,border-radius,background-color,box-shadow] duration-500 ease-[var(--ease-out-expo)] ${
+            pill
+              ? "h-14 max-w-[76rem] rounded-full bg-paper/70 px-2.5 pl-3 shadow-[0_10px_34px_-14px_rgb(12_18_38/0.45),inset_0_0_0_1px_rgb(255_255_255/0.7),0_0_0_1px_rgb(12_18_38/0.06)] backdrop-blur-xl backdrop-saturate-150 sm:px-3 sm:pl-4"
+              : "h-16 max-w-[1320px] px-5 sm:px-8 lg:h-[68px]"
+          }`}
+          aria-label="Primary"
+        >
           <Logo />
 
           <div className="hidden items-center gap-0.5 lg:flex">
@@ -167,8 +173,9 @@ export default function Navbar({ phone, phoneHref, whatsapp }: { phone: string; 
             )}
           </div>
 
-          <div className="flex items-center gap-2">
-            <a href={phoneHref} className="hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-ink-2 hover:text-ink xl:flex">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <LanguageToggle />
+            <a href={phoneHref} translate="no" className="hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-ink-2 hover:text-ink xl:flex">
               <PhoneIcon size={17} weight="duotone" className="text-brand-600" />
               {phone}
             </a>

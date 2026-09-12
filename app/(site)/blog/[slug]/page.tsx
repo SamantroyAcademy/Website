@@ -66,7 +66,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           </div>
         )}
         <div className="container-x mt-12 max-w-3xl">
-          <div className="rich-html prose-article" dangerouslySetInnerHTML={{ __html: post.body }} />
+          <div className="rich-html prose-article" data-i18n="html" dangerouslySetInnerHTML={{ __html: post.body }} />
           <div className="mt-14 flex flex-col gap-4 rounded-[var(--radius-card)] bg-brand-50 p-7 sm:flex-row sm:items-center sm:justify-between">
             <p className="font-display text-xl font-bold text-ink">Preparing for this exam?</p>
             <OpenEnquiry />

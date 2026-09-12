@@ -56,3 +56,15 @@ export async function listFolder(folder: string): Promise<string[]> {
 
 const decodeXml = (s: string) =>
   s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&");
+
+/** Server-side upload (small generated files such as the translation
+ *  dictionary). Object keys are versioned by the caller, so a year of
+ *  browser caching is safe. */
+export async function putObject(key: string, body: Uint8Array | string, headers: Record<string, string>): Promise<boolean> {
+  const res = await r2().fetch(objectUrl(key), {
+    method: "PUT",
+    body: typeof body === "string" ? body : new Blob([body as BlobPart]),
+    headers: { "Cache-Control": UPLOAD_CACHE_CONTROL, ...headers },
+  });
+  return res.ok;
+}

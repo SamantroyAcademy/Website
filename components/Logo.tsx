@@ -66,13 +66,13 @@ export default function Logo({
   className?: string;
 }) {
   const inner = (
-    <span className={`inline-flex items-center gap-2.5 ${className}`}>
-      <LogoMark className="h-10 w-10 shrink-0" />
+    <span translate="no" className={`inline-flex items-center gap-2 sm:gap-2.5 ${className}`}>
+      <LogoMark className="h-9 w-9 shrink-0 sm:h-10 sm:w-10" />
       <span className="flex flex-col leading-none">
-        <span className={`font-display text-[1.14rem] font-extrabold tracking-[-0.02em] sm:text-[1.22rem] ${invert ? "text-paper" : "text-ink"}`}>
+        <span className={`font-display text-[0.98rem] font-extrabold tracking-[-0.02em] min-[400px]:text-[1.1rem] sm:text-[1.22rem] ${invert ? "text-paper" : "text-ink"}`}>
           Samantroy Academy
         </span>
-        <span className={`mt-1 text-[0.56rem] font-bold tracking-[0.14em] sm:text-[0.6rem] ${invert ? "text-brand-200" : "text-accent-ink"}`}>
+        <span className={`mt-1 text-[0.5rem] font-bold tracking-[0.12em] min-[400px]:text-[0.56rem] sm:text-[0.6rem] sm:tracking-[0.14em] ${invert ? "text-brand-200" : "text-accent-ink"}`}>
           SHAPING NATION&rsquo;S WARRIORS
         </span>
       </span>

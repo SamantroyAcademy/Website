@@ -26,7 +26,7 @@ export default async function BooksSection() {
                 <h3 className="font-display text-xl font-bold tracking-tight text-ink sm:text-2xl">{b.title}</h3>
                 {b.subtitle && <p className="text-sm font-medium text-brand-600">{b.subtitle}</p>}
                 <p className="mt-1 text-sm text-muted">{[b.author, b.edition].filter(Boolean).join(", ")}</p>
-                <div className="rich-html mt-3 line-clamp-4 text-sm leading-relaxed text-ink-2" dangerouslySetInnerHTML={{ __html: b.blurb }} />
+                <div className="rich-html mt-3 line-clamp-4 text-sm leading-relaxed text-ink-2" data-i18n="html" dangerouslySetInnerHTML={{ __html: b.blurb }} />
                 {b.buyUrl && (
                   <a href={b.buyUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm mt-auto self-start">
                     Buy the book <ArrowUpRightIcon size={16} weight="bold" />

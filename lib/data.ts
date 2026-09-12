@@ -32,9 +32,9 @@ export const SITE = {
   whatsapp: "https://wa.me/919861077371?text=Jai%20Hind!%20I%20want%20to%20know%20about%20Samantroy%20Academy%20batches.",
   email: "",
   address: "Gosaninuagaon, Sishu Mandir Road, 300 m left of Railway Station, Brahmapur, Ganjam, Odisha 760003",
-  /** Opens the academy on Google Maps. Every address on the site links here.
-   *  Replace with the academy's own Google Maps pin link when available. */
-  mapUrl: "https://maps.google.com/maps?q=Samantroy%20Academy%2C%20Gosaninuagaon%2C%20Brahmapur%2C%20Odisha%20760003",
+  /** The academy's Google Maps pin. Every address on the site links here, and
+   *  the embedded map centres on its @lat,lng. */
+  mapUrl: "https://www.google.com/maps/place/Samantroy+Academy/@19.2935554,84.7925175,18z/data=!4m6!3m5!1s0x3a3d5aa2c3ee6c09:0x2980bdca1fe41371!8m2!3d19.2935554!4d84.7925175!16s%2Fg%2F11byyqh2r_",
   instagram: "https://www.instagram.com/samantroyacademy07/",
   youtube: "https://www.youtube.com/@samantroyacademy5722",
   telegram: "",
@@ -49,8 +49,7 @@ export const SITE = {
 };
 
 /** Where the academy is, for structured data and local search. Coordinates
- *  are Brahmapur railway station (the academy is 300 m from it); refine them
- *  from the academy's Google Maps pin. */
+ *  are the academy's own Google Maps pin. */
 export const LOCATION = {
   streetAddress: "Gosaninuagaon, Sishu Mandir Road, 300 m left of Railway Station",
   locality: "Brahmapur",
@@ -60,8 +59,8 @@ export const LOCATION = {
   regionCode: "IN-OR",
   postalCode: "760003",
   country: "IN",
-  lat: 19.2968,
-  lng: 84.7974,
+  lat: 19.2935554,
+  lng: 84.7925175,
 };
 
 /** Batch cadence shown on the Courses page. */

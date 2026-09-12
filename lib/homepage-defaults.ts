@@ -55,7 +55,7 @@ export type GoogleReview = {
 export const GOOGLE_REVIEWS: GoogleReview[] = [];
 
 /** Google Business profile link for the "see all reviews" button. */
-export const GOOGLE_PLACE_URL = "https://maps.google.com/maps?q=Samantroy%20Academy%2C%20Brahmapur%2C%20Odisha";
+export const GOOGLE_PLACE_URL = "https://www.google.com/maps/place/Samantroy+Academy/@19.2935554,84.7925175,18z/data=!4m6!3m5!1s0x3a3d5aa2c3ee6c09:0x2980bdca1fe41371!8m2!3d19.2935554!4d84.7925175!16s%2Fg%2F11byyqh2r_";
 
 /** The enquiry popup that opens shortly after the site loads. */
 export type EnquiryPopupDoc = {

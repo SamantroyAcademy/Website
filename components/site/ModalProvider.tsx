@@ -135,7 +135,7 @@ export default function ModalProvider({
                 </div>
               </div>
               {popup.body && (
-                <div className="rich-html mt-3 text-sm leading-snug text-ink-2 sm:text-[0.95rem] sm:leading-normal" dangerouslySetInnerHTML={{ __html: popup.body }} />
+                <div className="rich-html mt-3 text-sm leading-snug text-ink-2 sm:text-[0.95rem] sm:leading-normal" data-i18n="html" dangerouslySetInnerHTML={{ __html: popup.body }} />
               )}
               <div className="mt-4 sm:mt-6">
                 <ContactForm compact config={form} phone={phone} presetEntry={preset} />

@@ -22,7 +22,7 @@ export default async function Mentors() {
                   <h3 className="font-display text-2xl font-bold tracking-tight text-ink">{m.name}</h3>
                   {m.role && <p className="mt-1 font-medium text-brand-600">{m.role}</p>}
                   {m.specialty && <p className="mt-3 text-sm font-semibold text-ink-2">{m.specialty}</p>}
-                  {m.bio && <div className="rich-html mt-2 leading-relaxed text-ink-2" dangerouslySetInnerHTML={{ __html: m.bio }} />}
+                  {m.bio && <div className="rich-html mt-2 leading-relaxed text-ink-2" data-i18n="html" dangerouslySetInnerHTML={{ __html: m.bio }} />}
                 </div>
               </article>
             </li>

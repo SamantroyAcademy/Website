@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "@/components/ui/Link";
 import { gsap } from "gsap";
-import { ChatCircleDotsIcon, XIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
+import { ChatCircleDotsIcon, XIcon, PaperPlaneRightIcon, CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import { LogoMark } from "@/components/Logo";
 import { useContactModal } from "./ModalProvider";
 import { prefersReducedMotion } from "@/components/motion/MotionProvider";
@@ -53,9 +53,21 @@ function knowledge(s: ChatSettings): Entry[] {
     },
     {
       id: "exams",
-      keys: ["exam", "agniveer", "ssc gd", "navy", "ssr", "mr", "air force", "airman", "x group", "y group", "odisha police", "constable", "railway", "rrb", "group d", "rpf", "bsf", "crpf", "cisf", "bank", "ibps", "sbi", "clerk", "ossc", "osssc", "opsc", "aso", "cgl", "nda", "cds", "afcat", "tes", "ncc"],
+      keys: ["exam", "agniveer", "ssc gd", "navy", "ssr", "mr", "air force", "airman", "x group", "y group", "odisha police", "constable", "railway", "rrb", "group d", "rpf", "bsf", "crpf", "cisf", "ossc", "osssc", "opsc", "aso"],
       a: "Army (Agniveer GD, Technical, Clerk), Navy SSR and MR, Air Force X and Y, SSC GD for BSF, CRPF, CISF, ITBP and SSB, Odisha Police Constable and SI, OSSC, OSSSC, OPSC and ASO, Bank PO and Clerk, Railway (RRB) and SSC CGL. Officer entries too: NDA, TES, CDS, AFCAT and NCC. Each exam has its own page with eligibility and pattern.",
       links: [{ label: "Browse all exams", href: "/exams" }],
+    },
+    {
+      id: "officer",
+      keys: ["nda", "cds", "afcat", "tes", "ncc", "officer", "ssb interview", "commission", " acc "],
+      a: "Yes: NDA, NA, TES, CDS, AFCAT and NCC special entry, with SSB interview practice. The NDA batch starts on 21 September and the CDS batch on 14 October. Recent officer results: AFCAT All India Rank 183 and Army ACC All India Rank 26.",
+      links: [{ label: "Officer entries", href: "/exams?vertical=officer" }, { label: "Book free counselling", href: "#", action: "enquire" }],
+    },
+    {
+      id: "bank",
+      keys: ["bank", "ibps", "sbi", "clerk", " po ", "railway", "rrb", "ssc cgl", "cgl", "government job", "govt job"],
+      a: "The Bank, Railway and SSC batch covers Bank PO and Clerk (IBPS, SBI), Railway (RRB), SSC CGL and Odisha jobs through OSSC, OSSSC, OPSC and ASO. It is written-exam coaching, open after +2 in any stream or after graduation.",
+      links: [{ label: "Bank and SSC exams", href: "/exams?vertical=ssc" }, { label: "View courses", href: "/courses" }],
     },
     {
       id: "process",
@@ -128,12 +140,69 @@ function knowledge(s: ChatSettings): Entry[] {
 
 const QUICK: { label: string; id: string }[] = [
   { label: "Which exams can I apply for?", id: "eligible" },
+  { label: "When does the next batch start?", id: "batches" },
+  { label: "I studied Arts or Commerce", id: "streams" },
+  { label: "NDA, CDS and AFCAT", id: "officer" },
+  { label: "Bank, Railway and SSC", id: "bank" },
+  { label: "All exams you coach for", id: "exams" },
+  { label: "Fees", id: "fees" },
+  { label: "Results so far", id: "results" },
   { label: "Height and chest standards", id: "height" },
   { label: "Run timings", id: "running" },
-  { label: "Next batch", id: "batches" },
-  { label: "Fees", id: "fees" },
+  { label: "Selection process", id: "process" },
   { label: "Free mock test", id: "mock" },
+  { label: "Notes and papers", id: "notes" },
+  { label: "Stay near the academy", id: "hostel" },
+  { label: "Address and phone", id: "contact" },
+  { label: "About the academy", id: "about" },
 ];
+
+/** Quick-question slider: swipe on touch, mouse wheel or drag on desktop,
+ *  and arrow buttons at the ends. */
+function ChipSlider({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ x: number; left: number; moved: boolean } | null>(null);
+  const [edges, setEdges] = useState({ prev: false, next: false });
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => setEdges({ prev: el.scrollLeft > 4, next: el.scrollLeft + el.clientWidth < el.scrollWidth - 4 });
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => { el.removeEventListener("scroll", update); el.removeEventListener("wheel", onWheel); };
+  }, []);
+  const step = (dir: 1 | -1) => ref.current?.scrollBy({ left: dir * 180, behavior: "smooth" });
+  const arrow = "absolute top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-surface text-ink shadow-[var(--shadow-card),inset_0_0_0_1px_var(--color-line)]";
+  return (
+    <div className="relative border-t border-line">
+      <div
+        ref={ref}
+        data-lenis-prevent
+        className="rail flex cursor-grab gap-2 overflow-x-auto px-3 py-2 active:cursor-grabbing"
+        onPointerDown={(e) => { if (e.pointerType === "mouse" && ref.current) drag.current = { x: e.clientX, left: ref.current.scrollLeft, moved: false }; }}
+        onPointerMove={(e) => {
+          const d = drag.current;
+          if (!d || !ref.current) return;
+          if (Math.abs(e.clientX - d.x) > 4) d.moved = true;
+          ref.current.scrollLeft = d.left - (e.clientX - d.x);
+        }}
+        onPointerUp={() => { setTimeout(() => { drag.current = null; }, 0); }}
+        onPointerLeave={() => { drag.current = null; }}
+        onClickCapture={(e) => { if (drag.current?.moved) { e.stopPropagation(); e.preventDefault(); } }}
+      >
+        {children}
+      </div>
+      {edges.prev && <button type="button" onClick={() => step(-1)} aria-label="Previous questions" className={`${arrow} left-1`}><CaretLeftIcon size={14} weight="bold" /></button>}
+      {edges.next && <button type="button" onClick={() => step(1)} aria-label="More questions" className={`${arrow} right-1`}><CaretRightIcon size={14} weight="bold" /></button>}
+    </div>
+  );
+}
 
 export default function ChatBot({ settings }: { settings: ChatSettings }) {
   const KB = knowledge(settings);
@@ -230,7 +299,7 @@ export default function ChatBot({ settings }: { settings: ChatSettings }) {
           <div ref={body} data-lenis-prevent className="flex-1 space-y-3 overflow-y-auto px-3 py-4" aria-live="polite">
             {msgs.map((m, i) => (
               <div key={i} className={`flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[86%] rounded-[18px] px-3.5 py-2.5 text-[0.9rem] leading-relaxed ${
+                <div translate={m.from === "user" ? "no" : undefined} className={`max-w-[86%] rounded-[18px] px-3.5 py-2.5 text-[0.9rem] leading-relaxed ${
                   m.from === "user" ? "rounded-br-md bg-brand-800 text-surface" : "rounded-bl-md bg-surface text-ink shadow-[inset_0_0_0_1px_var(--color-line)]"
                 }`}>
                   <p className="whitespace-pre-line">{m.text}</p>
@@ -259,14 +328,14 @@ export default function ChatBot({ settings }: { settings: ChatSettings }) {
             ))}
           </div>
 
-          <div data-lenis-prevent className="rail flex gap-2 overflow-x-auto border-t border-line px-3 py-2">
+          <ChipSlider>
             {QUICK.map((q) => (
               <button key={q.id} type="button" onClick={() => push(q.label, toMsg(byId(q.id)))}
                 className="shrink-0 rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-ink-2 shadow-[inset_0_0_0_1px_var(--color-line)] transition hover:text-ink">
                 {q.label}
               </button>
             ))}
-          </div>
+          </ChipSlider>
 
           <form
             onSubmit={(e) => { e.preventDefault(); const t = input.trim(); if (!t) return; setInput(""); push(t, answer(t)); }}

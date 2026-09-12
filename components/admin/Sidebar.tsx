@@ -64,6 +64,7 @@ const GROUPS: Group[] = [
       { href: "/admin/sections/enquiry_popup", label: "Enquiry Popup" },
       { href: "/admin/contact-form", label: "Enquiry Form" },
       { href: "/admin/settings", label: "Footer and Contact" },
+      { href: "/admin/translations", label: "Odia Translations" },
       { href: "/admin/seo", label: "SEO" },
       { href: "/admin/media", label: "Media Library" },
     ],

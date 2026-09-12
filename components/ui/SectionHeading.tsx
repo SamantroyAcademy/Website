@@ -41,7 +41,7 @@ export default function SectionHeading({
         <Tag
           data-split
           className={`display-lg ${kicker ? "mt-3" : ""} ${tone === "dark" ? "text-surface" : "text-ink"}`}
-          dangerouslySetInnerHTML={{ __html: title }}
+          data-i18n="html" dangerouslySetInnerHTML={{ __html: title }}
         />
       )}
       {subtitle && (

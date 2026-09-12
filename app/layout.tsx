@@ -100,7 +100,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){try{var d=document.documentElement,r=matchMedia(\"(prefers-reduced-motion: reduce)\").matches,s=null;try{s=sessionStorage.getItem(\"sa-intro\")}catch(e){}if(r||s)d.classList.add(\"sa-intro-done\");if(!r){d.classList.add(\"js-motion\");setTimeout(function(){if(!window.__saMotion)d.classList.remove(\"js-motion\")},4000)}}catch(e){}})();",
+              "(function(){try{if(localStorage.getItem(\"sa-lang\")===\"or\")document.documentElement.classList.add(\"i18n-or\")}catch(e){}})();(function(){try{var d=document.documentElement,r=matchMedia(\"(prefers-reduced-motion: reduce)\").matches,s=null;try{s=sessionStorage.getItem(\"sa-intro\")}catch(e){}if(r||s)d.classList.add(\"sa-intro-done\");if(!r){d.classList.add(\"js-motion\");setTimeout(function(){if(!window.__saMotion)d.classList.remove(\"js-motion\")},4000)}}catch(e){}})();",
           }}
         />
       </head>

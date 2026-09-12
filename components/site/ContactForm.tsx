@@ -15,9 +15,9 @@ import Turnstile, { waitForTurnstile } from "@/components/ui/Turnstile";
 
 type Status = "idle" | "sending" | "success" | "error";
 
-/** The popup must fit one screen with no scrolling, so its compact form only
- *  asks what a callback needs (plus anything the admin marks required). */
-const COMPACT_KEYS: ContactField["key"][] = ["name", "phone", "entry", "batch"];
+/** Which fields a form shows: "Show" decides for both forms; the popup (which
+ *  must fit one phone screen) also needs "In popup" (Admin, Enquiry Form). */
+const visible = (f: ContactField, compact: boolean) => f.enabled && (!compact || f.popup !== false);
 
 /** Enquiry form. Every label, placeholder, required flag, visibility toggle
  *  and dropdown list comes from the CMS (Admin -> Enquiry Form), and
@@ -48,7 +48,7 @@ export default function ContactForm({
     setStatus("sending");
     setErrorMsg("");
     await waitForTurnstile(form);
-    const data = Object.fromEntries(new FormData(form).entries());
+    const data: Record<string, FormDataEntryValue> = { ...Object.fromEntries(new FormData(form).entries()), _form: compact ? "popup" : "full" };
     if ("phone" in data) data.phone = fullPhone(phoneVal);
     try {
       const res = await fetch("/api/contact", {
@@ -70,7 +70,7 @@ export default function ContactForm({
     }
   }
 
-  const shown = config.fields.filter((f) => f.enabled && (!compact || f.required || COMPACT_KEYS.includes(f.key)));
+  const shown = config.fields.filter((f) => visible(f, compact));
   const find = (key: ContactField["key"]) => shown.find((f) => f.key === key);
 
   // Render helpers (plain functions, NOT components): defining components

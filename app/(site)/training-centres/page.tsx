@@ -47,7 +47,7 @@ export default async function TrainingCentresPage() {
                     {c.service && <div><dt className="text-muted">Force</dt><dd className="font-semibold text-ink">{c.service}</dd></div>}
                     {c.established && <div><dt className="text-muted">Established</dt><dd className="font-semibold text-ink">{c.established}</dd></div>}
                   </dl>
-                  <div className="rich-html mt-5 leading-relaxed text-ink-2" dangerouslySetInnerHTML={{ __html: c.intro }} />
+                  <div className="rich-html mt-5 leading-relaxed text-ink-2" data-i18n="html" dangerouslySetInnerHTML={{ __html: c.intro }} />
                   {asArray(c.courses).length > 0 && (
                     <ul className="mt-6 space-y-2">
                       {asArray<Centre["courses"][number]>(c.courses).map((k) => (

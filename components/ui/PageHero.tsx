@@ -47,7 +47,7 @@ export default function PageHero({
             {kicker && (
               <p data-reveal="fade" className={`mb-4 font-semibold text-brand-600 ${KICKER_SIZE[kickerSize ?? "md"] ?? "text-sm"}`}>{kicker}</p>
             )}
-            <h1 data-split className="display-xl text-ink" dangerouslySetInnerHTML={{ __html: title }} />
+            <h1 data-split className="display-xl text-ink" data-i18n="html" dangerouslySetInnerHTML={{ __html: title }} />
           </div>
           <div className="lg:col-span-4">
             {subtitle && <p data-reveal className="lede">{subtitle}</p>}

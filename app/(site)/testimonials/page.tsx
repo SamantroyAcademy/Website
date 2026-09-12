@@ -29,7 +29,7 @@ export default async function TestimonialsPage() {
             {items.map((t, i) => (
               <li key={(t.id ?? t.name) + i} className="card mb-5 break-inside-avoid p-7" data-reveal>
                 <QuotesIcon size={30} weight="fill" className="text-accent" aria-hidden />
-                <div className="rich-html mt-3 text-lg leading-relaxed text-ink" dangerouslySetInnerHTML={{ __html: t.body }} />
+                <div className="rich-html mt-3 text-lg leading-relaxed text-ink" data-i18n="html" dangerouslySetInnerHTML={{ __html: t.body }} />
                 <div className="mt-6 flex items-center gap-3">
                   <Portrait src={t.image_path} name={t.name} className="h-12 w-12 shrink-0" rounded="rounded-full" sizes="48px" monoClass="text-base" />
                   <div>

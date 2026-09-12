@@ -45,7 +45,7 @@ export default async function RecruitmentProcessPage() {
 
       <section className="section-y">
         <div className="container-x">
-          <div className="rich-html max-w-3xl font-display text-[clamp(1.4rem,2.6vw,2.1rem)] font-bold leading-[1.25] tracking-tight text-ink" data-reveal dangerouslySetInnerHTML={{ __html: intro.text }} />
+          <div className="rich-html max-w-3xl font-display text-[clamp(1.4rem,2.6vw,2.1rem)] font-bold leading-[1.25] tracking-tight text-ink" data-reveal data-i18n="html" dangerouslySetInnerHTML={{ __html: intro.text }} />
 
           <div className="mt-14 grid gap-10 lg:grid-cols-12">
             <div className="lg:col-span-3">
@@ -62,7 +62,7 @@ export default async function RecruitmentProcessPage() {
                         <p className={`numeral text-5xl ${TONE_TEXT[s.service] ?? "text-brand-700"}`}>{s.code}</p>
                         <h2 className="mt-5 font-display text-[clamp(1.7rem,3vw,2.4rem)] font-extrabold leading-tight tracking-tight text-ink">{s.title}</h2>
                         {s.subtitle && <p className="mt-2 text-lg font-medium text-brand-600">{s.subtitle}</p>}
-                        <div className="rich-html mt-5 leading-relaxed text-ink-2" dangerouslySetInnerHTML={{ __html: s.brief }} />
+                        <div className="rich-html mt-5 leading-relaxed text-ink-2" data-i18n="html" dangerouslySetInnerHTML={{ __html: s.brief }} />
                         {deeper && (
                           <Link href={deeper.href} className="group mt-6 inline-flex items-center gap-1.5 font-semibold text-accent-ink">
                             {deeper.label} <ArrowRightIcon size={16} weight="bold" className="arrow" />
@@ -86,7 +86,7 @@ export default async function RecruitmentProcessPage() {
                         {s.drill && (
                           <div className="mt-4 rounded-[14px] bg-brand-50 px-4 py-4">
                             <p className="text-sm font-semibold text-brand-700">How we prepare you</p>
-                            <div className="rich-html mt-1 leading-relaxed text-brand-900" dangerouslySetInnerHTML={{ __html: s.drill }} />
+                            <div className="rich-html mt-1 leading-relaxed text-brand-900" data-i18n="html" dangerouslySetInnerHTML={{ __html: s.drill }} />
                           </div>
                         )}
                       </div>

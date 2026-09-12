@@ -40,7 +40,7 @@ export default async function AboutPage() {
         <div className="container-x grid gap-12 lg:grid-cols-12 lg:items-center">
           <div className="lg:col-span-6">
             <SectionHeading kicker={mission.kicker} kickerSize={(mission as { kickerSize?: string }).kickerSize} title={mission.title} />
-            <div className="rich-html lede mt-6 space-y-4" data-reveal dangerouslySetInnerHTML={{ __html: mission.body }} />
+            <div className="rich-html lede mt-6 space-y-4" data-reveal data-i18n="html" dangerouslySetInnerHTML={{ __html: mission.body }} />
           </div>
           {mission.image && (
             <div className="lg:col-span-5 lg:col-start-8">
@@ -58,14 +58,14 @@ export default async function AboutPage() {
       <section className="section-y bg-surface">
         <div className="container-x">
           <SectionHeading kicker={story.kicker} title={story.title} />
-          <div className="rich-html lede mt-6" data-reveal dangerouslySetInnerHTML={{ __html: story.paragraph }} />
+          <div className="rich-html lede mt-6" data-reveal data-i18n="html" dangerouslySetInnerHTML={{ __html: story.paragraph }} />
           {gapItems.length > 0 && (
             <ol className="mt-12 grid gap-px overflow-hidden rounded-[var(--radius-card)] bg-line md:grid-cols-3" data-reveal="stagger">
               {gapItems.map((g, i) => (
                 <li key={g.title + i} className="bg-surface p-7 sm:p-8">
                   <Icon name={g.icon} size={30} className="text-accent-ink" />
                   <h3 className="mt-5 font-display text-2xl font-bold tracking-tight text-ink">{g.title}</h3>
-                  <div className="rich-html mt-3 leading-relaxed text-ink-2" dangerouslySetInnerHTML={{ __html: g.body }} />
+                  <div className="rich-html mt-3 leading-relaxed text-ink-2" data-i18n="html" dangerouslySetInnerHTML={{ __html: g.body }} />
                 </li>
               ))}
             </ol>

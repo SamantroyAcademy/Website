@@ -38,7 +38,7 @@ export default async function WhyUs() {
               </span>
               <div>
                 <h3 className="font-display text-xl font-bold tracking-tight text-ink sm:text-2xl">{it.title}</h3>
-                <div className="rich-html mt-2 leading-relaxed text-ink-2" dangerouslySetInnerHTML={{ __html: it.body }} />
+                <div className="rich-html mt-2 leading-relaxed text-ink-2" data-i18n="html" dangerouslySetInnerHTML={{ __html: it.body }} />
               </div>
             </li>
           ))}
