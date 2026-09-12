@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ArrowUpRightIcon } from "@phosphor-icons/react/ssr";
 import { getPublished } from "@/lib/content";
 import { VERTICALS_DOC, type VerticalsDoc, type VerticalCard } from "@/lib/verticals";

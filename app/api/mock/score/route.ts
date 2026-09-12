@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { rateLimitShared } from "@/lib/rate-limit";
+import { readJson } from "@/lib/security";
 import { createAdminClient, hasServiceRole } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SAMPLE_QUESTIONS } from "@/lib/mock-defaults";
@@ -13,15 +14,12 @@ type KeyRow = { id: string; answer: number | null; explanation: string | null; m
  *  answer, -negative_marks for a wrong one, 0 for a skipped one.
  *  Body: { answers: { [questionId]: optionIndex } } */
 export async function POST(req: Request) {
-  const rl = rateLimit(`mock:${clientIp(req)}`, { limit: 20, windowMs: 60_000 });
-  if (!rl.ok) return NextResponse.json({ error: "Too many attempts. Please wait." }, { status: 429 });
-
-  let body: { answers?: Record<string, number> };
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  if (!(await rateLimitShared("mock", req, { limit: 15, windowSeconds: 60 }))) {
+    return NextResponse.json({ error: "Too many attempts. Please wait." }, { status: 429 });
   }
+
+  const body = await readJson<{ answers?: Record<string, number> }>(req, 8_192);
+  if (!body || typeof body !== "object") return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   const answers = body.answers && typeof body.answers === "object" ? body.answers : {};
   const ids = Object.keys(answers).slice(0, 100);
   if (ids.length === 0) return NextResponse.json({ error: "No answers submitted." }, { status: 400 });

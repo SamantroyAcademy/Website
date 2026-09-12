@@ -79,7 +79,7 @@ export const ABOUT_MISSION = {
   title: `Shaping the nation's warriors ${em("since 2001")}`,
   body:
     "<p>Samantroy Academy for Defence Career Studies has trained aspirants in Brahmapur (Berhampur), Ganjam since 2001. In 2026 the academy marks its 25th anniversary, with more than 4000 of its aspirants recruited into the Army, Navy, Air Force, the central armed police forces and Odisha Police, and into bank, railway, SSC and Odisha government jobs.</p><p>Aspirants join after +2 in Science, Commerce or Arts, or after graduation, from across Ganjam, Gajapati, Kandhamal, Khordha, Puri and Cuttack. Classes run at our centre on Sishu Mandir Road, Gosaninuagaon, 300 m from Brahmapur railway station.</p>",
-  image: "hero/result-collage-2025-26.webp",
+  image: "/images/scenes/field-training.jpg",
 };
 
 export const GATEWAYS = [

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { createClient } from "@/lib/supabase/server";
 import { getSection, sectionDefaults } from "@/lib/sections";
 import SectionEditor from "@/components/admin/SectionEditor";

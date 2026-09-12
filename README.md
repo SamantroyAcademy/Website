@@ -55,6 +55,26 @@ it straight from `NEXT_PUBLIC_R2_PUBLIC_URL`, so Vercel's bandwidth is never spe
   origins. **Add the production domain to the CORS rule before launch**, or admin
   uploads on the live site will fail.
 
+## Performance and security
+
+- **Few requests per visit** (about 23 on the homepage): links do not prefetch
+  (`components/ui/Link.tsx`), only the 7 font files in use ship, the hero mounts posters
+  one ahead of the carousel, and images come from R2, not Vercel.
+- **Cached pages**: public pages are static with a 5-minute revalidate; a CMS publish
+  refreshes them at once (`revalidateTag`). Admin draft preview uses Next draft mode
+  (`/api/admin/preview`), so only the previewing admin gets fresh renders.
+- **Bots and floods**: Cloudflare Turnstile on the enquiry, eligibility and mock-test forms
+  (verified server-side, `lib/security.ts`), a honeypot field, per-IP rate limits shared by
+  every serverless instance (Postgres, migration 0006) with per-day caps, 16 KB request
+  body limits, and admin-only YouTube lookups.
+- **Headers**: strict CSP (scripts only from this site and Turnstile; browser connections
+  only to this site, Supabase, R2 and Turnstile), HSTS, frame, MIME, referrer, COOP and
+  permissions policies; the admin is `noindex` and never cached.
+- **Data**: row-level security on every table, service-role key server-only, signed
+  R2 uploads (type, size and cache headers signed), last super admin protected.
+- **In the dashboards** (not in code): Vercel Firewall Bot Protection and Attack Challenge
+  Mode, Supabase Auth captcha (Turnstile) and sign-ups off.
+
 ## Database
 
 Run the files in `supabase/migrations/` in order (Supabase, SQL Editor), then the seed:
@@ -66,6 +86,7 @@ Run the files in `supabase/migrations/` in order (Supabase, SQL Editor), then th
 | `0003_resources.sql` | Resource folders and files |
 | `0004_exams_standards.sql` | Exam catalogue and physical standards |
 | `0005_candidate_hometown.sql` | Hometown on selected candidates |
+| `0006_rate_limits.sql` | Shared rate-limit counter for the public API |
 | `seed/0001_catalogue.sql` | 27 exams, 20 standards rows, sample questions, FAQs (idempotent) |
 
 Regenerate the seed after editing `lib/exams.ts` or `lib/standards.ts`:

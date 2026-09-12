@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { draftMode } from "next/headers";
 import { unstable_cache } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createPublicClient } from "@/lib/supabase/public";
@@ -27,11 +27,12 @@ function deepSanitize<T>(value: T): T {
   return value;
 }
 
-/** True when an authenticated admin is previewing drafts (cookie set by the editor). */
+/** True when an admin has draft preview on (Next draft mode, enabled by
+ *  /api/admin/preview). Unlike reading a cookie, this keeps every public page
+ *  cacheable: only requests that carry the draft-mode bypass render fresh. */
 async function isPreview(): Promise<boolean> {
   try {
-    const c = await cookies();
-    return c.get("sa-preview")?.value === "1";
+    return (await draftMode()).isEnabled;
   } catch {
     return false;
   }

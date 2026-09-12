@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { gsap } from "gsap";
 import { ChatCircleDotsIcon, XIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
 import { LogoMark } from "@/components/Logo";
@@ -48,8 +48,8 @@ function knowledge(s: ChatSettings): Entry[] {
     {
       id: "running",
       keys: ["run", "running", "1600", "1.6", "5 km", "pet", "race", "timing", "beam", "pull up", "long jump", "high jump", "ditch"],
-      a: "Run distance and cut-off time change by exam: 1.6 km for Army and Navy, 5 km for SSC GD men, 1000 m for RRB Group D. Our ground batch times every run against your exam's cut-off.",
-      links: [{ label: "See run timings by exam", href: "/standards" }, { label: "Physical Training Batch", href: "/courses" }],
+      a: "Run distance and cut-off time change by exam: 1.6 km for Army and Navy, 5 km for SSC GD men, 1000 m for RRB Group D. The Standards page lists every exam's timings.",
+      links: [{ label: "See run timings by exam", href: "/standards" }, { label: "View courses", href: "/courses" }],
     },
     {
       id: "exams",
@@ -84,7 +84,7 @@ function knowledge(s: ChatSettings): Entry[] {
     {
       id: "fees",
       keys: ["fee", "fees", "price", "cost", "charge", "how much", "payment", "rupee", "discount"],
-      a: "Fees depend on the batch (complete selection, written only or physical only) and on hostel. A trainer confirms the current fee on a free counselling call.",
+      a: "Fees depend on the batch: Defence Careers, Police and CAPF, or Bank, Railway and SSC. Call the academy or book a free counselling call for the current fee.",
       links: [{ label: "Book free counselling", href: "#", action: "enquire" }, { label: "Ask on WhatsApp", href: s.whatsapp }],
     },
     {

@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type FormEvent } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
 import { mediaUrl } from "@/lib/supabase/media";

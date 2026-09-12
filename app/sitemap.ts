@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getExams, getPosts } from "@/lib/public-data";
 import { SITE } from "@/lib/data";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 const ROUTES = [
   "", "/about", "/recruitment-process", "/exams", "/standards", "/training-centres", "/courses",

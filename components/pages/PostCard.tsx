@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { mediaUrl } from "@/lib/supabase/media";
 import type { Post } from "@/lib/public-data";
 

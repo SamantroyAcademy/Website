@@ -27,8 +27,9 @@ async function logActivity(action: string, target: string) {
   await supabase.from("activity_log").insert({ actor: user.id, actor_email: user.email, action, target });
 }
 
-function setPreviewCookie(on: boolean) {
-  document.cookie = on ? "sa-preview=1; path=/; SameSite=Lax" : "sa-preview=; path=/; Max-Age=0; SameSite=Lax";
+/** Draft preview on while an editor is open (Next draft mode via the API). */
+function setPreview(on: boolean) {
+  void fetch("/api/admin/preview", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ on }), keepalive: true }).catch(() => {});
 }
 
 /** Renders a single field (text/rich/image/tags/repeater). */
@@ -130,7 +131,7 @@ export default function SectionEditor({ section, initial, canRollback }: { secti
   const [autosave, setAutosave] = useState<"idle" | "saving" | "saved">("idle");
   const firstRun = useRef(true);
 
-  useEffect(() => { setPreviewCookie(true); return () => setPreviewCookie(false); }, []);
+  useEffect(() => { setPreview(true); return () => setPreview(false); }, []);
 
   useEffect(() => {
     if (firstRun.current) { firstRun.current = false; return; }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { rateLimitShared, clientIp } from "@/lib/rate-limit";
+import { readJson, verifyTurnstile, BOT_CHECK_FAILED } from "@/lib/security";
 import { saveEnquiry } from "@/lib/enquiries";
 import { getPublished } from "@/lib/content";
 import { notifyAdmin, emailShell, escapeHtml } from "@/lib/mailer";
@@ -24,28 +25,29 @@ type Payload = {
   status?: string;
   message?: string;
   company?: string; // honeypot
+  "cf-turnstile-response"?: string;
 };
 
 export async function POST(req: Request) {
-  // Throttle abusive submitters (best-effort per instance; honeypot handles bots).
-  const rl = rateLimit(`contact:${clientIp(req)}`, { limit: 5, windowMs: 60_000 });
-  if (!rl.ok) {
+  // Throttle: 5 a minute and 20 a day per IP, shared across all instances.
+  if (!(await rateLimitShared("contact", req, { limit: 5, windowSeconds: 60 })) ||
+      !(await rateLimitShared("contact-day", req, { limit: 20, windowSeconds: 86_400 }))) {
     return NextResponse.json(
-      { error: "You're sending messages too quickly. Please try again shortly." },
+      { error: "You're sending messages too quickly. Please try again later." },
       { status: 429 },
     );
   }
 
-  let body: Payload;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
-  }
+  const body = await readJson<Payload>(req);
+  if (!body || typeof body !== "object") return NextResponse.json({ error: "Invalid request." }, { status: 400 });
 
   // Honeypot filled → silently accept (bot)
   if (body.company) {
     return NextResponse.json({ ok: true });
+  }
+  // Cloudflare Turnstile: stops scripted submissions that skip the page.
+  if (!(await verifyTurnstile(body["cf-turnstile-response"], clientIp(req)))) {
+    return NextResponse.json({ error: BOT_CHECK_FAILED }, { status: 400 });
   }
 
   const name = body.name?.trim() ?? "";

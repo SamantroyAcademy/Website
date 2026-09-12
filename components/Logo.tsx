@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { BARS_LEFT, BARS_RIGHT, LOGO_H, LOGO_RED, LOGO_W, MARK_BOX, MARK_D, RULE, TAGLINE_D, type Bar } from "@/lib/logo-art";
 
 /** The tagline paths are the heaviest part of the artwork, so they are

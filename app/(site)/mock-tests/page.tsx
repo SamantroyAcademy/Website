@@ -6,7 +6,8 @@ import MockQuiz from "@/components/pages/MockQuiz";
 import CtaBanner from "@/components/site/CtaBanner";
 import Reveals from "@/components/motion/Reveals";
 
-export const dynamic = "force-dynamic";
+// Cached for everyone; a CMS publish refreshes it at once (revalidateTag).
+export const revalidate = 300;
 export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata("mock-tests");
 }

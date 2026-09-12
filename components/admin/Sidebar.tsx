@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { usePathname } from "next/navigation";
 import type { AdminRole } from "@/lib/auth";
 import { LogoMark } from "@/components/Logo";

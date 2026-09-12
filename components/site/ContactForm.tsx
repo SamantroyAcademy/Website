@@ -11,8 +11,13 @@ import {
   type ContactField,
   type ContactFormDoc,
 } from "@/lib/form-defaults";
+import Turnstile, { waitForTurnstile } from "@/components/ui/Turnstile";
 
 type Status = "idle" | "sending" | "success" | "error";
+
+/** The popup must fit one screen with no scrolling, so its compact form only
+ *  asks what a callback needs (plus anything the admin marks required). */
+const COMPACT_KEYS: ContactField["key"][] = ["name", "phone", "entry", "batch"];
 
 /** Enquiry form. Every label, placeholder, required flag, visibility toggle
  *  and dropdown list comes from the CMS (Admin -> Enquiry Form), and
@@ -34,14 +39,17 @@ export default function ContactForm({
   const [errorMsg, setErrorMsg] = useState("");
   const [phoneVal, setPhoneVal] = useState("");
   const [phoneTouched, setPhoneTouched] = useState(false);
+  // Bumped after every attempt: Turnstile tokens are single-use.
+  const [tries, setTries] = useState(0);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
-    if ("phone" in data) data.phone = fullPhone(phoneVal);
     setStatus("sending");
     setErrorMsg("");
+    await waitForTurnstile(form);
+    const data = Object.fromEntries(new FormData(form).entries());
+    if ("phone" in data) data.phone = fullPhone(phoneVal);
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -57,16 +65,18 @@ export default function ContactForm({
     } catch (err) {
       setStatus("error");
       setErrorMsg(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setTries((t) => t + 1);
     }
   }
 
-  const shown = config.fields.filter((f) => f.enabled);
+  const shown = config.fields.filter((f) => f.enabled && (!compact || f.required || COMPACT_KEYS.includes(f.key)));
   const find = (key: ContactField["key"]) => shown.find((f) => f.key === key);
 
   // Render helpers (plain functions, NOT components): defining components
   // inside render would remount the inputs on every keystroke and drop focus.
   const label = (f: ContactField) => (
-    <label htmlFor={`cf-${f.key}`} className="mb-1.5 block text-sm font-semibold text-ink">
+    <label htmlFor={`cf-${f.key}`} className={`${compact ? "mb-1" : "mb-1.5"} block text-sm font-semibold text-ink`}>
       {f.label}
       {f.required ? <span className="ml-0.5 text-accent-ink" aria-hidden>*</span> : <span className="ml-1.5 text-xs font-normal text-muted">optional</span>}
     </label>
@@ -121,8 +131,8 @@ export default function ContactForm({
   }
 
   return (
-    <form onSubmit={onSubmit} aria-label="Enquiry form" className={compact ? "space-y-3.5" : "space-y-5"} noValidate={false}>
-      <div className={`grid gap-3.5 ${compact ? "grid-cols-1 sm:grid-cols-2" : "gap-5 sm:grid-cols-2"}`}>
+    <form onSubmit={onSubmit} aria-label="Enquiry form" className={compact ? "space-y-3" : "space-y-5"} noValidate={false}>
+      <div className={`grid ${compact ? "grid-cols-1 gap-3 sm:grid-cols-2" : "gap-5 sm:grid-cols-2"}`}>
         {name && (
           field(name,
             <input id="cf-name" name="name" required={name.required} minLength={2} maxLength={80}
@@ -181,6 +191,7 @@ export default function ContactForm({
 
       {/* Honeypot: invisible to people, irresistible to bots. */}
       <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
+      <Turnstile resetKey={tries} />
 
       <button type="submit" disabled={status === "sending" || (phoneVal !== "" && !isValidPhone(phoneVal))} className="btn btn-primary group w-full">
         {status === "sending" ? (
@@ -204,7 +215,7 @@ export default function ContactForm({
           </p>
         )}
       </div>
-      <p className="text-center text-xs text-muted">{config.privacyNote}</p>
+      {!compact && <p className="text-center text-xs text-muted">{config.privacyNote}</p>}
     </form>
   );
 }

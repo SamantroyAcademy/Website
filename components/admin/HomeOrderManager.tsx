@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
 import { HOME_SECTIONS, type HomeOrderItem } from "@/lib/homepage-order";

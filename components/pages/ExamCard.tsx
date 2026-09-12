@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ArrowUpRightIcon } from "@phosphor-icons/react/ssr";
 import type { Exam } from "@/lib/exams";
 import { verticalLabel } from "@/lib/exams";

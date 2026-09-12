@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { usePathname } from "next/navigation";
 
-/** Shown on the live site ONLY while an admin has draft preview on (the
- *  sa-preview cookie, set by the section editor). One click jumps to the CMS
- *  screen for the page being viewed, or exits preview. */
+/** Shown on the live site ONLY while an admin has draft preview on (draft
+ *  mode, with the readable sa-preview marker cookie set alongside it). One
+ *  click jumps to the CMS screen for the page being viewed, or exits preview. */
 export default function PreviewBar() {
   const pathname = usePathname();
   const [on, setOn] = useState(false);
@@ -17,8 +17,8 @@ export default function PreviewBar() {
 
   if (!on) return null;
 
-  function exit() {
-    document.cookie = "sa-preview=; path=/; Max-Age=0; SameSite=Lax";
+  async function exit() {
+    await fetch("/api/admin/preview", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ on: false }) }).catch(() => {});
     setOn(false);
     window.location.reload();
   }

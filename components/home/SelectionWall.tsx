@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ArrowRightIcon } from "@phosphor-icons/react/ssr";
 import { getCandidates, type Candidate } from "@/lib/public-data";
 import { HOMEPAGE_WALL_COUNT } from "@/lib/candidates";

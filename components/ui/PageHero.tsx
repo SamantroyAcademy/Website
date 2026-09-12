@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import type { ReactNode } from "react";
 import { CaretRightIcon } from "@phosphor-icons/react/ssr";
 import { mediaUrl } from "@/lib/supabase/media";

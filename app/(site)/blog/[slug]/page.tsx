@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { notFound } from "next/navigation";
 import { ArrowLeftIcon } from "@phosphor-icons/react/ssr";
 import { getPost, getPosts } from "@/lib/public-data";
@@ -12,7 +12,8 @@ import OpenEnquiry from "@/components/site/OpenEnquiry";
 import CtaBanner from "@/components/site/CtaBanner";
 import Reveals from "@/components/motion/Reveals";
 
-export const dynamic = "force-dynamic";
+// Cached for everyone; a CMS publish refreshes it at once (revalidateTag).
+export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;

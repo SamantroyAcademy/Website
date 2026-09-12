@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
-import { ArrowRightIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react";
 import type { HERO } from "@/lib/section-defaults";
 import type { HeroSlide } from "@/lib/hero-slides";
 import OpenEnquiry from "@/components/site/OpenEnquiry";
@@ -58,6 +58,13 @@ function Typewriter({ words }: { words: string[] }) {
 export default function Hero({ doc, slides }: { doc: Doc; slides: (HeroSlide & { image: string })[] }) {
   const root = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
+  // Slides whose images are in the DOM: the first two at start, then each
+  // new slide and the one after it as the carousel reaches them.
+  const [mounted, setMounted] = useState<Set<number>>(() => new Set([0, 1]));
+  useEffect(() => {
+    const next = (active + 1) % Math.max(slides.length, 1);
+    setMounted((m) => (m.has(active) && m.has(next) ? m : new Set([...m, active, next])));
+  }, [active, slides.length]);
 
   // Intro choreography, after the intro screen lifts.
   useEffect(() => {
@@ -80,18 +87,91 @@ export default function Hero({ doc, slides }: { doc: Doc; slides: (HeroSlide & {
     return () => { ctx.revert(); split?.revert(); };
   }, []);
 
-  // Slide rotation.
+  // Slide rotation. `nonce` restarts the timer after a manual change, so a
+  // tapped poster gets its full time on screen.
+  const [nonce, setNonce] = useState(0);
   useEffect(() => {
     if (slides.length < 2) return;
     const id = window.setInterval(() => setActive((a) => (a + 1) % slides.length), 6500);
     return () => window.clearInterval(id);
-  }, [slides.length]);
+  }, [slides.length, nonce]);
+  const go = (i: number) => { setActive((i + slides.length) % slides.length); setNonce((n) => n + 1); };
 
   const current = slides[active];
 
   return (
-    <section ref={root} className="relative overflow-hidden pt-24 sm:pt-28 lg:pt-24" aria-label="Introduction">
-      <div className="container-x grid items-center gap-10 pb-14 lg:min-h-[calc(100dvh-6rem)] lg:grid-cols-12 lg:gap-14 lg:pb-12">
+    <section ref={root} className="relative overflow-hidden pt-[4.6rem] sm:pt-20" aria-label="Introduction">
+      {/* Full-width poster carousel. */}
+      <figure className="relative">
+        <div data-hero-media className="relative h-[62vw] max-h-[74dvh] min-h-[15rem] w-full overflow-hidden bg-brand-950 sm:h-[52vw] lg:h-[68dvh]">
+          {slides.map((s, i) => (
+            <div
+              key={s.image + i}
+              className="absolute inset-0 transition-opacity duration-[1400ms] ease-out"
+              style={{ opacity: i === active ? 1 : 0 }}
+              aria-hidden={i !== active}
+            >
+              {/* Only the current poster and the next one are mounted, so a
+                  visitor downloads posters as they come up, not all at once.
+                  Posters come in every shape: each is shown whole, on a
+                  blurred, darkened copy of itself (same file, one download). */}
+              {mounted.has(i) && (
+                <>
+                  <Image aria-hidden src={s.image} alt="" fill sizes="100vw"
+                    className="scale-110 object-cover opacity-40 blur-2xl" />
+                  <Image
+                    data-hero-img={i === 0 ? "" : undefined}
+                    src={s.image}
+                    alt={[s.name, s.academy, s.term].filter(Boolean).join(", ") || "Samantroy Academy results poster"}
+                    fill
+                    priority={i === 0}
+                    sizes="100vw"
+                    className="object-contain px-3 pb-12 pt-3 drop-shadow-[0_18px_30px_rgb(0_0_0/0.4)] sm:px-6 sm:pb-16 sm:pt-6"
+                  />
+                </>
+              )}
+            </div>
+          ))}
+
+          {/* Caption, arrows and progress, over a soft bottom shade. */}
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-brand-950/85 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0">
+            <div className="container-x flex items-end justify-between gap-4 pb-4 sm:pb-5">
+              {current && (current.academy || current.term || current.name) ? (
+                <figcaption className="min-w-0 text-white">
+                  <span className="block truncate text-sm font-semibold sm:text-base">{current.name || current.academy}</span>
+                  <span className="block text-xs text-white/75 sm:text-sm">{current.name ? [current.academy, current.term].filter(Boolean).join(", ") : current.term}</span>
+                </figcaption>
+              ) : <span />}
+              {slides.length > 1 && (
+                <div className="flex shrink-0 gap-2">
+                  <button type="button" onClick={() => go(active - 1)} aria-label="Previous poster"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-ink shadow transition hover:bg-white">
+                    <ArrowLeftIcon size={18} weight="bold" />
+                  </button>
+                  <button type="button" onClick={() => go(active + 1)} aria-label="Next poster"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-ink shadow transition hover:bg-white">
+                    <ArrowRightIcon size={18} weight="bold" />
+                  </button>
+                </div>
+              )}
+            </div>
+            {slides.length > 1 && (
+              <div className="container-x flex gap-1.5 pb-3" role="tablist" aria-label="Choose poster">
+                {slides.map((s, i) => (
+                  <button key={i} type="button" role="tab" aria-selected={i === active} aria-label={`Poster ${i + 1}`}
+                    onClick={() => go(i)} className="h-1 flex-1 overflow-hidden rounded-full bg-white/25">
+                    <span key={i === active ? `on-${nonce}` : "off"} className={`block h-full rounded-full bg-white transition-[width] ${i === active ? "w-full duration-[6500ms] ease-linear" : "w-0 duration-0"}`} />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </figure>
+
+      {/* Headline and offer, below the carousel. */}
+      <div className="container-x grid gap-8 pb-14 pt-10 sm:pt-12 lg:grid-cols-12 lg:gap-14 lg:pb-16">
         <div className="lg:col-span-7">
           {doc.badge && (
             <p data-hero-badge className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3.5 py-1.5 text-sm font-semibold text-brand-700 shadow-[inset_0_0_0_1px_var(--color-brand-100)]">
@@ -108,10 +188,12 @@ export default function Hero({ doc, slides }: { doc: Doc; slides: (HeroSlide & {
               <Typewriter words={doc.typedWords} />
             </p>
           )}
+        </div>
+        <div className="lg:col-span-5 lg:self-end">
           {doc.paragraph && (
-            <div data-hero-fade className="rich-html lede mt-6" dangerouslySetInnerHTML={{ __html: doc.paragraph }} />
+            <div data-hero-fade className="rich-html lede" dangerouslySetInnerHTML={{ __html: doc.paragraph }} />
           )}
-          <div data-hero-fade className="mt-9 flex flex-col gap-3 sm:flex-row">
+          <div data-hero-fade className="mt-8 flex flex-col gap-3 sm:flex-row">
             <OpenEnquiry label={doc.primaryCta || undefined} className="btn btn-primary" />
             {doc.secondaryCta && (
               <Link href={doc.secondaryCtaHref || "/eligibility"} className="btn btn-ghost group">
@@ -124,56 +206,6 @@ export default function Hero({ doc, slides }: { doc: Doc; slides: (HeroSlide & {
             <p data-hero-fade className="mt-6 text-sm text-muted" dangerouslySetInnerHTML={{ __html: doc.rating }} />
           )}
         </div>
-
-        <figure className="lg:col-span-5">
-          <div data-hero-media className="relative mx-auto aspect-square max-h-[72dvh] w-full overflow-hidden rounded-[var(--radius-card)] bg-brand-950 lg:max-h-[78dvh]">
-            {slides.map((s, i) => (
-              <div
-                key={s.image + i}
-                className="absolute inset-0 transition-opacity duration-[1400ms] ease-out"
-                style={{ opacity: i === active ? 1 : 0 }}
-                aria-hidden={i !== active}
-              >
-                {/* Posters come in every shape: show each one whole, on a
-                    blurred, darkened copy of itself. */}
-                <Image aria-hidden src={s.image} alt="" fill sizes="(min-width: 1024px) 40vw, 100vw"
-                  className="scale-125 object-cover opacity-45 blur-2xl" />
-                <Image
-                  data-hero-img={i === 0 ? "" : undefined}
-                  src={s.image}
-                  alt={[s.name, s.academy, s.term].filter(Boolean).join(", ") || "Samantroy Academy results poster"}
-                  fill
-                  priority={i === 0}
-                  sizes="(min-width: 1024px) 40vw, 100vw"
-                  className="object-contain drop-shadow-[0_18px_30px_rgb(0_0_0/0.35)]"
-                />
-              </div>
-            ))}
-          </div>
-          {current && (current.academy || current.term || current.name) && (
-            <figcaption data-hero-fade className="mt-4 flex items-baseline justify-between gap-4 text-sm">
-              <span className="font-semibold text-ink">{current.name || current.academy}</span>
-              <span className="shrink-0 whitespace-nowrap text-right text-muted">{current.name ? [current.academy, current.term].filter(Boolean).join(", ") : current.term}</span>
-            </figcaption>
-          )}
-          {slides.length > 1 && (
-            <div className="mt-3 flex gap-1.5" role="tablist" aria-label="Choose photo">
-              {slides.map((s, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  role="tab"
-                  aria-selected={i === active}
-                  aria-label={`Photo ${i + 1}`}
-                  onClick={() => setActive(i)}
-                  className="h-1 flex-1 overflow-hidden rounded-full bg-tint-2"
-                >
-                  <span className={`block h-full rounded-full bg-brand-700 transition-[width] ${i === active ? "w-full duration-[5200ms] ease-linear" : "w-0 duration-0"}`} />
-                </button>
-              ))}
-            </div>
-          )}
-        </figure>
       </div>
     </section>
   );

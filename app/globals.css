@@ -307,7 +307,12 @@ html.js-motion [data-split] { opacity: 0; }
 /* Intro screen: hidden on repeat visits (set before paint) and, as a
    fail-safe, after 4s even if JavaScript never runs. */
 html.sa-intro-done .sa-preloader { display: none; }
-.sa-preloader { animation: sa-intro-failsafe 0s linear 4s forwards; }
+/* Fail-safe for when JS never runs: uncover the site after 6s. Once the
+   intro is actually playing, it is switched off so the site is never
+   revealed mid-animation on a slow phone. */
+.sa-preloader { animation: sa-intro-failsafe 0s linear 6s forwards; }
+html.sa-intro-running .sa-preloader { animation: none; }
+html.sa-intro-running body { overflow: hidden; }
 @keyframes sa-intro-failsafe { to { visibility: hidden; pointer-events: none; } }
 
 /* Lenis smooth scroll */

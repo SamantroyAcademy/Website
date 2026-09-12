@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ArrowRightIcon } from "@phosphor-icons/react/ssr";
 
 export default function NotFound() {

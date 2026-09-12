@@ -1,4 +1,5 @@
 import "server-only";
+import { createHash } from "node:crypto";
 
 /** Best-effort in-memory rate limiter (per warm serverless instance).
  *  Not a substitute for an edge WAF, but stops trivial floods & scripted
@@ -55,4 +56,29 @@ export function clientIp(req: Request): string {
   const xff = req.headers.get("x-forwarded-for");
   if (xff) return xff.split(",")[0].trim();
   return req.headers.get("x-real-ip") || "unknown";
+}
+
+/**
+ * Rate limit shared by every serverless instance (Postgres counter, see
+ * migration 0006). Checks the cheap in-memory limiter first, then the shared
+ * counter. If the database is unreachable it falls back to the in-memory
+ * result rather than blocking real visitors.
+ */
+export async function rateLimitShared(
+  bucket: string,
+  req: Request,
+  { limit, windowSeconds }: { limit: number; windowSeconds: number },
+): Promise<boolean> {
+  const ip = clientIp(req);
+  if (!rateLimit(`${bucket}:${ip}`, { limit, windowMs: windowSeconds * 1000 }).ok) return false;
+  try {
+    const { createAdminClient, hasServiceRole } = await import("@/lib/supabase/admin");
+    if (!hasServiceRole()) return true;
+    const key = createHash("sha256").update(`${bucket}:${ip}`).digest("hex");
+    const { data, error } = await createAdminClient().rpc("rate_limit_hit", { p_key: key, p_limit: limit, p_window_seconds: windowSeconds });
+    if (error) return true;
+    return data !== false;
+  } catch {
+    return true;
+  }
 }

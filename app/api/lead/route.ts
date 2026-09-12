@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { rateLimitShared, clientIp } from "@/lib/rate-limit";
+import { readJson, verifyTurnstile, BOT_CHECK_FAILED } from "@/lib/security";
 import { saveEnquiry } from "@/lib/enquiries";
 import { notifyAdmin } from "@/lib/mailer";
 import { fullPhone, isValidPhone, phoneDigits } from "@/lib/form-defaults";
@@ -15,6 +16,7 @@ type Body = {
   source?: "eligibility" | "mock_test";
   meta?: Record<string, unknown>;
   company?: string; // honeypot
+  turnstile?: string;
 };
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,16 +26,15 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  *  (this audience is phone-first). Stores to the CRM, then emails the
  *  academy; both best-effort so a downstream outage never fails the visitor. */
 export async function POST(req: Request) {
-  const rl = rateLimit(`lead:${clientIp(req)}`, { limit: 8, windowMs: 60_000 });
-  if (!rl.ok) return NextResponse.json({ error: "Too many requests." }, { status: 429 });
-
-  let body: Body;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  if (!(await rateLimitShared("lead", req, { limit: 6, windowSeconds: 60 })) ||
+      !(await rateLimitShared("lead-day", req, { limit: 25, windowSeconds: 86_400 }))) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
   }
+
+  const body = await readJson<Body>(req);
+  if (!body || typeof body !== "object") return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   if (body.company) return NextResponse.json({ ok: true }); // bot
+  if (!(await verifyTurnstile(body.turnstile, clientIp(req)))) return NextResponse.json({ error: BOT_CHECK_FAILED }, { status: 400 });
 
   const name = (body.name ?? "").trim();
   const email = (body.email ?? "").trim();

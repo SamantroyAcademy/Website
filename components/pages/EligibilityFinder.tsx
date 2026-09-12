@@ -1,13 +1,14 @@
 "use client";
 
 import { useMemo, useRef, useState, type FormEvent } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { gsap } from "gsap";
 import { ArrowLeftIcon, ArrowRightIcon, CheckCircleIcon, WarningCircleIcon, ArrowCounterClockwiseIcon } from "@phosphor-icons/react";
 import type { Exam, Education } from "@/lib/exams";
 import type { StandardRow, Category } from "@/lib/standards";
 import { assess, type EligibilityInput } from "@/lib/eligibility";
 import { prefersReducedMotion } from "@/components/motion/MotionProvider";
+import Turnstile, { waitForTurnstile } from "@/components/ui/Turnstile";
 
 const EDUCATION: { value: Education; label: string }[] = [
   { value: "8th", label: "Class 8" },
@@ -225,17 +226,21 @@ export default function EligibilityFinder({ exams, standards }: { exams: Exam[];
 function LeadCapture({ input, eligible }: { input: EligibilityInput; eligible: string[] }) {
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [err, setErr] = useState("");
+  const [tries, setTries] = useState(0);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget).entries()) as Record<string, string>;
+    const formEl = e.currentTarget;
     setStatus("sending");
+    await waitForTurnstile(formEl);
+    const data = Object.fromEntries(new FormData(formEl).entries()) as Record<string, string>;
     try {
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: data.name, email: data.email, phone: data.phone, company: data.company,
+          turnstile: data["cf-turnstile-response"],
           source: "eligibility",
           entry: eligible.slice(0, 6).join(", "),
           meta: {
@@ -251,6 +256,7 @@ function LeadCapture({ input, eligible }: { input: EligibilityInput; eligible: s
     } catch (e2) {
       setErr(e2 instanceof Error ? e2.message : "Could not send.");
       setStatus("error");
+      setTries((t) => t + 1);
     }
   }
 
@@ -276,6 +282,7 @@ function LeadCapture({ input, eligible }: { input: EligibilityInput; eligible: s
         <input id="ld-email" name="email" type="email" placeholder="Email (optional)" autoComplete="email" className="field border-transparent" />
       </div>
       <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
+      <Turnstile resetKey={tries} />
       <button type="submit" disabled={status === "sending"} className="btn btn-primary mt-4">
         {status === "sending" ? "Sending" : "Send me the plan"}
       </button>

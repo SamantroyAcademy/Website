@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ArrowRightIcon } from "@phosphor-icons/react/ssr";
 import { getPublished } from "@/lib/content";
 import { DAYS, type JourneyStage } from "@/lib/data";

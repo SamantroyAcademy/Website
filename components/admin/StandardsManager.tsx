@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
 import { STANDARD_ROWS, CATEGORIES, type StandardRow, type Category } from "@/lib/standards";

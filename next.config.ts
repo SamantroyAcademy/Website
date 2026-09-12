@@ -16,6 +16,10 @@ const securityHeaders = [
   // Lock down powerful browser features by default.
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
   { key: "X-DNS-Prefetch-Control", value: "on" },
+  // Keep other sites from getting a handle on this window, and block legacy
+  // Flash/PDF cross-domain policy files.
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
+  { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
   // Force HTTPS once served over TLS (Vercel).
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
   // Baseline CSP: no framing, no plugins, no <base> hijack, forms to self only.
@@ -30,16 +34,21 @@ const securityHeaders = [
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
       // React dev tooling needs eval; production never gets it.
-      `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
+      // Cloudflare Turnstile (bot check on forms) is the only third-party script.
+      `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
       "script-src-attr 'none'",
-      "connect-src 'self' https:",
-      `frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com https://maps.google.com https://*.supabase.co https://www.instagram.com https://instagram.com${R2_ORIGIN ? ` ${R2_ORIGIN}` : ""}`,
+      // Browser calls go only to this site, Supabase (auth, page views), R2
+      // (signed admin uploads) and Turnstile.
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.r2.cloudflarestorage.com https://challenges.cloudflare.com",
+      `frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com https://maps.google.com https://*.supabase.co https://www.instagram.com https://instagram.com https://challenges.cloudflare.com${R2_ORIGIN ? ` ${R2_ORIGIN}` : ""}`,
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
       // 'self' (not 'none') so the admin live-preview iframe can frame our own
       // pages; other origins still cannot embed the site.
       "frame-ancestors 'self'",
+      // On Vercel (always HTTPS) only: a local `next start` is plain http.
+      ...(process.env.VERCEL ? ["upgrade-insecure-requests"] : []),
     ].join("; "),
   },
 ];
@@ -57,7 +66,13 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // The admin is private: never indexed, never cached by shared caches.
+      { source: "/admin/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }, { key: "Cache-Control", value: "private, no-store" }] },
+      // App icons rarely change: let browsers keep them for a month.
+      { source: "/brand/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=2592000" }] },
+    ];
   },
 };
 

@@ -69,6 +69,6 @@ export const ENQUIRY_POPUP: EnquiryPopupDoc = {
   enabled: "on",
   title: "Book a free counselling call",
   subtitle: "Find out which exams you qualify for",
-  body: "New batches: NDA from 21 September, CDS from 14 October. Tell us your age, education and height and we will call back with the exams you can apply for.",
+  body: "New batches: NDA from 21 September, CDS from 14 October. We call back with the exams you qualify for.",
   delayMs: "6000",
 };

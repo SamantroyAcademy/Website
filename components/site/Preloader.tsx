@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { LogoArt } from "@/components/Logo";
+import { useMotion } from "@/components/motion/MotionProvider";
 
 const SESSION_KEY = "sa-intro";
 
@@ -15,11 +16,15 @@ const SESSION_KEY = "sa-intro";
 export default function Preloader({ enabled = true }: { enabled?: boolean }) {
   const root = useRef<HTMLDivElement>(null);
   const [done, setDone] = useState(false);
+  const { lock } = useMotion();
 
   useEffect(() => {
+    const html = document.documentElement;
     const finish = () => {
       try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* ignore */ }
-      document.documentElement.classList.add("sa-intro-done");
+      html.classList.remove("sa-intro-running");
+      html.classList.add("sa-intro-done");
+      lock(false);
       setDone(true);
       window.dispatchEvent(new Event("sa:loaded"));
     };
@@ -28,6 +33,11 @@ export default function Preloader({ enabled = true }: { enabled?: boolean }) {
       document.documentElement.classList.contains("sa-intro-done") ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (skip || !root.current) return finish();
+
+    // The site stays covered (and still) until the intro has fully played:
+    // switch off the CSS fail-safe, which exists only for when JS never runs.
+    html.classList.add("sa-intro-running");
+    lock(true);
 
     const q = gsap.utils.selector(root);
     const tl = gsap.timeline({ defaults: { ease: "expo.out" }, onComplete: finish });
@@ -40,6 +50,7 @@ export default function Preloader({ enabled = true }: { enabled?: boolean }) {
       .from(q("[data-sub]"), { autoAlpha: 0, y: 8, duration: 0.5 }, "-=0.35")
       .to(root.current, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.9, ease: "power4.inOut" }, "+=0.35");
     return () => { tl.kill(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled]);
 
   if (done) return null;

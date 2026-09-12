@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { MapPinIcon, PhoneIcon, EnvelopeSimpleIcon, ClockIcon } from "@phosphor-icons/react/ssr";
 import { LogoArt } from "@/components/Logo";
 import SocialIcons from "@/components/site/SocialIcons";

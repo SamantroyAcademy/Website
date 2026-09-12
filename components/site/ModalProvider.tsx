@@ -124,7 +124,7 @@ export default function ModalProvider({
               <XIcon size={18} weight="bold" />
             </button>
 
-            <div className="p-6 sm:p-8">
+            <div className="p-5 sm:p-8">
               <div className="flex items-center gap-3 pr-12">
                 <LogoMark className="h-11 w-11 shrink-0" />
                 <div>
@@ -135,9 +135,9 @@ export default function ModalProvider({
                 </div>
               </div>
               {popup.body && (
-                <div className="rich-html mt-4 text-[0.95rem] text-ink-2" dangerouslySetInnerHTML={{ __html: popup.body }} />
+                <div className="rich-html mt-3 text-sm leading-snug text-ink-2 sm:text-[0.95rem] sm:leading-normal" dangerouslySetInnerHTML={{ __html: popup.body }} />
               )}
-              <div className="mt-6">
+              <div className="mt-4 sm:mt-6">
                 <ContactForm compact config={form} phone={phone} presetEntry={preset} />
               </div>
             </div>

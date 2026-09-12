@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ArrowRightIcon } from "@phosphor-icons/react/ssr";
 import { pageMetadata } from "@/lib/seo";
 import { getPublished } from "@/lib/content";
@@ -14,7 +14,8 @@ import { FaqList } from "@/components/home/FaqSection";
 import CtaBanner from "@/components/site/CtaBanner";
 import Reveals from "@/components/motion/Reveals";
 
-export const dynamic = "force-dynamic";
+// Cached for everyone; a CMS publish refreshes it at once (revalidateTag).
+export const revalidate = 300;
 export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata("recruitment-process");
 }

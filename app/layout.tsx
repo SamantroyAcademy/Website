@@ -5,13 +5,12 @@ import { LOCATION } from "@/lib/data";
 import { ogImages } from "@/lib/seo";
 
 /* Self-hosted type from Fontshare (Indian Type Foundry, free commercial
-   licence). No Google Fonts request is ever made. */
+   licence). No Google Fonts request is ever made. Only the weights the
+   design uses ship (7 files); each one is a request for every new visitor. */
 const cabinet = localFont({
   src: [
-    { path: "./fonts/cabinet-grotesk-500.woff2", weight: "500", style: "normal" },
     { path: "./fonts/cabinet-grotesk-700.woff2", weight: "700", style: "normal" },
     { path: "./fonts/cabinet-grotesk-800.woff2", weight: "800", style: "normal" },
-    { path: "./fonts/cabinet-grotesk-900.woff2", weight: "900", style: "normal" },
   ],
   variable: "--font-cabinet",
   display: "swap",
@@ -20,7 +19,6 @@ const cabinet = localFont({
 const switzer = localFont({
   src: [
     { path: "./fonts/switzer-400.woff2", weight: "400", style: "normal" },
-    { path: "./fonts/switzer-400i.woff2", weight: "400", style: "italic" },
     { path: "./fonts/switzer-500.woff2", weight: "500", style: "normal" },
     { path: "./fonts/switzer-600.woff2", weight: "600", style: "normal" },
     { path: "./fonts/switzer-700.woff2", weight: "700", style: "normal" },
@@ -31,11 +29,12 @@ const switzer = localFont({
 
 const stencil = localFont({
   src: [
-    { path: "./fonts/bespoke-stencil-700.woff2", weight: "700", style: "normal" },
     { path: "./fonts/bespoke-stencil-800.woff2", weight: "800", style: "normal" },
   ],
   variable: "--font-bespoke-stencil",
   display: "swap",
+  // Numerals far down the page: load on use, not up front.
+  preload: false,
 });
 
 const SITE_URL = "https://www.samantroyacademy.com";

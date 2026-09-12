@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { ArrowLeftIcon, ArrowRightIcon, TimerIcon, CheckCircleIcon, XCircleIcon, MinusCircleIcon, ArrowCounterClockwiseIcon } from "@phosphor-icons/react";
 import type { PublicQuestion } from "@/lib/mock-defaults";
 import { prefersReducedMotion } from "@/components/motion/MotionProvider";
+import Turnstile, { waitForTurnstile } from "@/components/ui/Turnstile";
 
 type Detail = { id: string; chosen: number | null; answer: number | null; correct: boolean; explanation: string | null };
 type Result = { correct: number; wrong: number; skipped: number; total: number; score: number; max: number; details: Detail[] };
@@ -227,14 +228,17 @@ export default function MockQuiz({ questions }: { questions: PublicQuestion[] })
 function ScoreLead({ result, subject }: { result: Result; subject: string }) {
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [err, setErr] = useState("");
+  const [tries, setTries] = useState(0);
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const d = Object.fromEntries(new FormData(e.currentTarget).entries()) as Record<string, string>;
+    const formEl = e.currentTarget;
     setState("sending");
+    await waitForTurnstile(formEl);
+    const d = Object.fromEntries(new FormData(formEl).entries()) as Record<string, string>;
     try {
       const res = await fetch("/api/lead", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: d.name, phone: d.phone, email: d.email, company: d.company, source: "mock_test", entry: subject === "all" ? "All subjects" : subject,
+        body: JSON.stringify({ name: d.name, phone: d.phone, email: d.email, company: d.company, turnstile: d["cf-turnstile-response"], source: "mock_test", entry: subject === "all" ? "All subjects" : subject,
           meta: { score: `${result.score} / ${result.max}`, correct: result.correct, wrong: result.wrong, skipped: result.skipped, subject } }),
       });
       const json = await res.json().catch(() => ({}));
@@ -242,6 +246,7 @@ function ScoreLead({ result, subject }: { result: Result; subject: string }) {
       setState("done");
     } catch (e2) {
       setErr(e2 instanceof Error ? e2.message : "Could not send."); setState("error");
+      setTries((t) => t + 1);
     }
   }
   if (state === "done") return <p className="rounded-[var(--radius-card)] bg-brand-50 p-6 font-semibold text-ink">Sent. A trainer will call to go through your weak areas.</p>;
@@ -255,6 +260,7 @@ function ScoreLead({ result, subject }: { result: Result; subject: string }) {
         <input name="email" type="email" placeholder="Email (optional)" aria-label="Email" autoComplete="email" className="field border-transparent" />
       </div>
       <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
+      <Turnstile resetKey={tries} />
       <button type="submit" disabled={state === "sending"} className="btn btn-primary mt-4">{state === "sending" ? "Sending" : "Request a review"}</button>
       {state === "error" && <p className="mt-3 text-sm text-accent">{err}</p>}
     </form>

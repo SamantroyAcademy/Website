@@ -4,6 +4,7 @@ import { SHORTS_DOC, type ShortItem, type ShortsDoc } from "@/lib/shorts";
 import { asArray } from "@/lib/shape";
 import CmsSectionHeading from "@/components/ui/CmsSectionHeading";
 import ShortCard from "./ShortCard";
+import Rail from "@/components/ui/Rail";
 
 /** Student stories (CMS: shorts): result announcements and class clips from
  *  the academy's YouTube channel, in a swipeable rail. Hidden when empty. */
@@ -22,13 +23,15 @@ export default async function ShortsSection() {
           </a>
         )}
       </div>
-      <ul className="rail mt-10 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-3 sm:gap-4 sm:px-8 lg:px-[max(2rem,calc((100vw-1320px)/2+2rem))]" data-lenis-prevent data-reveal="stagger">
+      <div className="mt-10">
+      <Rail label="Student stories" className="rail flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-3 sm:gap-4 sm:px-8 lg:px-[max(2rem,calc((100vw-1320px)/2+2rem))]">
         {items.map((s) => (
           <li key={s.id} className="w-[46vw] max-w-[14rem] shrink-0 snap-start">
             <ShortCard id={s.id} title={s.title} />
           </li>
         ))}
-      </ul>
+      </Rail>
+      </div>
     </section>
   );
 }
