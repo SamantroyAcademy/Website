@@ -29,12 +29,13 @@ export default function CreditsPage() {
                 <Image src={mediaUrl(c.file)} alt="" fill sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover" />
               </div>
               <div className="p-5 text-sm">
-                <p className="line-clamp-2 font-semibold text-ink">{c.title?.replace(/^File:/, "").replace(/\.\w+$/, "") || c.file.split("/").pop()}</p>
-                <p className="mt-1 text-muted">{[c.artist, c.license].filter(Boolean).join(", ")}</p>
+                {/* Attribution stays exactly as the licence gives it, in any language. */}
+                <p className="line-clamp-2 font-semibold text-ink" translate="no">{c.title?.replace(/^File:/, "").replace(/\.\w+$/, "") || c.file.split("/").pop()}</p>
+                <p className="mt-1 text-muted" translate="no">{[c.artist, c.license].filter(Boolean).join(", ")}</p>
                 {c.source?.startsWith("http") ? (
                   <a href={c.source} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block font-semibold text-accent-ink underline underline-offset-4">Source</a>
                 ) : c.source ? (
-                  <p className="mt-2 text-xs text-muted">{c.source}</p>
+                  <p className="mt-2 text-xs text-muted" translate="no">{c.source}</p>
                 ) : null}
               </div>
             </li>

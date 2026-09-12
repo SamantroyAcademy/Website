@@ -73,6 +73,13 @@ The navbar has an **EN / ଓଡ଼ିଆ** switch. Translation is automatic and 
   (`/api/i18n/missing`, rate-limited) and translated in the next sync.
 - Free models are rate-limited per day and sometimes slow, so a large backlog is translated
   over a few runs. Odia uses Noto Sans Oriya (served from R2, loaded only for Odia text).
+- The text on the site at launch was translated and reviewed by hand (model `claude-opus-5`
+  in the table); the free models only pick up text added or changed after that. To load a
+  reviewed batch yourself: `node scripts/i18n-import.mjs file.json --model=manual --base=<site>`
+  with `file.json` an array of `{ "source", "odia" }` (it reads `.env.local` and publishes when
+  done; `--publish-only` just republishes).
+- English questions in the mock test stay in English in Odia mode, and image attributions on
+  `/credits` stay exactly as licensed.
 
 ## Performance and security
 

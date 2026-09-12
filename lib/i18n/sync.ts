@@ -5,7 +5,7 @@ import { parse, type HTMLElement as PElement, type Node as PNode } from "node-ht
 import { createAdminClient, hasServiceRole } from "@/lib/supabase/admin";
 import { isR2Configured, putObject } from "@/lib/r2";
 import { EXAMS } from "@/lib/exams";
-import { I18N_ATTRS, SKIP_TAGS, hasOdia, norm, worthTranslating, type Dictionary } from "./text";
+import { FIELD_TAGS, I18N_ATTRS, SKIP_TAGS, hasOdia, norm, worthTranslating, type Dictionary } from "./text";
 
 /**
  * Odia translation sync.
@@ -35,6 +35,7 @@ export const FREE_MODELS = [
 const PAGES = [
   "/", "/about", "/recruitment-process", "/exams", "/standards", "/training-centres", "/courses",
   "/eligibility", "/mock-tests", "/resources", "/gallery", "/selected", "/blog", "/testimonials", "/contact",
+  "/credits",
 ];
 
 type Kind = "text" | "html";
@@ -59,6 +60,7 @@ function walk(node: PNode, out: Map<string, Row>) {
     const v = norm(el.getAttribute(a) ?? "");
     if (worthTranslating(v) && !out.has(v)) out.set(v, { source: v, source_html: null, kind: "text" });
   }
+  if (FIELD_TAGS.has(tag)) return;
   // Rich text from the CMS: translated as one block so the grammar holds.
   if (el.getAttribute("data-i18n") === "html") {
     const key = norm(el.text);
@@ -158,8 +160,12 @@ async function publish(): Promise<{ version: string; count: number } | null> {
   const body = gzipSync(JSON.stringify(dict), { level: 9 });
   const headers = { "Content-Type": "application/json; charset=utf-8", "Content-Encoding": "gzip" };
   // One retry: a large upload occasionally drops on a slow connection.
-  let ok = await putObject(`i18n/or-${version}.json`, body, headers).catch(() => false);
-  if (!ok) ok = await putObject(`i18n/or-${version}.json`, body, headers).catch(() => false);
+  const put = () => putObject(`i18n/or-${version}.json`, body, headers).catch((e: unknown) => {
+    console.error("i18n publish:", e instanceof Error ? `${e.message} ${String(e.cause ?? "")}` : e);
+    return false;
+  });
+  let ok = await put();
+  if (!ok) ok = await put();
   if (!ok) { console.error("i18n publish: R2 upload failed"); return null; }
   const doc = { version, count, updatedAt: new Date().toISOString() };
   await db.from("site_content").upsert({ key: "i18n", label: "Odia translations (automatic)", draft: doc, published: doc }, { onConflict: "key" });

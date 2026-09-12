@@ -12,6 +12,8 @@ type Result = { correct: number; wrong: number; skipped: number; total: number; 
 
 const SECONDS_PER_Q = 45;
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+/** English questions test English, so the Odia switch must leave them alone. */
+const keep = (subject: string) => (/^english$/i.test(subject.trim()) ? "no" : undefined);
 
 /** Timed MCQ runner. Answers are never on the page: the server scores the
  *  attempt (/api/mock/score) and returns explanations only after submit. */
@@ -106,8 +108,8 @@ export default function MockQuiz({ questions }: { questions: PublicQuestion[] })
             return (
               <li key={x.id} className="card p-6">
                 <p className="text-sm font-semibold text-muted">{x.subject}</p>
-                <p className="mt-1 font-semibold text-ink">{n + 1}. {x.question}</p>
-                <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                <p className="mt-1 font-semibold text-ink" translate={keep(x.subject)}>{n + 1}. {x.question}</p>
+                <ul className="mt-3 grid gap-2 sm:grid-cols-2" translate={keep(x.subject)}>
                   {x.options.map((o, k) => {
                     const isAnswer = d?.answer === k;
                     const isChosen = d?.chosen === k;
@@ -118,7 +120,7 @@ export default function MockQuiz({ questions }: { questions: PublicQuestion[] })
                     );
                   })}
                 </ul>
-                {d?.explanation && <p className="mt-3 text-sm leading-relaxed text-ink-2"><span className="font-semibold text-ink">Why: </span>{d.explanation}</p>}
+                {d?.explanation && <p className="mt-3 text-sm leading-relaxed text-ink-2"><span className="font-semibold text-ink">Why: </span><span translate={keep(x.subject)}>{d.explanation}</span></p>}
               </li>
             );
           })}
@@ -174,10 +176,10 @@ export default function MockQuiz({ questions }: { questions: PublicQuestion[] })
               <TimerIcon size={20} weight="bold" /> {fmt(left)}
             </p>
           </div>
-          <p className="mt-4 font-display text-[clamp(1.3rem,2.4vw,1.75rem)] font-bold leading-snug tracking-tight text-ink">
+          <p className="mt-4 font-display text-[clamp(1.3rem,2.4vw,1.75rem)] font-bold leading-snug tracking-tight text-ink" translate={keep(q.subject)}>
             <span className="text-muted">{i + 1}.</span> {q.question}
           </p>
-          <div className="mt-6 grid gap-2.5" role="radiogroup" aria-label="Options">
+          <div className="mt-6 grid gap-2.5" role="radiogroup" aria-label="Options" translate={keep(q.subject)}>
             {q.options.map((o, k) => {
               const on = answers[q.id] === k;
               return (

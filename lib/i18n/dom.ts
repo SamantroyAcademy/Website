@@ -5,16 +5,33 @@
  *  whole so their grammar and formatting hold. */
 import { I18N_ATTRS, hasOdia, norm, worthTranslating, type Dictionary } from "./text";
 
-const SKIP = '[translate="no"],[data-no-translate],script,style,noscript,svg,code,pre,textarea,input';
+const SKIP = '[translate="no"],[data-no-translate],script,style,noscript,svg,code,pre';
+/** Placeholder and label are translated; the value people type is not. */
+const FIELDS = "input,textarea";
 const missing = new Set<string>();
+
+/** Plain text of a translated HTML block. Parsed in an inert <template>, so
+ *  nothing in it runs or loads. */
+function plain(html: string): string {
+  const t = document.createElement("template");
+  t.innerHTML = html;
+  return norm(t.content.textContent ?? "");
+}
+
+/** The same English can be a rich block on one page and plain text on
+ *  another, but the dictionary files it under one kind only. */
+function forText(dict: Dictionary, key: string): string | undefined {
+  if (dict.t[key]) return dict.t[key];
+  return dict.h[key] ? plain(dict.h[key]) : undefined;
+}
 
 function textNode(node: Text, dict: Dictionary) {
   const raw = node.nodeValue;
   if (!raw || !raw.trim()) return;
   const parent = node.parentElement;
-  if (!parent || parent.closest(SKIP) || parent.closest('[data-i18n="html"]')) return;
+  if (!parent || parent.closest(SKIP) || parent.closest(FIELDS) || parent.closest('[data-i18n="html"]')) return;
   const key = norm(raw);
-  const odia = dict.t[key];
+  const odia = forText(dict, key);
   if (odia) {
     const next = (raw.match(/^\s*/)?.[0] ?? "") + odia + (raw.match(/\s*$/)?.[0] ?? "");
     if (node.nodeValue !== next) node.nodeValue = next;
@@ -27,7 +44,7 @@ function attributes(el: Element, dict: Dictionary) {
   for (const a of I18N_ATTRS) {
     const v = el.getAttribute(a);
     if (!v) continue;
-    const odia = dict.t[norm(v)];
+    const odia = forText(dict, norm(v));
     if (odia && v !== odia) el.setAttribute(a, odia);
   }
 }
@@ -35,7 +52,13 @@ function attributes(el: Element, dict: Dictionary) {
 function richBlock(el: Element, dict: Dictionary) {
   const key = norm(el.textContent ?? "");
   const odia = dict.h[key];
-  if (odia && el.innerHTML !== odia) el.innerHTML = odia;
+  if (odia) {
+    if (el.innerHTML !== odia) el.innerHTML = odia;
+  } else if (el.children.length === 0) {
+    // A block that is only text can take the plain-text translation.
+    if (dict.t[key]) { if (el.textContent !== dict.t[key]) el.textContent = dict.t[key]; }
+    else if (!hasOdia(key) && worthTranslating(key)) missing.add(key);
+  }
 }
 
 export function translateTree(root: Node, dict: Dictionary) {
@@ -49,6 +72,7 @@ export function translateTree(root: Node, dict: Dictionary) {
         const el = n as Element;
         if (el.matches(SKIP)) return NodeFilter.FILTER_REJECT;
         attributes(el, dict);
+        if (el.matches(FIELDS)) return NodeFilter.FILTER_REJECT;
         if (el.getAttribute("data-i18n") === "html") { richBlock(el, dict); return NodeFilter.FILTER_REJECT; }
         return NodeFilter.FILTER_SKIP;
       }

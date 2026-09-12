@@ -61,10 +61,13 @@ const decodeXml = (s: string) =>
  *  dictionary). Object keys are versioned by the caller, so a year of
  *  browser caching is safe. */
 export async function putObject(key: string, body: Uint8Array | string, headers: Record<string, string>): Promise<boolean> {
+  // R2 rejects streamed uploads (411), so send plain bytes with their length.
+  const bytes = typeof body === "string" ? new TextEncoder().encode(body) : body;
   const res = await r2().fetch(objectUrl(key), {
     method: "PUT",
-    body: typeof body === "string" ? body : new Blob([body as BlobPart]),
-    headers: { "Cache-Control": UPLOAD_CACHE_CONTROL, ...headers },
+    body: bytes as BodyInit,
+    headers: { "Cache-Control": UPLOAD_CACHE_CONTROL, "Content-Length": String(bytes.byteLength), ...headers },
   });
+  if (!res.ok) console.error(`R2 PUT ${key}: ${res.status} ${(await res.text().catch(() => "")).slice(0, 300)}`);
   return res.ok;
 }

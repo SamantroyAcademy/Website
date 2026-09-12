@@ -18,7 +18,9 @@ export function worthTranslating(s: string): boolean {
 export const I18N_ATTRS = ["placeholder", "aria-label", "title", "alt"] as const;
 
 /** Elements whose content is never translated. */
-export const SKIP_TAGS = new Set(["script", "style", "noscript", "svg", "code", "pre", "template", "iframe", "textarea", "input"]);
+export const SKIP_TAGS = new Set(["script", "style", "noscript", "svg", "code", "pre", "template", "iframe"]);
+/** Form fields: their placeholder and label are translated, what people type is not. */
+export const FIELD_TAGS = new Set(["input", "textarea"]);
 
 /** Dictionary as published to R2: plain strings and rich-text blocks. */
 export type Dictionary = { v: string; t: Record<string, string>; h: Record<string, string> };
