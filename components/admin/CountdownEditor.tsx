@@ -12,6 +12,7 @@ export default function CountdownEditor({ initial }: { initial: CountdownDoc }) 
   const [bg, setBg] = useState(initial.bg ?? "#0a1524");
   const [textColor, setTextColor] = useState(initial.textColor ?? "#ffffff");
   const [kickerColor, setKickerColor] = useState(initial.kickerColor ?? "#f2d519");
+  const [popup, setPopup] = useState(initial.popup !== "off");
   const [items, setItems] = useState<CountdownItem[]>(
     initial.items.length ? initial.items : [{ label: "", date: "", kind: "exam" }],
   );
@@ -25,7 +26,7 @@ export default function CountdownEditor({ initial }: { initial: CountdownDoc }) 
 
   async function save() {
     setBusy(true); setMsg(null);
-    const doc: CountdownDoc = { kicker, heading, bg, textColor, kickerColor, items: items.filter((i) => i.label && i.date) };
+    const doc: CountdownDoc = { kicker, heading, bg, textColor, kickerColor, popup: popup ? "on" : "off", items: items.filter((i) => i.label && i.date) };
     const { error } = await supabase.from("site_content").upsert({
       key: "countdown", label: "Batch & Exam Countdown", draft: doc, published: doc,
     });
@@ -72,6 +73,14 @@ export default function CountdownEditor({ initial }: { initial: CountdownDoc }) 
         <p className="mt-1 text-lg font-bold" style={{ color: textColor }}>{heading}</p>
         <p className="mt-2 font-mono text-2xl font-bold" style={{ color: textColor }}>02 10 30 03</p>
       </div>
+
+      <label className="mt-4 flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+        <input type="checkbox" checked={popup} onChange={(e) => setPopup(e.target.checked)} className="mt-0.5 h-4 w-4 accent-brand-600" />
+        <span className="text-sm text-slate-700">
+          <span className="font-semibold">Show a batches popup when the site opens</span>
+          <span className="block text-xs text-slate-500">Once per visit, right after the intro and before the enquiry form. Lists upcoming dates and batches that started in the last 45 days.</span>
+        </span>
+      </label>
 
       <p className="mt-4 mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">Dates</p>
 

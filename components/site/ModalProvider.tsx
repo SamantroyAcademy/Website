@@ -5,9 +5,11 @@ import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
 import { XIcon } from "@phosphor-icons/react";
 import ContactForm from "./ContactForm";
+import BatchesPopup from "./BatchesPopup";
 import { LogoMark } from "@/components/Logo";
 import { ENQUIRY_POPUP, type EnquiryPopupDoc } from "@/lib/homepage-defaults";
 import { CONTACT_FORM, type ContactFormDoc } from "@/lib/form-defaults";
+import { popupBatches, type CountdownItem, type PopupBatch } from "@/lib/countdown-defaults";
 import { useMotion, prefersReducedMotion } from "@/components/motion/MotionProvider";
 
 type Ctx = { open: (presetEntry?: string) => void; close: () => void };
@@ -15,23 +17,32 @@ const ModalContext = createContext<Ctx>({ open: () => {}, close: () => {} });
 export const useContactModal = () => useContext(ModalContext);
 
 const SESSION_KEY = "sa-popup-seen";
+const BATCHES_KEY = "sa-batches-seen";
 
-/** Enquiry modal (CMS: enquiry_popup + contact_form). Auto-opens once per
- *  browser session after the intro finishes; any "Book free counselling"
- *  button can open it on demand via useContactModal(). */
+const seen = (key: string) => { try { return Boolean(sessionStorage.getItem(key)); } catch { return false; } };
+const markSeen = (key: string) => { try { sessionStorage.setItem(key, "1"); } catch { /* storage blocked */ } };
+
+/** Opening sequence, once per browser session: the intro, then the batches
+ *  popup (CMS: countdown), then the enquiry popup (CMS: enquiry_popup +
+ *  contact_form) a few seconds after the batches popup closes. Any "Book free
+ *  counselling" button opens the enquiry popup on demand via useContactModal(). */
 export default function ModalProvider({
   children,
   popup = ENQUIRY_POPUP,
   form = CONTACT_FORM,
   phone = "",
+  batches = { items: [], enabled: false },
 }: {
   children: ReactNode;
   popup?: EnquiryPopupDoc;
   form?: ContactFormDoc;
   phone?: string;
+  batches?: { items: CountdownItem[]; enabled: boolean };
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [preset, setPreset] = useState("");
+  const [batchList, setBatchList] = useState<PopupBatch[] | null>(null);
+  const enquiryTimer = useRef<number | undefined>(undefined);
   const { lock } = useMotion();
   const pathname = usePathname();
   const card = useRef<HTMLDivElement>(null);
@@ -45,32 +56,73 @@ export default function ModalProvider({
   }, []);
   const close = useCallback(() => setIsOpen(false), []);
 
-  // Auto-open once per session, never on the contact page itself.
+  const enquiryAuto = popup.enabled !== "off";
+  const enquiryDelay = Math.max(1500, Number(popup.delayMs) || 6000);
+  const scheduleEnquiry = useCallback((delay: number) => {
+    if (!enquiryAuto || seen(SESSION_KEY)) return;
+    window.clearTimeout(enquiryTimer.current);
+    enquiryTimer.current = window.setTimeout(() => {
+      if (seen(SESSION_KEY)) return;
+      markSeen(SESSION_KEY);
+      setIsOpen(true);
+    }, delay);
+  }, [enquiryAuto]);
+
+  // Opening sequence: never on the contact page itself.
   useEffect(() => {
-    if (popup.enabled === "off" || pathname.startsWith("/contact")) return;
-    try { if (sessionStorage.getItem(SESSION_KEY)) return; } catch { /* storage blocked */ }
-    const delay = Math.max(1500, Number(popup.delayMs) || 6000);
+    if (pathname.startsWith("/contact")) return;
     let t: number | undefined;
-    const trigger = () => {
-      window.clearTimeout(t);
-      t = window.setTimeout(() => {
-        try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* ignore */ }
-        setIsOpen(true);
-      }, delay);
+    let started = false;
+    const start = () => {
+      if (started) return;
+      started = true;
+      const list = batches.enabled && !seen(BATCHES_KEY) ? popupBatches(batches.items, Date.now()) : [];
+      if (list.length) {
+        t = window.setTimeout(() => { markSeen(BATCHES_KEY); setBatchList(list); }, 700);
+      } else {
+        scheduleEnquiry(enquiryDelay);
+      }
     };
-    window.addEventListener("sa:loaded", trigger, { once: true });
-    const fallback = window.setTimeout(trigger, 2500);
+    window.addEventListener("sa:loaded", start, { once: true });
+    // Fail-safe if the intro never reports back, but never while it still plays.
+    const fallback = window.setTimeout(() => {
+      if (!document.documentElement.classList.contains("sa-intro-running")) start();
+    }, 2500);
     return () => {
-      window.removeEventListener("sa:loaded", trigger);
+      window.removeEventListener("sa:loaded", start);
       window.clearTimeout(fallback);
       window.clearTimeout(t);
+      window.clearTimeout(enquiryTimer.current);
     };
     // Only on first mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const closeBatches = useCallback(() => {
+    setBatchList(null);
+    scheduleEnquiry(enquiryDelay);
+  }, [scheduleEnquiry, enquiryDelay]);
+
+  const enquireFromBatches = useCallback(() => {
+    setBatchList(null);
+    window.clearTimeout(enquiryTimer.current);
+    markSeen(SESSION_KEY);
+    open();
+  }, [open]);
+
+  // One scroll lock for both popups, so handing over from one to the other
+  // never unlocks the page underneath. Only called on a real change, so it
+  // never releases a lock the menu or the intro is holding.
+  const anyOpen = isOpen || batchList !== null;
+  const wasOpen = useRef(false);
   useEffect(() => {
-    lock(isOpen);
+    if (anyOpen === wasOpen.current) return;
+    wasOpen.current = anyOpen;
+    lock(anyOpen);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [anyOpen]);
+
+  useEffect(() => {
     if (!isOpen) {
       lastFocus.current?.focus?.();
       return;
@@ -100,6 +152,8 @@ export default function ModalProvider({
   return (
     <ModalContext.Provider value={{ open, close }}>
       {children}
+
+      {batchList && !isOpen && <BatchesPopup batches={batchList} onClose={closeBatches} onEnquire={enquireFromBatches} />}
 
       {isOpen && (
         <div

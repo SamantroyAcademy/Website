@@ -35,7 +35,7 @@ touching code.
 | Odia translations | Site, Odia Translations |
 | The popup that greets visitors | Site, Enquiry Popup |
 | Page titles for Google | Site, SEO |
-| Upcoming batch and exam dates | Homepage, Countdown |
+| Upcoming batch and exam dates (homepage countdown and the batches popup shown when the site opens; the popup has its own on/off switch) | Homepage, Countdown |
 
 ## Odia (ଓଡ଼ିଆ)
 

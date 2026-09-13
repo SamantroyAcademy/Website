@@ -14,15 +14,18 @@ import { CONTACT_FORM, resolveContactForm } from "@/lib/form-defaults";
 import { getPublished, getSettings, telHref, brochureHref, brochureOn, mapHref } from "@/lib/content";
 import { ENQUIRY_POPUP, type EnquiryPopupDoc } from "@/lib/homepage-defaults";
 import { BATCH_INFO } from "@/lib/data";
+import { COUNTDOWN, type CountdownDoc, type CountdownItem } from "@/lib/countdown-defaults";
+import { asArray } from "@/lib/shape";
 import { ldJson, siteJsonLd } from "@/lib/structured-data";
 
 export default async function SiteLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [popup, formDoc, settings, preloader, i18n] = await Promise.all([
+  const [popup, formDoc, settings, preloader, i18n, countdown] = await Promise.all([
     getPublished<EnquiryPopupDoc>("enquiry_popup", ENQUIRY_POPUP),
     getPublished<unknown>("contact_form", CONTACT_FORM),
     getSettings(),
     getPublished<{ lottie: string }>("preloader", { lottie: "on" }),
     getPublished<{ version: string }>("i18n", { version: "" }),
+    getPublished<CountdownDoc>("countdown", COUNTDOWN),
   ]);
   const form = resolveContactForm(formDoc);
   const phoneHref = telHref(settings.phone1);
@@ -36,7 +39,7 @@ export default async function SiteLayout({ children }: Readonly<{ children: Reac
       <LogoDefs />
       <PageViewTracker />
       <Preloader enabled={preloader.lottie !== "off"} />
-      <ModalProvider popup={popup} form={form} phone={settings.phone1}>
+      <ModalProvider popup={popup} form={form} phone={settings.phone1} batches={{ items: asArray<CountdownItem>(countdown.items), enabled: countdown.popup !== "off" }}>
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-surface">
           Skip to content
         </a>
