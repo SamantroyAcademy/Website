@@ -127,12 +127,12 @@ export const STANDARD_ROWS: StandardRow[] = [
   row({
     exam_slug: "odisha-police-constable", gender: "male", category: "UR", height_cm: 168,
     chest_cm: 79, chest_expanded_cm: 84,
-    notes: "Applies to UR, SEBC and SC. PET events and marks are set in each OPRB notification.",
+    notes: "Applies to UR, SEBC and SC. PET events and marks are set in each OUSSSC notification.",
   }),
   row({
     exam_slug: "odisha-police-constable", gender: "male", category: "ST", height_cm: 163,
     chest_cm: 76, chest_expanded_cm: 81,
-    notes: "PET events and marks are set in each OPRB notification.",
+    notes: "PET events and marks are set in each OUSSSC notification.",
   }),
   row({
     exam_slug: "odisha-police-constable", gender: "female", category: "UR", height_cm: 155,

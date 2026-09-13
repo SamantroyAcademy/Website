@@ -3,7 +3,8 @@
 //   node scripts/i18n-import.mjs <file.json> [--model=manual] [--base=http://localhost:3000]
 //   node scripts/i18n-import.mjs --publish-only [--base=...]
 //
-// <file.json> is an array of { source, odia }. `source` must match an existing
+// <file.json> is an array of { source, odia, html? }; html: true marks a rich
+// block whose Odia keeps the markup (e.g. "<p>...</p>"). `source` must match an existing
 // row in public.translations (the normalized English text). Rows are marked done
 // so the free models leave them alone; later site changes still go to the models.
 // Env comes from .env.local the same way Next loads it.
@@ -56,7 +57,7 @@ for (const r of rows.filter((r) => known.has(r.source))) {
 }
 // Strings the crawl has not seen yet (text that only appears after a click, say).
 const fresh = rows.filter((r) => !known.has(r.source))
-  .map((r) => ({ source: r.source, source_html: null, kind: "text", odia: r.odia.trim(), status: "done", attempts: 0, model, updated_at: now }));
+  .map((r) => ({ source: r.source, source_html: null, kind: r.html ? "html" : "text", odia: r.odia.trim(), status: "done", attempts: 0, model, updated_at: now }));
 if (fresh.length) {
   const { error: e } = await db.from("translations").insert(fresh);
   if (e) throw e;
