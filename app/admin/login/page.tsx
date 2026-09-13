@@ -29,7 +29,7 @@ export default function LoginPage() {
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password, options: { captchaToken: captchaToken || undefined } });
     if (error) {
-      setError(/captcha/i.test(error.message) ? "Security check failed. Please wait a moment and try again." : error.message);
+      setError(/captcha/i.test(error.message) ? "Security check not completed. If a check box appears below, tick it, then sign in again." : error.message);
       setTries((n) => n + 1);
       setBusy(false);
       return;
