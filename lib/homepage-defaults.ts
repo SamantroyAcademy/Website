@@ -26,7 +26,7 @@ export const AIR1_IMAGES: string[] = RESULT_POSTERS;
 export const CAMPUS_IMAGES: string[] = [
   "/images/scenes/field-training.jpg",
   "/images/scenes/police-training.jpg",
-  "/images/scenes/army-parade.jpg",
+  "/images/scenes/gorkha-rifles-parade-2016.jpg",
   "/images/forces/crpf-contingent.jpg",
   "/images/forces/bsf-contingent.jpg",
   "/images/forces/navy-contingent.jpg",

@@ -43,7 +43,7 @@ export const CENTRES: Centre[] = [
     location: "Recruiting offices serving Odisha districts",
     service: "Indian Army, Agniveer",
     established: "",
-    image: "/images/scenes/army-parade.jpg",
+    image: "/images/scenes/gorkha-rifles-parade-2016.jpg",
     intro:
       "<p>Army Recruiting Offices run the recruitment rallies for Agniveer entries. The rally is where running, beam, ditch and balance are tested before the medical.</p>",
     courses: [{ name: "Recruitment rally", duration: "Over several days per district", who: "Candidates who clear the online CEE" }],

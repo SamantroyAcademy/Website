@@ -12,7 +12,7 @@ export default async function CtaBanner() {
   return (
     <section className="on-dark relative isolate overflow-hidden bg-brand-950 text-surface" aria-labelledby="cta-title">
       <div className="absolute inset-0 -z-10" aria-hidden>
-        <Image src={mediaUrl("/images/scenes/army-parade.jpg")} alt="" fill sizes="100vw" className="object-cover opacity-[0.16] grayscale" data-parallax="8" />
+        <Image src={mediaUrl("/images/scenes/gorkha-rifles-parade-2016.jpg")} alt="" fill sizes="100vw" className="object-cover opacity-[0.16] grayscale" data-parallax="8" />
         <div className="absolute inset-0 bg-gradient-to-b from-brand-950/40 via-brand-950/70 to-brand-950" />
       </div>
       <div className="container-x grid gap-10 pb-16 pt-20 md:grid-cols-12 md:items-end md:pb-20 md:pt-28">

@@ -9,7 +9,7 @@ export const PAGE_HEROES: Record<string, PageHeroDoc> = {
     kicker: "", crumb: "About",
     title: `Trained on the ground. ${em("Selected on merit.")}`,
     subtitle: "Samantroy Academy for Defence Career Studies, Brahmapur (Ganjam), Odisha. Coaching for defence, police and government jobs since 2001.",
-    image: "/images/scenes/army-parade.jpg",
+    image: "/images/scenes/gorkha-rifles-parade-2016.jpg",
   },
   "recruitment-process": {
     kicker: "", crumb: "Recruitment process",
@@ -81,7 +81,7 @@ export const PAGE_HEROES: Record<string, PageHeroDoc> = {
     kicker: "", crumb: "Testimonials",
     title: `In their ${em("own words")}`,
     subtitle: "What changed for our aspirants between joining and selection.",
-    image: "/images/scenes/army-parade.jpg",
+    image: "/images/scenes/gorkha-rifles-parade-2016.jpg",
   },
   contact: {
     kicker: "", crumb: "Contact",
@@ -92,4 +92,4 @@ export const PAGE_HEROES: Record<string, PageHeroDoc> = {
 };
 
 export const pageHero = (key: string): PageHeroDoc =>
-  PAGE_HEROES[key] ?? { kicker: "", title: "", subtitle: "", image: "/images/scenes/army-parade.jpg", crumb: "" };
+  PAGE_HEROES[key] ?? { kicker: "", title: "", subtitle: "", image: "/images/scenes/gorkha-rifles-parade-2016.jpg", crumb: "" };
