@@ -22,6 +22,22 @@ export async function uploadMedia(key: string, file: Blob): Promise<{ error: { m
   }
 }
 
+/** Delete a media-library file. Refused (with the reason) while the site uses it. */
+export async function deleteMedia(key: string): Promise<{ error: string | null }> {
+  try {
+    const res = await fetch("/api/admin/media", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key }),
+    });
+    if (res.ok) return { error: null };
+    const data = (await res.json().catch(() => ({}))) as { error?: string };
+    return { error: data.error || "Could not delete the file." };
+  } catch {
+    return { error: "Network error. Please try again." };
+  }
+}
+
 /** Keys in one media-library folder, newest first. */
 export async function listMedia(folder: string): Promise<string[]> {
   const res = await fetch(`/api/admin/media?folder=${encodeURIComponent(folder)}`, { cache: "no-store" });

@@ -54,6 +54,12 @@ export async function listFolder(folder: string): Promise<string[]> {
   return items.filter((i) => i.key && !i.key.endsWith("/")).sort((a, b) => b.at.localeCompare(a.at)).map((i) => i.key);
 }
 
+/** Remove one object. A key that is already gone counts as removed. */
+export async function deleteObject(key: string): Promise<boolean> {
+  const res = await r2().fetch(objectUrl(key), { method: "DELETE" });
+  return res.ok || res.status === 404;
+}
+
 const decodeXml = (s: string) =>
   s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&");
 

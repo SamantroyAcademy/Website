@@ -63,6 +63,11 @@ Uploads are cropped to the frame they appear in, compressed automatically and st
 Cloudflare R2. Images can be up to 10 MB before compression and PDFs up to 25 MB. Use real
 photographs of the academy's ground, classroom and selected candidates.
 
+**Media Library** lists every uploaded file by folder. **Delete** removes a file for good, but
+only when no page, candidate, testimonial, mentor, post, resource or exam still uses it; if
+one does, the message says where, so replace it there first. Deletions are recorded in the
+activity log.
+
 ## People and access
 
 - **Super admin** can add, promote, demote and remove admins (Users).

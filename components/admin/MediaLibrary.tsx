@@ -5,7 +5,7 @@ import Image from "next/image";
 import { mediaUrl } from "@/lib/supabase/media";
 import { compressImage } from "@/lib/image-client";
 import { useImageCropper } from "./useImageCropper";
-import { listMedia, uploadMedia } from "@/lib/upload-client";
+import { deleteMedia, listMedia, uploadMedia } from "@/lib/upload-client";
 
 /** R2 folders the admin uploaders write to. */
 const FOLDERS = ["library", "candidates", "mentors", "testimonials", "hero", "sections", "campus-gallery", "toppers", "officers", "verticals", "exams", "blog", "reviews", "resources"];
@@ -16,6 +16,7 @@ export default function MediaLibrary() {
   const [files, setFiles] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const load = useCallback(async (f: string) => {
     setFiles(await listMedia(f));
@@ -40,6 +41,15 @@ export default function MediaLibrary() {
     setFolder("library");
     load("library");
     e.target.value = "";
+  }
+
+  async function remove(path: string) {
+    if (!confirm(`Delete ${path.split("/").pop()}? This cannot be undone.`)) return;
+    setDeleting(path);
+    const { error } = await deleteMedia(path);
+    setDeleting(null);
+    if (error) return alert(error);
+    setFiles((list) => list.filter((k) => k !== path));
   }
 
   const copy = (path: string) => {
@@ -71,9 +81,12 @@ export default function MediaLibrary() {
             <div className="relative aspect-square bg-slate-100">
               <Image src={mediaUrl(p)} alt={p} fill sizes="200px" className="object-cover" />
             </div>
-            <figcaption className="p-1.5">
-              <button onClick={() => copy(p)} className="w-full truncate rounded bg-slate-100 px-2 py-1 text-[11px] text-slate-600 hover:bg-slate-200" title={p}>
+            <figcaption className="flex gap-1 p-1.5">
+              <button onClick={() => copy(p)} className="min-w-0 flex-1 truncate rounded bg-slate-100 px-2 py-1 text-[11px] text-slate-600 hover:bg-slate-200" title={p}>
                 {copied === p ? "✓ Copied path" : p.split("/").pop()}
+              </button>
+              <button onClick={() => remove(p)} disabled={deleting === p} className="shrink-0 rounded px-2 py-1 text-[11px] font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50" title="Delete (only if the site does not use it)">
+                {deleting === p ? "…" : "Delete"}
               </button>
             </figcaption>
           </figure>
