@@ -31,7 +31,7 @@ touching code.
 | Height, chest, run timings | Physical Standards |
 | The seven recruitment stages | Pages and Sections, Recruitment Journey |
 | Phone, WhatsApp, email, address, map, socials | Site, Footer and Contact |
-| Enquiry form fields and dropdowns (Show, In popup, Mandatory) | Site, Enquiry Form |
+| Enquiry form: add, delete and reorder fields (drag or arrows), add your own questions (short answer, paragraph, dropdown, number), edit each dropdown's options, and Show / In popup / Mandatory per field. Answers to added questions appear in Enquiries, the email and the CSV | Site, Enquiry Form |
 | Odia translations | Site, Odia Translations |
 | The popup that greets visitors | Site, Enquiry Popup |
 | Page titles for Google | Site, SEO |

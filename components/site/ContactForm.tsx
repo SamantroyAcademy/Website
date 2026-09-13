@@ -71,7 +71,7 @@ export default function ContactForm({
   }
 
   const shown = config.fields.filter((f) => visible(f, compact));
-  const find = (key: ContactField["key"]) => shown.find((f) => f.key === key);
+  const phoneInvalid = phoneTouched && phoneVal !== "" && !isValidPhone(phoneVal);
 
   // Render helpers (plain functions, NOT components): defining components
   // inside render would remount the inputs on every keystroke and drop focus.
@@ -82,40 +82,67 @@ export default function ContactForm({
     </label>
   );
 
-  const field = (f: ContactField, children: ReactNode) => (
-    <div className="flex flex-col">
-      {label(f)}
-      {children}
-    </div>
-  );
-
-  const dropdown = (f: ContactField, options: string[], preset?: string) =>
-    field(
-      f,
-      <select
-        id={`cf-${f.key}`}
-        name={f.key}
-        required={f.required}
-        defaultValue={preset && options.includes(preset) ? preset : ""}
-        className="field"
-      >
-        <option value="" disabled={f.required}>
-          {f.placeholder || `Select ${f.label.toLowerCase()}`}
-        </option>
-        {options.map((o) => (
-          <option key={o} value={o}>{o}</option>
-        ))}
-      </select>,
-    );
-
-  const name = find("name");
-  const phoneF = find("phone");
-  const email = find("email");
-  const entry = find("entry");
-  const batch = find("batch");
-  const statusField = find("status");
-  const message = find("message");
-  const phoneInvalid = phoneTouched && phoneVal !== "" && !isValidPhone(phoneVal);
+  /** One field, in the order the admin set. Paragraphs take the full width. */
+  const control = (f: ContactField): ReactNode => {
+    const id = `cf-${f.key}`;
+    switch (f.type) {
+      case "phone":
+        return (
+          <>
+            <div className="flex">
+              <span className="flex shrink-0 items-center rounded-l-[var(--radius-field)] border-[1.5px] border-r-0 border-line bg-tint px-3 text-sm font-semibold text-ink-2">
+                {PHONE_DIAL_CODE}
+              </span>
+              <input
+                id={id}
+                name={f.key}
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel-national"
+                maxLength={10}
+                required={f.required}
+                value={phoneVal}
+                onChange={(e) => setPhoneVal(phoneDigits(e.target.value))}
+                onBlur={() => setPhoneTouched(true)}
+                onInvalid={() => setPhoneTouched(true)}
+                pattern="[6-9][0-9]{9}"
+                title="Enter a 10-digit Indian mobile number starting with 6, 7, 8 or 9"
+                placeholder={f.placeholder}
+                aria-invalid={phoneInvalid}
+                aria-describedby={phoneInvalid ? "cf-phone-err" : undefined}
+                className="field rounded-l-none"
+              />
+            </div>
+            {phoneInvalid && (
+              <p id="cf-phone-err" className="mt-1.5 text-sm font-medium text-accent-ink">
+                Enter a 10-digit mobile number starting with 6, 7, 8 or 9.
+              </p>
+            )}
+          </>
+        );
+      case "email":
+        return <input id={id} name={f.key} type="email" required={f.required} autoComplete="email" placeholder={f.placeholder} className="field" />;
+      case "select": {
+        const options = f.options ?? [];
+        const preset = f.key === "entry" && presetEntry && options.includes(presetEntry) ? presetEntry : "";
+        return (
+          <select id={id} name={f.key} required={f.required} defaultValue={preset} className="field">
+            <option value="" disabled={f.required}>{f.placeholder || `Select ${f.label.toLowerCase()}`}</option>
+            {options.map((o) => <option key={o} value={o}>{o}</option>)}
+          </select>
+        );
+      }
+      case "textarea":
+        return <textarea id={id} name={f.key} required={f.required} rows={compact ? 2 : 3} maxLength={2000} placeholder={f.placeholder} className="field resize-y" />;
+      case "number":
+        return <input id={id} name={f.key} type="number" inputMode="decimal" step="any" required={f.required} placeholder={f.placeholder} className="field" />;
+      default:
+        return (
+          <input id={id} name={f.key} required={f.required} maxLength={f.key === "name" ? 80 : 200} minLength={f.key === "name" ? 2 : undefined}
+            autoComplete={f.key === "name" ? "name" : "off"} placeholder={f.placeholder} className="field" />
+        );
+    }
+  };
 
   if (status === "success") {
     return (
@@ -133,62 +160,13 @@ export default function ContactForm({
   return (
     <form onSubmit={onSubmit} aria-label="Enquiry form" className={compact ? "space-y-3" : "space-y-5"} noValidate={false}>
       <div className={`grid ${compact ? "grid-cols-1 gap-3 sm:grid-cols-2" : "gap-5 sm:grid-cols-2"}`}>
-        {name && (
-          field(name,
-            <input id="cf-name" name="name" required={name.required} minLength={2} maxLength={80}
-              autoComplete="name" placeholder={name.placeholder} className="field" />,
-          )
-        )}
-        {phoneF && (
-          field(phoneF, <>
-            <div className="flex">
-              <span className="flex shrink-0 items-center rounded-l-[var(--radius-field)] border-[1.5px] border-r-0 border-line bg-tint px-3 text-sm font-semibold text-ink-2">
-                {PHONE_DIAL_CODE}
-              </span>
-              <input
-                id="cf-phone"
-                name="phone"
-                type="tel"
-                inputMode="numeric"
-                autoComplete="tel-national"
-                maxLength={10}
-                required={phoneF.required}
-                value={phoneVal}
-                onChange={(e) => setPhoneVal(phoneDigits(e.target.value))}
-                onBlur={() => setPhoneTouched(true)}
-                onInvalid={() => setPhoneTouched(true)}
-                pattern="[6-9][0-9]{9}"
-                title="Enter a 10-digit Indian mobile number starting with 6, 7, 8 or 9"
-                placeholder={phoneF.placeholder}
-                aria-invalid={phoneInvalid}
-                aria-describedby={phoneInvalid ? "cf-phone-err" : undefined}
-                className="field rounded-l-none"
-              />
-            </div>
-            {phoneInvalid && (
-              <p id="cf-phone-err" className="mt-1.5 text-sm font-medium text-accent-ink">
-                Enter a 10-digit mobile number starting with 6, 7, 8 or 9.
-              </p>
-            )}
-          </>)
-        )}
-        {email && (
-          field(email,
-            <input id="cf-email" name="email" type="email" required={email.required}
-              autoComplete="email" placeholder={email.placeholder} className="field" />,
-          )
-        )}
-        {entry && dropdown(entry, config.entryOptions, presetEntry)}
-        {batch && dropdown(batch, config.batchOptions)}
-        {statusField && dropdown(statusField, config.statusOptions)}
+        {shown.map((f) => (
+          <div key={f.key} className={`flex flex-col ${f.type === "textarea" ? "sm:col-span-2" : ""}`}>
+            {label(f)}
+            {control(f)}
+          </div>
+        ))}
       </div>
-
-      {message && (
-        field(message,
-          <textarea id="cf-message" name="message" required={message.required} rows={compact ? 2 : 3}
-            maxLength={2000} placeholder={message.placeholder} className="field resize-y" />,
-        )
-      )}
 
       {/* Honeypot: invisible to people, irresistible to bots. */}
       <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />

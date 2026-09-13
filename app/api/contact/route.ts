@@ -8,26 +8,24 @@ import { notifyAdmin, emailShell, escapeHtml } from "@/lib/mailer";
 import {
   CONTACT_FORM,
   fullPhone,
+  isBuiltin,
   isValidPhone,
   phoneDigits,
   resolveContactForm,
-  type ContactFieldKey,
+  type ContactField,
 } from "@/lib/form-defaults";
 
 export const runtime = "nodejs";
 
-type Payload = {
-  name?: string;
-  email?: string;
-  phone?: string;
-  entry?: string;
-  batch?: string;
-  status?: string;
-  message?: string;
+/** Field keys come from the admin's form, so the payload is open-ended; every
+ *  value is read as a trimmed, length-capped string. */
+type Payload = Record<string, unknown> & {
   company?: string; // honeypot
   _form?: string; // "popup" or "full"
   "cf-turnstile-response"?: string;
 };
+
+const MAX_LEN: Record<ContactField["type"], number> = { text: 200, textarea: 2000, select: 120, number: 20, phone: 20, email: 120 };
 
 export async function POST(req: Request) {
   // Throttle: 5 a minute and 20 a day per IP, shared across all instances.
@@ -51,33 +49,33 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: BOT_CHECK_FAILED }, { status: 400 });
   }
 
-  const name = body.name?.trim() ?? "";
-  const email = body.email?.trim() ?? "";
+  // Validate against the admin's own form: its fields, visibility and
+  // mandatory flags. The popup only shows fields marked "In popup", so only
+  // those can be required there.
+  const form = resolveContactForm(await getPublished<unknown>("contact_form", CONTACT_FORM));
+  const fromPopup = body._form === "popup";
+  const shown = form.fields.filter((f) => f.enabled && (!fromPopup || f.popup));
+  const values = new Map<string, string>();
+  for (const f of shown) {
+    const v = body[f.key];
+    values.set(f.key, typeof v === "string" ? v.trim().slice(0, MAX_LEN[f.type]) : "");
+  }
+
   // Normalise whatever arrives to the 10 national digits, so a number is
   // validated and stored identically however it was typed or pasted.
-  const phoneNational = phoneDigits(body.phone ?? "");
+  const phoneNational = phoneDigits(values.get("phone") ?? "");
   const phone = fullPhone(phoneNational);
-  const entry = body.entry?.trim() ?? "";
-  const batch = body.batch?.trim().slice(0, 120) ?? "";
-  const currentStatus = body.status?.trim().slice(0, 120) ?? "";
-  const message = body.message?.trim() ?? "";
+  if (values.has("phone")) values.set("phone", phone);
+  const name = values.get("name") ?? "";
+  const email = values.get("email") ?? "";
+  const entry = values.get("entry") ?? "";
+  const batch = values.get("batch") ?? "";
+  const currentStatus = values.get("status") ?? "";
+  const message = values.get("message") ?? "";
 
-  // Validate against the admin's own field settings. The form is configurable
-  // - a field can be hidden or made optional - so hardcoding "email is
-  // required" here rejected submissions from a form that never asked for one.
-  const form = resolveContactForm(await getPublished<unknown>("contact_form", CONTACT_FORM));
-  const cfg = (key: ContactFieldKey) => form.fields.find((f) => f.key === key);
-  // The popup only shows fields marked "In popup"; only those can be required there.
-  const fromPopup = body._form === "popup";
-  const isOn = (key: ContactFieldKey) => cfg(key)?.enabled !== false && (!fromPopup || cfg(key)?.popup !== false);
-  const isRequired = (key: ContactFieldKey) => isOn(key) && cfg(key)?.required === true;
-  const labelOf = (key: ContactFieldKey) => cfg(key)?.label || key;
-
-  const missing = (["name", "phone", "email", "entry", "batch", "status", "message"] as ContactFieldKey[])
-    .filter((k) => isRequired(k))
-    .find((k) => !({ name, phone, email, entry, batch, status: currentStatus, message }[k] ?? "").trim());
+  const missing = shown.find((f) => f.required && !values.get(f.key));
   if (missing) {
-    return NextResponse.json({ error: `Please fill in ${labelOf(missing)}.` }, { status: 400 });
+    return NextResponse.json({ error: `Please fill in ${missing.label}.` }, { status: 400 });
   }
 
   // Format checks apply to whatever was actually supplied, whether or not the
@@ -94,14 +92,21 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
-  if (message.length > 2000) {
-    return NextResponse.json({ error: "Message is too long." }, { status: 400 });
+  const badNumber = shown.find((f) => f.type === "number" && values.get(f.key) && !/^-?\d+(\.\d+)?$/.test(values.get(f.key)!));
+  if (badNumber) {
+    return NextResponse.json({ error: `Please enter a number for ${badNumber.label}.` }, { status: 400 });
   }
   // A lead nobody can reply to is worthless, so insist on one channel - but
   // only when the admin has actually left one of them on the form.
-  if (!email && !phone && (isOn("email") || isOn("phone"))) {
+  if (!email && !phone && (values.has("email") || values.has("phone"))) {
     return NextResponse.json({ error: "Please leave a phone number or an email so we can reach you." }, { status: 400 });
   }
+
+  // Answers to questions the admin added, with the label they had when asked
+  // (so an enquiry still reads correctly after the question is renamed).
+  const answers = shown
+    .filter((f) => !isBuiltin(f.key) && values.get(f.key))
+    .map((f) => ({ label: f.label, value: values.get(f.key)! }));
 
   // Capture the lead in the CRM first (best-effort, independent of email).
   await saveEnquiry({
@@ -112,7 +117,7 @@ export async function POST(req: Request) {
     entry,
     message,
     source: "contact_form",
-    meta: { batch, status: currentStatus },
+    meta: { batch, status: currentStatus, answers },
   });
 
   // Notify the academy. Shared with the eligibility/mock-test route so both
@@ -122,15 +127,8 @@ export async function POST(req: Request) {
     subject: `New enquiry: ${name} (${entry || "exam not specified"})`,
     subtitle: "New callback request from the website",
     ...(email ? { replyTo: email } : {}),
-    rows: [
-      ["Name", name],
-      ["Email", email],
-      ["Phone", phone],
-      ["Target exam", entry],
-      ["Preferred batch", batch],
-      ["Where they are now", currentStatus],
-      ["Message", message],
-    ],
+    // Every answered field, in the form's own order and with its own label.
+    rows: shown.filter((f) => values.get(f.key)).map((f) => [f.label, values.get(f.key)!] as [string, string]),
     footer: email
       ? "Reply directly to this email to reach the aspirant."
       : "This aspirant left no email address - call or WhatsApp the number above.",

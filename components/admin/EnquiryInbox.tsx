@@ -14,7 +14,8 @@ export type Enquiry = {
   source: string;
   status: Status;
   notes: string | null;
-  /** Extra answers the form collected — preferred batch, current status. */
+  /** Extra answers the form collected: preferred batch, current status, and
+   *  answers to questions the admin added (meta.answers). */
   meta: Record<string, unknown> | null;
   created_at: string;
 };
@@ -23,6 +24,14 @@ export type Enquiry = {
 const extra = (r: Enquiry, key: string) => {
   const v = r.meta?.[key];
   return typeof v === "string" && v.trim() ? v : "";
+};
+
+/** Answers to questions the admin added to the form (label as asked). */
+const answers = (r: Enquiry): { label: string; value: string }[] => {
+  const a = r.meta?.answers;
+  return Array.isArray(a)
+    ? a.filter((x): x is { label: string; value: string } => !!x && typeof x.label === "string" && typeof x.value === "string" && x.value.trim() !== "")
+    : [];
 };
 
 const STATUSES: Status[] = ["new", "contacted", "enrolled", "dropped"];
@@ -77,13 +86,14 @@ export default function EnquiryInbox({ initial }: { initial: Enquiry[] }) {
   }
 
   function exportCsv() {
-    const header = ["Date", "Name", "Email", "Phone", "Entry", "Batch", "Current status", "Source", "Status", "Message", "Notes"];
+    const header = ["Date", "Name", "Email", "Phone", "Entry", "Batch", "Current status", "Other answers", "Source", "Status", "Message", "Notes"];
     const lines = [header.join(",")].concat(
       visible.map((r) =>
         [
           new Date(r.created_at).toLocaleString(),
           r.name, r.email, r.phone ?? "", r.entry ?? "",
           extra(r, "batch"), extra(r, "status"),
+          answers(r).map((a) => `${a.label}: ${a.value}`).join("; "),
           r.source, r.status, r.message ?? "", r.notes ?? "",
         ].map((v) => csvCell(String(v))).join(","),
       ),
@@ -153,7 +163,7 @@ export default function EnquiryInbox({ initial }: { initial: Enquiry[] }) {
                 {openId === r.id && (
                   <tr>
                     <td colSpan={6} className="bg-slate-50 px-4 py-4">
-                      {(extra(r, "batch") || extra(r, "status")) && (
+                      {(extra(r, "batch") || extra(r, "status") || answers(r).length > 0) && (
                         <div className="mb-3 flex flex-wrap gap-2">
                           {extra(r, "batch") && (
                             <span className="rounded-full bg-white px-3 py-1 text-xs text-slate-700 ring-1 ring-slate-200">
@@ -165,6 +175,11 @@ export default function EnquiryInbox({ initial }: { initial: Enquiry[] }) {
                               <b className="text-slate-500">Current status:</b> {extra(r, "status")}
                             </span>
                           )}
+                          {answers(r).map((a) => (
+                            <span key={a.label} className="rounded-full bg-white px-3 py-1 text-xs text-slate-700 ring-1 ring-slate-200">
+                              <b className="text-slate-500">{a.label}:</b> {a.value}
+                            </span>
+                          ))}
                         </div>
                       )}
                       {r.message && <p className="mb-3 rounded-lg bg-white p-3 text-sm text-slate-700"><span className="font-semibold text-slate-500">Message: </span>{r.message}</p>}
