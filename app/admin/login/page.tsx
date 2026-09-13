@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import AdminNotConfigured from "@/components/admin/AdminNotConfigured";
 import { LogoMark } from "@/components/Logo";
+import Turnstile, { waitForTurnstile } from "@/components/ui/Turnstile";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,17 +15,22 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [tries, setTries] = useState(0);
 
   if (!isSupabaseConfigured()) return <AdminNotConfigured />;
 
-  async function onSubmit(e: FormEvent) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
     setError("");
+    // Supabase Auth checks this Turnstile token (Auth, Bot and Abuse
+    // Protection); it is single-use, so each attempt gets a fresh one.
+    const captchaToken = await waitForTurnstile(e.currentTarget);
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email, password, options: { captchaToken: captchaToken || undefined } });
     if (error) {
-      setError(error.message);
+      setError(/captcha/i.test(error.message) ? "Security check failed. Please wait a moment and try again." : error.message);
+      setTries((n) => n + 1);
       setBusy(false);
       return;
     }
@@ -60,6 +66,7 @@ export default function LoginPage() {
             <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">For your security you were signed out when the tab was closed. Please sign in again.</p>
           )}
           {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+          <Turnstile resetKey={tries} />
 
           <button type="submit" disabled={busy}
             className="w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
