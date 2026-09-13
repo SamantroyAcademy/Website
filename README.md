@@ -100,6 +100,12 @@ The navbar has an **EN / ଓଡ଼ିଆ** switch. Translation is automatic and 
   R2 uploads (type, size and cache headers signed), last super admin protected.
 - **In the dashboards** (not in code): Vercel Firewall Bot Protection and Attack Challenge
   Mode, Supabase Auth captcha (Turnstile) and sign-ups off.
+- **Admin login captcha**: Supabase, Authentication, Bot and Abuse Protection is on with
+  Turnstile. Its "Captcha secret" must be the Turnstile widget's **secret key** (the same
+  value as `TURNSTILE_SECRET_KEY`; Cloudflare, Turnstile, the widget, Settings), never a
+  name or password. The login form sends a fresh token with every attempt. For local
+  admin work, `localhost` must be in the widget's allowed hostnames, or turn the captcha
+  off while developing.
 
 ## Database
 
