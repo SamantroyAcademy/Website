@@ -379,6 +379,23 @@ html.lenis, html.lenis body { height: auto; }
 }
 .admin-root ::selection { background: var(--color-brand-600); color: #fff; }
 
+/* Developer credit in the footer: the Crayora mark glows in its own violet
+   and breathes slowly. The pulse stops under reduced motion (below). */
+.crayora-glow {
+  filter: drop-shadow(0 0 5px rgb(91 70 255 / 0.55)) drop-shadow(0 0 14px rgb(91 70 255 / 0.3));
+  animation: crayora-breathe 4s ease-in-out infinite;
+  transition: filter 0.4s var(--ease-out-expo), transform 0.4s var(--ease-out-expo);
+}
+.group:hover .crayora-glow,
+.group:focus-visible .crayora-glow {
+  filter: drop-shadow(0 0 7px rgb(110 92 255 / 0.85)) drop-shadow(0 0 22px rgb(91 70 255 / 0.5));
+  transform: translateY(-1px);
+}
+@keyframes crayora-breathe {
+  0%, 100% { filter: drop-shadow(0 0 4px rgb(91 70 255 / 0.4)) drop-shadow(0 0 12px rgb(91 70 255 / 0.22)); }
+  50% { filter: drop-shadow(0 0 8px rgb(110 92 255 / 0.7)) drop-shadow(0 0 20px rgb(91 70 255 / 0.4)); }
+}
+
 /* ── Reduced motion ──────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .marquee-track { width: auto; flex-wrap: wrap; row-gap: 0.75rem; padding-inline: 1.25rem; }
@@ -387,6 +404,7 @@ html.lenis, html.lenis body { height: auto; }
   .journey-wrap { height: auto !important; padding-block: 5rem !important; }
   .journey-track { overflow-x: auto; padding-bottom: 1rem; }
   html { scroll-behavior: auto; }
+  .crayora-glow { animation: none; }
   html.js-motion [data-reveal], html.js-motion [data-split] { opacity: 1 !important; clip-path: none !important; transform: none !important; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

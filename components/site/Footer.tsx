@@ -1,5 +1,7 @@
+import Image from "next/image";
 import Link from "@/components/ui/Link";
 import { MapPinIcon, PhoneIcon, EnvelopeSimpleIcon, ClockIcon } from "@phosphor-icons/react/ssr";
+import { mediaUrl } from "@/lib/supabase/media";
 import { LogoArt } from "@/components/Logo";
 import SocialIcons from "@/components/site/SocialIcons";
 import { FOOTER_LINKS } from "@/lib/data";
@@ -94,6 +96,30 @@ export default async function Footer() {
             <Link href="/credits" className="inline-block py-1 transition-colors hover:text-surface">Image credits</Link>
             <Link href="/contact" className="inline-block py-1 transition-colors hover:text-surface">Contact</Link>
           </div>
+        </div>
+      </div>
+
+      {/* Developer credit, last line of the page. */}
+      <div className="border-t border-white/10">
+        <div className="container-x flex justify-center py-5">
+          <a
+            href="https://www.crayoratech.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Designed and developed by Crayora"
+            className="group inline-flex items-center gap-2.5 rounded-full px-3 py-1.5 text-xs text-brand-300 transition-colors hover:text-surface sm:text-sm"
+          >
+            <span>Designed and developed by</span>
+            <Image
+              src={mediaUrl("/images/brand/crayora-white.webp")}
+              alt="Crayora"
+              width={448}
+              height={120}
+              sizes="120px"
+              translate="no"
+              className="crayora-glow h-4 w-auto sm:h-[1.15rem]"
+            />
+          </a>
         </div>
       </div>
     </footer>
