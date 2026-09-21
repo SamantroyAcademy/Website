@@ -61,9 +61,10 @@ export type Candidate = {
 export const getCandidates = (limit?: number) =>
   listed<Candidate>("published_selected_candidates", SAMPLE_CANDIDATES, {
     limit,
+    // The admin's order (Admin, Selected Candidates); newest first by default.
     order: [
-      { column: "selected_on", ascending: false, nullsFirst: false },
       { column: "sort_order", ascending: true },
+      { column: "selected_on", ascending: false, nullsFirst: false },
     ],
   });
 

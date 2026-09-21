@@ -4,6 +4,7 @@ import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
 import Preloader from "@/components/site/Preloader";
 import FloatingActions from "@/components/site/FloatingActions";
+import SocialRail from "@/components/site/SocialRail";
 import ChatBot from "@/components/site/ChatBot";
 import PreviewBar from "@/components/site/PreviewBar";
 import PageViewTracker from "@/components/site/PageViewTracker";
@@ -49,6 +50,7 @@ export default async function SiteLayout({ children }: Readonly<{ children: Reac
           <Footer />
         </div>
         <FloatingActions phoneHref={phoneHref} whatsapp={settings.whatsapp} />
+        <SocialRail settings={settings} />
         <ChatBot
           settings={{
             whatsapp: settings.whatsapp,

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
 import type { CountdownDoc, CountdownItem } from "@/lib/countdown-defaults";
+import BatchesPopupSwitch from "./BatchesPopupSwitch";
 
 export default function CountdownEditor({ initial }: { initial: CountdownDoc }) {
   const supabase = createClient();
@@ -36,7 +37,10 @@ export default function CountdownEditor({ initial }: { initial: CountdownDoc }) 
   }
 
   return (
-    <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
+    <>
+    {/* Saves on its own the moment it is flipped; Save & publish keeps it. */}
+    <div className="mt-6"><BatchesPopupSwitch initial={popup} onChange={setPopup} /></div>
+    <div className="mt-4 rounded-xl border border-slate-200 bg-white p-6">
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-xs font-medium text-slate-500">Kicker
           <input value={kicker} onChange={(e) => setKicker(e.target.value)}
@@ -73,14 +77,6 @@ export default function CountdownEditor({ initial }: { initial: CountdownDoc }) 
         <p className="mt-1 text-lg font-bold" style={{ color: textColor }}>{heading}</p>
         <p className="mt-2 font-mono text-2xl font-bold" style={{ color: textColor }}>02 10 30 03</p>
       </div>
-
-      <label className="mt-4 flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
-        <input type="checkbox" checked={popup} onChange={(e) => setPopup(e.target.checked)} className="mt-0.5 h-4 w-4 accent-brand-600" />
-        <span className="text-sm text-slate-700">
-          <span className="font-semibold">Show a batches popup when the site opens</span>
-          <span className="block text-xs text-slate-500">Once per visit, right after the intro and before the enquiry form. Lists upcoming dates and batches that started in the last 45 days.</span>
-        </span>
-      </label>
 
       <p className="mt-4 mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">Dates</p>
 
@@ -121,5 +117,6 @@ export default function CountdownEditor({ initial }: { initial: CountdownDoc }) 
       </div>
       <p className="mt-2 text-xs text-slate-400">Live ticking countdowns appear on the homepage, auto-sorted by nearest date. Past dates show “passed”. Per-card BG/Text colours override the section colours above.</p>
     </div>
+    </>
   );
 }

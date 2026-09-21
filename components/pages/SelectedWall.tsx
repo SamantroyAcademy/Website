@@ -26,8 +26,8 @@ export default function SelectedWall({ initial, sample }: { initial: Candidate[]
     const { data, error } = await createClient()
       .from("published_selected_candidates")
       .select("id, name, exam, post, force, year, image_path, selected_on, hometown")
-      .order("selected_on", { ascending: false, nullsFirst: false })
       .order("sort_order", { ascending: true })
+      .order("selected_on", { ascending: false, nullsFirst: false })
       .range(items.length, items.length + PAGE - 1);
     if (error || !data) setDone(true);
     else {

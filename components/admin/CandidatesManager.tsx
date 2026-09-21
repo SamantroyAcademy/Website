@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
@@ -29,14 +29,13 @@ export type Candidate = {
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const today = () => new Date().toISOString().slice(0, 10);
 
-// Latest recommendation first; undated rows fall back to sort_order.
+/** The admin's order is the wall's order (lowest sort_order first). */
 const sortCands = (arr: Candidate[]) =>
-  [...arr].sort((a, b) => {
-    if (a.selected_on && b.selected_on) return b.selected_on.localeCompare(a.selected_on);
-    if (a.selected_on) return -1;
-    if (b.selected_on) return 1;
-    return a.sort_order - b.sort_order;
-  });
+  [...arr].sort((a, b) => a.sort_order - b.sort_order || (b.selected_on ?? "").localeCompare(a.selected_on ?? ""));
+
+/** Newest selection first: the "Sort by date" button. */
+const byDate = (arr: Candidate[]) =>
+  [...arr].sort((a, b) => (b.selected_on ?? "").localeCompare(a.selected_on ?? "") || a.sort_order - b.sort_order || a.name.localeCompare(b.name));
 
 export default function CandidatesManager({ initial }: { initial: Candidate[] }) {
   const supabase = createClient();
@@ -50,6 +49,11 @@ export default function CandidatesManager({ initial }: { initial: Candidate[] })
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [orderMsg, setOrderMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [dragFrom, setDragFrom] = useState<number | null>(null);
+  const [dragOver, setDragOver] = useState<number | null>(null);
+  // Drop checks run before React re-renders, so they read a ref.
+  const dragRef = useRef<number | null>(null);
 
   async function uploadImage(f: File): Promise<string> {
     const ext = f.name.split(".").pop()?.toLowerCase() || "jpg";
@@ -67,7 +71,8 @@ export default function CandidatesManager({ initial }: { initial: Candidate[] })
       // Photo is optional: tiles without one render as a monogram.
       const image_path = file ? await uploadImage(file) : null;
       const year = date ? Number(date.slice(0, 4)) : null;
-      const sort_order = rows.length ? Math.max(...rows.map((r) => r.sort_order)) + 1 : 0;
+      // New selections go to the top of the wall.
+      const sort_order = rows.length ? Math.min(...rows.map((r) => r.sort_order)) - 1 : 0;
       const { data, error } = await supabase
         .from("selected_candidates")
         .insert({ name, exam, post: post || null, force: force || null, hometown: hometown.trim() || null, year, image_path, sort_order, published: true, selected_on: date || null })
@@ -98,20 +103,35 @@ export default function CandidatesManager({ initial }: { initial: Candidate[] })
     await supabase.from("selected_candidates").update({ published: next }).eq("id", c.id); void bustCmsCache();
   }
 
-  async function move(index: number, dir: -1 | 1) {
-    const j = index + dir;
-    if (j < 0 || j >= rows.length) return;
-    const a = rows[index], b = rows[j];
-    const newRows = [...rows];
-    newRows[index] = { ...b, sort_order: a.sort_order };
-    newRows[j] = { ...a, sort_order: b.sort_order };
-    setRows(newRows);
-    await Promise.all([
-      supabase.from("selected_candidates").update({ sort_order: b.sort_order }).eq("id", a.id),
-      supabase.from("selected_candidates").update({ sort_order: a.sort_order }).eq("id", b.id),
-    ]);
-    // re-sort locally
-    setRows((r) => [...r].sort((x, y) => x.sort_order - y.sort_order));
+  /** Save a new order: every card takes its position as sort_order, and only
+   *  the cards whose number changed are written. */
+  async function persistOrder(next: Candidate[]) {
+    const numbered = next.map((c, i) => ({ ...c, sort_order: i }));
+    const changed = numbered.filter((c, i) => c.sort_order !== next[i].sort_order);
+    setRows(numbered);
+    if (!changed.length) return;
+    setOrderMsg({ ok: true, text: "Saving order…" });
+    let failed = 0;
+    for (let i = 0; i < changed.length; i += 10) {
+      const res = await Promise.all(changed.slice(i, i + 10).map((c) => supabase.from("selected_candidates").update({ sort_order: c.sort_order }).eq("id", c.id)));
+      failed += res.filter((r) => r.error).length;
+    }
+    setOrderMsg(failed ? { ok: false, text: `${failed} card(s) could not be saved. Reload and try again.` } : { ok: true, text: "Order saved: live on the website." });
+    void bustCmsCache();
+  }
+
+  const moveTo = (from: number, to: number) => {
+    if (from === to || to < 0 || to >= rows.length) return;
+    const next = [...rows];
+    const [c] = next.splice(from, 1);
+    next.splice(to, 0, c);
+    void persistOrder(next);
+  };
+  const move = (index: number, dir: -1 | 1) => moveTo(index, index + dir);
+
+  function sortByDate() {
+    if (!confirm("Put every candidate in date order, newest selection first? Your manual order will be replaced.")) return;
+    void persistOrder(byDate(rows));
   }
 
   return (
@@ -173,15 +193,34 @@ export default function CandidatesManager({ initial }: { initial: Candidate[] })
 
       {/* List */}
       <div className="rounded-xl border border-slate-200 bg-white p-5">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-slate-900">On the Wall ({rows.length})</h2>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 className="text-base font-semibold text-slate-900">On the Wall ({rows.length})</h2>
+            <p className="text-xs text-slate-500">Drag a card, or use ⤒ ↑ ↓. The public wall shows this order.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            {orderMsg && <span className={`text-xs font-medium ${orderMsg.ok ? "text-green-700" : "text-red-700"}`}>{orderMsg.text}</span>}
+            <button type="button" onClick={sortByDate} disabled={rows.length < 2}
+              className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50">
+              Sort by date (newest first)
+            </button>
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {rows.map((c, i) => (
-            <div key={c.id} className={`rounded-lg border p-2 ${c.published ? "border-slate-200" : "border-dashed border-slate-300 opacity-60"}`}>
+            <div
+              key={c.id}
+              draggable
+              onDragStart={(e) => { dragRef.current = i; setDragFrom(i); e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", c.id); }}
+              onDragEnd={() => { dragRef.current = null; setDragFrom(null); setDragOver(null); }}
+              onDragOver={(e) => { if (dragRef.current !== null) { e.preventDefault(); if (dragOver !== i) setDragOver(i); } }}
+              onDrop={(e) => { e.preventDefault(); const from = dragRef.current; dragRef.current = null; setDragFrom(null); setDragOver(null); if (from !== null) moveTo(from, i); }}
+              className={`cursor-grab rounded-lg border p-2 transition active:cursor-grabbing ${c.published ? "border-slate-200" : "border-dashed border-slate-300 opacity-60"} ${dragOver === i && dragFrom !== null && dragFrom !== i ? "ring-2 ring-brand-500" : ""} ${dragFrom === i ? "opacity-40" : ""}`}
+            >
               <div className="relative aspect-[4/5] overflow-hidden rounded-md bg-slate-100">
+                <span className="absolute left-1.5 top-1.5 z-10 rounded bg-white/90 px-1.5 text-[10px] font-bold text-slate-600">{i + 1}</span>
                 {c.image_path && (
-                  <Image src={mediaUrl(c.image_path)} alt={c.name} fill sizes="200px" className="object-cover" />
+                  <Image src={mediaUrl(c.image_path)} alt={c.name} fill sizes="200px" draggable={false} className="pointer-events-none object-cover" />
                 )}
               </div>
               <p className="mt-2 truncate text-sm font-semibold text-slate-900">{c.name}</p>
@@ -189,8 +228,9 @@ export default function CandidatesManager({ initial }: { initial: Candidate[] })
               {c.hometown && <p className="truncate text-xs text-slate-400">{c.hometown}</p>}
               <div className="mt-2 flex items-center justify-between gap-1">
                 <div className="flex gap-1">
-                  <button onClick={() => move(i, -1)} title="Move up" className="rounded border border-slate-200 px-1.5 text-slate-600 hover:bg-slate-50">↑</button>
-                  <button onClick={() => move(i, 1)} title="Move down" className="rounded border border-slate-200 px-1.5 text-slate-600 hover:bg-slate-50">↓</button>
+                  <button onClick={() => moveTo(i, 0)} disabled={i === 0} title="Move to the top" aria-label="Move to the top" className="rounded border border-slate-200 px-1.5 text-slate-600 hover:bg-slate-50 disabled:opacity-30">⤒</button>
+                  <button onClick={() => move(i, -1)} disabled={i === 0} title="Move up" aria-label="Move up" className="rounded border border-slate-200 px-1.5 text-slate-600 hover:bg-slate-50 disabled:opacity-30">↑</button>
+                  <button onClick={() => move(i, 1)} disabled={i === rows.length - 1} title="Move down" aria-label="Move down" className="rounded border border-slate-200 px-1.5 text-slate-600 hover:bg-slate-50 disabled:opacity-30">↓</button>
                 </div>
                 <div className="flex gap-1">
                   <button onClick={() => togglePublished(c)} title={c.published ? "Hide" : "Show"} className="rounded border border-slate-200 px-1.5 text-xs text-slate-600 hover:bg-slate-50">

@@ -36,7 +36,10 @@ export const SITE = {
    *  the embedded map centres on its @lat,lng. */
   mapUrl: "https://www.google.com/maps/place/Samantroy+Academy/@19.2935554,84.7925175,18z/data=!4m6!3m5!1s0x3a3d5aa2c3ee6c09:0x2980bdca1fe41371!8m2!3d19.2935554!4d84.7925175!16s%2Fg%2F11byyqh2r_",
   instagram: "https://www.instagram.com/samantroyacademy07/",
+  /** The academy's own channel: classes, current affairs, information. */
   youtube: "https://www.youtube.com/@samantroyacademy5722",
+  /** Prasanta Nayak's channel: mostly selection and result videos. */
+  youtube2: "https://www.youtube.com/@prasantanayakmotivation1873",
   telegram: "",
   facebook: "https://www.facebook.com/p/Samantroy-Academy-Brahmapur-100057121733570/",
   url: "https://www.samantroyacademy.com",
