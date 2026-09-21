@@ -15,7 +15,7 @@ export default async function GoogleReviewsAdmin() {
     <div className="max-w-4xl">
       <h1 className="text-2xl font-bold text-slate-900">Google Reviews</h1>
       <p className="mt-1 text-sm text-slate-500">
-        Reviews shown on the homepage. Import them from Google, or type one in by hand, then publish.
+        Reviews shown on the homepage. Paste a review&apos;s Google link and it is fetched and published.
       </p>
       <GoogleReviewsManager
         initial={asArray<GoogleReview>(draft.items)}
