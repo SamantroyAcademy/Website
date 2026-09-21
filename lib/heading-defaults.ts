@@ -14,7 +14,7 @@ export const HEADING_DEFAULTS: Record<string, HeadingDoc> = {
     title: `They trained here. ${em("Now they serve.")}`,
     subtitle: "Recent selections from Brahmapur, Ganjam and across Odisha: Army, Navy, Air Force, CAPF, Bank and OSSC.",
   },
-  shorts: { kicker: "", title: `Straight from ${em("result day")}`, subtitle: "Selected aspirants and class clips from the academy YouTube channel." },
+  shorts: { kicker: "", title: `Success ${em("stories")}`, subtitle: "The newest selection and result videos, straight from our success stories channel on YouTube." },
   toppers: { kicker: "", title: `Results, ${em("poster by poster")}`, subtitle: "Every selection list we have published, newest first. Tap a poster to see it full size." },
   courses: {
     kicker: "",
@@ -30,7 +30,7 @@ export const HEADING_DEFAULTS: Record<string, HeadingDoc> = {
   },
   stats: { kicker: "", title: `Since 2001, ${em("4000+ recruitments")}`, subtitle: "" },
   testimonials: { kicker: "", title: `In their ${em("own words")}`, subtitle: "" },
-  videos: { kicker: "", title: "Watch and learn", subtitle: "Results, career guidance and weekly current affairs on the Samantroy Academy YouTube channel." },
+  videos: { kicker: "", title: `Learn with ${em("Samantroy Academy")}`, subtitle: "Classes, current affairs and exam information: the newest videos from the Samantroy Academy YouTube channel." },
   google_reviews: { kicker: "", title: "What students say on Google", subtitle: "" },
   instagram: { kicker: "", title: `Follow ${em("@samantroyacademy07")}`, subtitle: "Results, new batches and notifications from Brahmapur." },
   officer_banners: { kicker: "Now serving", title: "Alumni in uniform", subtitle: "" },

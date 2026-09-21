@@ -1,12 +1,48 @@
-/** Student stories: YouTube Shorts and short clips (CMS: shorts). Plain data,
- *  safe for server and client. The admin adds or removes links, or imports
- *  from a channel; titles and thumbnails come from YouTube automatically. */
+/** The two YouTube sections on the homepage. Plain data, safe for server and
+ *  client.
+ *
+ *  Success stories (CMS: shorts): Prasanta Nayak's channel, which is mostly
+ *  selection and result videos. Educational videos (CMS: edu_videos): the
+ *  Samantroy Academy channel (classes, current affairs, information).
+ *
+ *  Both default to "auto": the channel's newest uploads, straight from its
+ *  public feed, minus any the admin hid. "manual" shows a hand-picked list
+ *  instead (Success stories: its own list; Educational: the Resources videos). */
 
 export type ShortItem = { id: string; title: string; url: string };
-export type ShortsDoc = { channelUrl: string; items: ShortItem[] };
+export type FeedMode = "auto" | "manual";
+export type ShortsDoc = {
+  channelUrl: string;
+  items: ShortItem[];
+  mode?: FeedMode;
+  /** How many videos the section shows. */
+  limit?: number;
+  /** Video ids never to show. */
+  hidden?: string[];
+};
 
-/** The academy's second channel, where student results and class clips go. */
+export type EduVideosDoc = {
+  channelUrl: string;
+  mode?: FeedMode;
+  /** Full videos in the grid. */
+  limit?: number;
+  /** Shorts in the strip under the grid (0 hides the strip). */
+  shortsLimit?: number;
+  hidden?: string[];
+};
+
+/** Success stories: Prasanta Nayak's channel. */
 export const SHORTS_CHANNEL = "https://www.youtube.com/@prasantanayakmotivation1873";
+/** Educational videos: the Samantroy Academy channel. */
+export const EDU_CHANNEL = "https://www.youtube.com/@samantroyacademy5722";
+
+export const EDU_DOC: EduVideosDoc = { channelUrl: EDU_CHANNEL, mode: "auto", limit: 6, shortsLimit: 10, hidden: [] };
+
+/** Keep a number inside sensible bounds. */
+export const clampCount = (v: unknown, fallback: number, max = 24) => {
+  const n = Math.round(Number(v));
+  return Number.isFinite(n) && n >= 0 ? Math.min(n, max) : fallback;
+};
 
 /** Result announcements and class clips picked from the channel (September 2026). */
 const PICKS: [string, string][] = [
@@ -29,6 +65,9 @@ const PICKS: [string, string][] = [
 export const SHORTS_DOC: ShortsDoc = {
   channelUrl: SHORTS_CHANNEL,
   items: PICKS.map(([id, title]) => ({ id, title, url: `https://www.youtube.com/shorts/${id}` })),
+  mode: "auto",
+  limit: 12,
+  hidden: [],
 };
 
 /** YouTube titles on this channel carry hashtags, handles and "||" dividers:

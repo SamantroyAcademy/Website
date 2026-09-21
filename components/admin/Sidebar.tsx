@@ -48,7 +48,7 @@ const GROUPS: Group[] = [
     items: [
       { href: "/admin/homepage", label: "Section Order" },
       { href: "/admin/hero-showcase", label: "Hero Posters" },
-      { href: "/admin/shorts", label: "Student Shorts" },
+      { href: "/admin/shorts", label: "YouTube Channels" },
       { href: "/admin/verticals", label: "Six Verticals" },
       { href: "/admin/campus", label: "Campus Gallery" },
       { href: "/admin/toppers", label: "Result Posters" },
@@ -67,6 +67,7 @@ const GROUPS: Group[] = [
       { href: "/admin/translations", label: "Odia Translations" },
       { href: "/admin/seo", label: "SEO" },
       { href: "/admin/media", label: "Media Library" },
+      { href: "/admin/connections", label: "Connections" },
     ],
   },
   {

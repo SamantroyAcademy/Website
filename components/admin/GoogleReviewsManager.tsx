@@ -2,21 +2,26 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
 import { mediaUrl } from "@/lib/supabase/media";
 import { compressImage } from "@/lib/image-client";
 import { asArray } from "@/lib/shape";
 import type { GoogleReview } from "@/lib/homepage-defaults";
+import { incompleteReviews, mergeReviews } from "@/lib/reviews";
 import { useImageCropper, FRAMES } from "./useImageCropper";
 import { uploadMedia } from "@/lib/upload-client";
 
 export default function GoogleReviewsManager({
   initial,
   placeUrl: initialPlaceUrl,
+  hasKey,
 }: {
   initial: GoogleReview[];
   placeUrl: string;
+  /** A Google API key is saved under Connections. */
+  hasKey: boolean;
 }) {
   const supabase = createClient();
   const [items, setItems] = useState<GoogleReview[]>(asArray<GoogleReview>(initial));
@@ -25,6 +30,7 @@ export default function GoogleReviewsManager({
   const { crop, cropperUi } = useImageCropper();
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [needsKey, setNeedsKey] = useState(!hasKey);
 
   const set = (i: number, patch: Partial<GoogleReview>) =>
     setItems((s) => s.map((x, j) => (j === i ? { ...x, ...patch } : x)));
@@ -34,7 +40,9 @@ export default function GoogleReviewsManager({
     const c = [...items]; [c[i], c[j]] = [c[j], c[i]]; setItems(c);
   };
 
-  /** Pull the latest reviews straight from Google (needs a Places API key). */
+  /** Pull the latest reviews straight from Google (needs a Places API key)
+   *  and publish them at once, so they show on the homepage without a second
+   *  step. New ones go on top; anyone already listed is skipped. */
   async function importFromGoogle() {
     setBusy(true); setMsg(null);
     try {
@@ -43,24 +51,37 @@ export default function GoogleReviewsManager({
       });
       const data = await res.json();
       if (!data.ok) {
+        if (data.needsKey) setNeedsKey(true);
         setMsg({ ok: false, text: data.error || "Could not import from Google." });
         return;
       }
-      const incoming: GoogleReview[] = (data.items ?? []).map(
-        (r: { url: string; name: string; rating: number; text: string; avatarUrl: string; date: string }) => ({
-          url: r.url, name: r.name, rating: r.rating, text: r.text, avatar: r.avatarUrl, date: r.date,
-        }),
-      );
-      // Skip anyone already on the wall.
-      setItems((cur) => {
-        const seen = new Set(cur.map((c) => (c.name + c.text).slice(0, 60)));
-        const fresh = incoming.filter((r) => !seen.has((r.name + r.text).slice(0, 60)));
-        setMsg({ ok: true, text: `Imported ${fresh.length} new review(s) from Google.` });
-        return [...cur, ...fresh];
-      });
+      setNeedsKey(false);
+      const { items: merged, added } = mergeReviews(items, (data.items ?? []) as GoogleReview[]);
+      const url = placeUrl || data.placeUrl || "";
+      if (!placeUrl && data.placeUrl) setPlaceUrl(data.placeUrl);
+      setItems(merged);
+      if (!added) {
+        setMsg({ ok: true, text: `Google returned ${data.count ?? 0} review(s); all are already listed. Google shares 5 at a time, and new ones are also imported every night.` });
+        return;
+      }
+      const error = await publish(merged, url);
+      setMsg(error
+        ? { ok: false, text: `Imported ${added} review(s), but saving failed: ${error}` }
+        : { ok: true, text: `Imported ${added} new review(s) from Google and published them on the homepage.` });
     } catch {
-      setMsg({ ok: false, text: "Could not reach Google — add the review manually below." });
+      setMsg({ ok: false, text: "Could not reach Google. Try again, or add the review by hand below." });
     } finally { setBusy(false); }
+  }
+
+  async function publish(list: GoogleReview[], url: string): Promise<string | null> {
+    const doc = { items: list.filter((r) => r.name?.trim() && r.text?.trim()), placeUrl: url };
+    const { error } = await supabase.from("site_content").upsert(
+      { key: "google_reviews", label: "Google Reviews", draft: doc, published: doc },
+      { onConflict: "key" },
+    );
+    if (error) return error.message;
+    void bustCmsCache();
+    return null;
   }
 
   /** Add an empty card to type a review into (always works). */
@@ -86,16 +107,16 @@ export default function GoogleReviewsManager({
   }
 
   async function save() {
+    const bad = incompleteReviews(items);
+    if (bad.length) {
+      return setMsg({ ok: false, text: `Review ${bad.join(", ")} needs the reviewer's name and the review text before it can show on the website. Google does not let websites read them from a link, so copy them from the review, or remove the card.` });
+    }
     setBusy(true); setMsg(null);
-    const doc = { items: items.filter((r) => r.name || r.text), placeUrl };
-    const { error } = await supabase.from("site_content").upsert(
-      { key: "google_reviews", label: "Google Reviews", draft: doc, published: doc },
-      { onConflict: "key" },
-    );
+    const error = await publish(items, placeUrl);
     setBusy(false);
-    if (error) return setMsg({ ok: false, text: error.message });
-    setMsg({ ok: true, text: "Saved & published — live on the homepage." });
-    void bustCmsCache();
+    if (error) return setMsg({ ok: false, text: error });
+    const n = items.filter((r) => r.name?.trim() && r.text?.trim()).length;
+    setMsg({ ok: true, text: n ? `Saved and published: ${n} review(s) live on the homepage.` : "Saved. The homepage section stays hidden until a review is added." });
   }
 
   return (
@@ -107,9 +128,15 @@ export default function GoogleReviewsManager({
           {busy ? "Importing…" : "⭐ Import latest reviews from Google"}
         </button>
         <p className="mt-2 text-xs text-slate-500">
-          Pulls the newest reviews (name, rating, text and photo) automatically. Needs a
-          <b> Google Places API key</b> on the server — otherwise add reviews by hand below.
+          Pulls the newest reviews (name, rating, text and photo) and publishes them. New reviews are also imported by themselves every night.
         </p>
+        {needsKey && (
+          <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            Importing needs a free Google API key.{" "}
+            <Link href="/admin/connections" className="font-semibold underline">Add it under Connections</Link>{" "}
+            (about 5 minutes, steps are on that page). Until then, add reviews by hand below.
+          </p>
+        )}
 
         <div className="mt-4 border-t border-slate-200 pt-4">
           <label className="mb-1 block text-sm font-medium text-slate-700">Or add one manually</label>
@@ -122,7 +149,7 @@ export default function GoogleReviewsManager({
             </button>
           </div>
           <p className="mt-2 text-xs text-slate-400">
-            Google blocks reading review text from a shared link, so pasting one alone cannot fill these in.
+            Google blocks reading review text from a shared link, so type the reviewer&apos;s name and words into the card.
           </p>
         </div>
         <label className="mt-4 block text-sm font-medium text-slate-700">Google profile link (for the “See all reviews” button)</label>
@@ -173,13 +200,13 @@ export default function GoogleReviewsManager({
 
       {items.length === 0 && (
         <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500">
-          No reviews yet — paste a Google review link above. The section stays hidden until you add one.
+          No reviews yet. Import them from Google or add one by hand. The homepage section stays hidden until there is one.
         </p>
       )}
 
       {msg && <p className={`rounded-lg px-3 py-2 text-sm ${msg.ok ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-800"}`}>{msg.text}</p>}
       <button onClick={save} disabled={busy} className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
-        {busy ? "Saving…" : "Save & publish"}
+        {busy ? "Saving…" : "Save and publish"}
       </button>
     </div>
   );

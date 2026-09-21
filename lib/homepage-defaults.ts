@@ -51,6 +51,8 @@ export type GoogleReview = {
   text: string;
   avatar?: string;
   date?: string;
+  /** When Google says it was posted (imported reviews only). */
+  publishedAt?: string;
 };
 export const GOOGLE_REVIEWS: GoogleReview[] = [];
 

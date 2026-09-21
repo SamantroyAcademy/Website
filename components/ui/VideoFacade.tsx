@@ -7,7 +7,9 @@ import { PlayIcon } from "@phosphor-icons/react";
 /** YouTube facade: a thumbnail until clicked, then the privacy-enhanced
  *  embed. Keeps the heavy iframe (and its trackers) off the page until the
  *  visitor actually asks for the video. */
-export default function VideoFacade({ id, title }: { id: string; title: string }) {
+/** `original`: the title comes straight from YouTube and changes with every
+ *  upload, so the Odia translator leaves it as it is. */
+export default function VideoFacade({ id, title, original = false }: { id: string; title: string; original?: boolean }) {
   const [play, setPlay] = useState(false);
   return (
     <div className="relative aspect-video overflow-hidden rounded-[var(--radius-card)] bg-brand-950">
@@ -26,7 +28,7 @@ export default function VideoFacade({ id, title }: { id: string; title: string }
           <span className="absolute left-5 top-1/2 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-accent text-white shadow-lg transition-transform group-hover:scale-110 sm:left-1/2 sm:-translate-x-1/2">
             <PlayIcon size={22} weight="fill" />
           </span>
-          <span className="absolute inset-x-0 bottom-0 line-clamp-2 p-4 text-left text-sm font-semibold text-surface">{title}</span>
+          <span translate={original ? "no" : undefined} className="absolute inset-x-0 bottom-0 line-clamp-2 p-4 text-left text-sm font-semibold text-surface">{title}</span>
         </button>
       )}
     </div>

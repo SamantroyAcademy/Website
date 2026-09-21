@@ -5,20 +5,28 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { bustCmsCache } from "@/lib/revalidate-client";
 import { youtubeId } from "@/lib/youtube";
-import { cleanTitle, type ShortItem, type ShortsDoc } from "@/lib/shorts";
+import { cleanTitle, clampCount, type ShortItem, type ShortsDoc } from "@/lib/shorts";
+import ChannelFeedSettings, { type FeedSettingsValue } from "./ChannelFeedSettings";
 
 type Found = { id: string; title: string; kind: "short" | "video"; published?: string };
 
 const input = "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100";
 const thumb = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 
-/** Student stories on the homepage: paste a Short or video link (title and
- *  thumbnail are fetched from YouTube), or import from a channel and tick
- *  the ones to show. Reorder, retitle, remove, then save to publish. */
+/** Success stories on the homepage. Automatic by default: the channel's
+ *  newest uploads, minus any hidden here. The hand-picked list below is shown
+ *  in Hand-picked mode, and as a backup if YouTube cannot be reached: paste a
+ *  link, or pick from the channel, then reorder, retitle or remove. */
 export default function ShortsManager({ initial }: { initial: ShortsDoc }) {
   const supabase = createClient();
   const [items, setItems] = useState<ShortItem[]>(initial.items);
-  const [channelUrl, setChannelUrl] = useState(initial.channelUrl);
+  const [feed, setFeed] = useState<FeedSettingsValue>({
+    channelUrl: initial.channelUrl,
+    mode: initial.mode === "manual" ? "manual" : "auto",
+    limit: clampCount(initial.limit, 12),
+    hidden: initial.hidden ?? [],
+  });
+  const channelUrl = feed.channelUrl;
   const [link, setLink] = useState("");
   const [found, setFound] = useState<Found[] | null>(null);
   const [picked, setPicked] = useState<Set<string>>(new Set());
@@ -74,9 +82,15 @@ export default function ShortsManager({ initial }: { initial: ShortsDoc }) {
 
   async function save() {
     setBusy(true); setMsg(null);
-    const doc: ShortsDoc = { channelUrl: channelUrl.trim(), items: items.filter((s) => s.id).map((s) => ({ ...s, title: s.title.trim() })) };
+    const doc: ShortsDoc = {
+      channelUrl: channelUrl.trim(),
+      items: items.filter((s) => s.id).map((s) => ({ ...s, title: s.title.trim() })),
+      mode: feed.mode,
+      limit: clampCount(feed.limit, 12),
+      hidden: feed.hidden,
+    };
     const { error } = await supabase.from("site_content").upsert(
-      { key: "shorts", label: "Student Stories (YouTube Shorts)", draft: doc, published: doc },
+      { key: "shorts", label: "Success Stories (YouTube)", draft: doc, published: doc },
       { onConflict: "key" },
     );
     setBusy(false);
@@ -86,8 +100,17 @@ export default function ShortsManager({ initial }: { initial: ShortsDoc }) {
   }
 
   return (
-    <div className="mt-6 space-y-5">
-      <div className="grid gap-4 rounded-xl border border-slate-200 bg-white p-5 lg:grid-cols-2">
+    <div className="mt-4 space-y-5">
+      <div className="rounded-xl border border-slate-200 bg-white p-5">
+        <ChannelFeedSettings value={feed} onChange={setFeed} manualLabel="Hand-picked list" limitLabel="Videos shown" />
+      </div>
+
+      <details open={feed.mode === "manual"} className="group rounded-xl border border-slate-200 bg-white">
+        <summary className="cursor-pointer select-none px-5 py-3 text-sm font-semibold text-slate-800">
+          Hand-picked list ({items.length}){feed.mode === "auto" ? " · backup, used only if YouTube cannot be reached" : " · shown on the website"}
+        </summary>
+        <div className="space-y-5 border-t border-slate-200 p-5">
+      <div className="grid gap-4 lg:grid-cols-2">
         <div>
           <label className="mb-1 block text-sm font-medium text-slate-700">Add one link</label>
           <div className="flex gap-2">
@@ -99,7 +122,7 @@ export default function ShortsManager({ initial }: { initial: ShortsDoc }) {
         <div>
           <label className="mb-1 block text-sm font-medium text-slate-700">Import from a channel</label>
           <div className="flex gap-2">
-            <input value={channelUrl} onChange={(e) => setChannelUrl(e.target.value)} className={input} placeholder="https://www.youtube.com/@channel" />
+            <input value={channelUrl} readOnly className={`${input} bg-slate-50 text-slate-500`} aria-label="Channel (set above)" />
             <button type="button" onClick={importChannel} disabled={busy || !channelUrl.trim()} className="shrink-0 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50">
               {busy ? "Working…" : "Fetch latest"}
             </button>
@@ -160,6 +183,9 @@ export default function ShortsManager({ initial }: { initial: ShortsDoc }) {
           ))}
         </ul>
       </div>
+
+        </div>
+      </details>
 
       <div className="flex items-center gap-3">
         <button type="button" onClick={save} disabled={busy} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50">
